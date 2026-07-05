@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Simplified, stylized orbit/interlock glyph evoking Stellar's network mark. NOT the official trademarked asset -- swap with the real logo from stellar.org/brand-resources before any public/co-marketing use. -->
+  <path d="M 10 44 C 10 24, 40 24, 54 10" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 10 20 C 10 40, 40 40, 54 54" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.55"/>
+</svg>
