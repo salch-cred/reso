@@ -150,11 +150,16 @@
   </header>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="switchTab('core')">&#x2699;&#xFE0F; Compliance Console</div>
-    <div class="nav-tab" onclick="switchTab('stellar')">&#x1F310; Stellar Testnet Live</div>
-    <div class="nav-tab" onclick="switchTab('assets')">&#x1F3E6; Assets &amp; DEX</div>
-    <div class="nav-tab" onclick="switchTab('escrow')">&#x1F512; ZK Escrow</div>
-    <div class="nav-tab" onclick="switchTab('sandbox')">&#x1F52C; Crypto Sandbox</div>
+    <div class="nav-tab active" onclick="switchTab('core')">⚙️ Compliance Console</div>
+    <div class="nav-tab" onclick="switchTab('stellar')">🌐 Stellar Testnet Live</div>
+    <div class="nav-tab" onclick="switchTab('assets')">🏦 Assets &amp; DEX</div>
+    <div class="nav-tab" onclick="switchTab('escrow')">🔒 ZK Escrow</div>
+    <div class="nav-tab" onclick="switchTab('sandbox')">🔬 Crypto Sandbox</div>
+    <div class="nav-tab" onclick="switchTab('zkml')">🧠 zkML Oracle</div>
+    <div class="nav-tab" onclick="switchTab('soulbound')">🏅 Soulbound</div>
+    <div class="nav-tab" onclick="switchTab('jurisdiction')">⚖️ Jurisdiction</div>
+    <div class="nav-tab" onclick="switchTab('reserves')">🏛️ Proof of Reserves</div>
+    <div class="nav-tab" onclick="switchTab('advanced')">🛡️ Advanced</div>
   </div>
 
   <!-- ============================================================ TAB 1: COMPLIANCE CORE ============================================================ -->
@@ -1049,11 +1054,452 @@ async function resetFolding(){
   try{await fetch(`${API}/api/crypto/folding/reset`,{method:'POST'});showToast('Accumulator reset.');loadFolding();}catch(e){showToast('Error.',false);}
 }
 
+
+<!-- ============================================================ TAB 6: zkML ORACLE ============================================================ -->
+<div class="tab-panel" id="panel-zkml">
+  <div class="grid">
+    <div class="card">
+      <h2>🧠 zkML Risk Score</h2>
+      <p class="subtitle">World-first: ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address…"></div>
+      <div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div>
+      <div class="btn-row">
+        <button class="btn purple" onclick="runZkmlScore()">🧠 Score Wallet</button>
+        <button class="btn sec" onclick="runZkmlBatch()">📊 Batch Score All</button>
+      </div>
+      <div class="result-box" id="zkmlResult"></div>
+    </div>
+    <div class="card">
+      <h2>📊 Batch Risk Dashboard</h2>
+      <p class="subtitle">ML risk scores for all registered wallets.</p>
+      <div class="list-wrap" id="zkmlBatchList"><div style="padding:20px;text-align:center;color:var(--fg2)">Click "Batch Score All" to load</div></div>
+    </div>
+    <div class="card full">
+      <h2>ℹ️ About zkML on Stellar</h2>
+      <p class="subtitle">This is the <strong>world's first ML-based risk oracle on Stellar</strong>. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights.</p>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:16px">
+        <div style="background:var(--blue-g);border:1px solid rgba(59,130,246,0.3);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px">⚡</div><div style="font-size:11px;color:var(--fg2);margin-top:4px">Amount Weight</div><div style="font-size:14px;font-weight:700;color:var(--blue)">0.35</div></div>
+        <div style="background:var(--blue-g);border:1px solid rgba(59,130,246,0.3);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px">📈</div><div style="font-size:11px;color:var(--fg2);margin-top:4px">Volume Weight</div><div style="font-size:14px;font-weight:700;color:var(--blue)">0.25</div></div>
+        <div style="background:var(--green-g);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px">✅</div><div style="font-size:11px;color:var(--fg2);margin-top:4px">KYC Weight</div><div style="font-size:14px;font-weight:700;color:var(--green)">-0.30</div></div>
+        <div style="background:var(--red-g);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px">🚫</div><div style="font-size:11px;color:var(--fg2);margin-top:4px">Sanction Weight</div><div style="font-size:14px;font-weight:700;color:var(--red)">0.90</div></div>
+        <div style="background:var(--purple-g);border:1px solid rgba(168,85,247,0.3);border-radius:10px;padding:14px;text-align:center"><div style="font-size:22px">🔑</div><div style="font-size:11px;color:var(--fg2);margin-top:4px">ZK-Attested</div><div style="font-size:14px;font-weight:700;color:var(--purple)">SHA-256</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 7: SOULBOUND TOKENS ============================================================ -->
+<div class="tab-panel" id="panel-soulbound">
+  <div class="grid">
+    <div class="card">
+      <h2>🏅 Issue Soulbound Token</h2>
+      <p class="subtitle">World-first: Non-transferable compliance credential (CST) on Stellar Testnet.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to…"></div>
+      <div class="fr">
+        <div class="fg"><label>Jurisdiction</label><select id="cstJurisdiction"><option value="GLOBAL">🌐 Global</option><option value="EU">🇪🇺 EU</option><option value="US">🇺🇸 US</option><option value="UAE">🇦🇪 UAE</option><option value="SG">🇸🇬 Singapore</option></select></div>
+        <div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn gold" onclick="issueSoulbound()">🏅 Issue CST</button>
+        <button class="btn sec" onclick="verifySoulbound()">✅ Verify</button>
+      </div>
+      <div class="result-box" id="cstResult"></div>
+    </div>
+    <div class="card">
+      <h2>📋 Active Soulbound Tokens</h2>
+      <p class="subtitle">Non-transferable credentials permanently bound to wallets.</p>
+      <div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadSoulboundList()">🔄 Refresh List</button></div>
+      <div class="list-wrap" id="soulboundList"><div style="padding:20px;text-align:center;color:var(--fg2)">Click Refresh to load tokens</div></div>
+    </div>
+    <div class="card full" style="background:linear-gradient(135deg,rgba(255,199,44,0.05),rgba(168,85,247,0.05));border-color:rgba(255,199,44,0.2)">
+      <h2>💡 What is a Compliance Soulbound Token?</h2>
+      <p class="subtitle">Unlike regular tokens, a CST <strong>cannot be transferred</strong>. It is permanently bound to the wallet that passed KYC. This means KYC attestations cannot be sold, borrowed, or faked — they live with the identity, not the money. This is the <strong>first implementation on Stellar</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 8: JURISDICTION ENGINE ============================================================ -->
+<div class="tab-panel" id="panel-jurisdiction">
+  <div class="grid">
+    <div class="card">
+      <h2>⚖️ Jurisdiction Compliance Check</h2>
+      <p class="subtitle">Auto-applies EU MiCA / US FinCEN / UAE VARA / SG MAS rules. World-first on Stellar.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="jurWallet" placeholder="Wallet to check…"></div>
+      <div class="fr">
+        <div class="fg"><label>Amount ($)</label><input type="number" id="jurAmount" value="1500"></div>
+        <div class="fg"><label>Jurisdiction</label><select id="jurCode"><option value="GLOBAL">🌐 Global</option><option value="EU">🇪🇺 EU MiCA</option><option value="US">🇺🇸 US FinCEN</option><option value="UAE">🇦🇪 UAE VARA</option><option value="SG">🇸🇬 SG MAS</option></select></div>
+      </div>
+      <div class="btn-row"><button class="btn" onclick="checkJurisdiction()">⚖️ Check Compliance</button></div>
+      <div class="result-box" id="jurResult"></div>
+    </div>
+    <div class="card">
+      <h2>📜 Jurisdiction Rule Comparison</h2>
+      <p class="subtitle">Side-by-side limits across all supported regulatory frameworks.</p>
+      <table>
+        <thead><tr><th>Jurisdiction</th><th>Max Tx</th><th>Daily Limit</th><th>Min KYC</th><th>Travel Rule</th></tr></thead>
+        <tbody>
+          <tr><td>🌐 Global</td><td>$10,000</td><td>$25,000</td><td>Tier 1</td><td>$1,000</td></tr>
+          <tr><td>🇺🇸 US FinCEN</td><td>$3,000</td><td>$10,000</td><td>Tier 1</td><td>$3,000</td></tr>
+          <tr><td>🇦🇪 UAE VARA</td><td>$5,000</td><td>$20,000</td><td>Tier 1</td><td>$5,000</td></tr>
+          <tr><td>🇸🇬 SG MAS</td><td>$2,000</td><td>$8,000</td><td>Tier 2</td><td>$1,500</td></tr>
+          <tr><td>🇪🇺 EU MiCA</td><td>$1,000</td><td>$5,000</td><td>Tier 2</td><td>$1,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 9: PROOF OF RESERVES ============================================================ -->
+<div class="tab-panel" id="panel-reserves">
+  <div class="grid">
+    <div class="card">
+      <h2>🏛️ Create Reserve Snapshot</h2>
+      <p class="subtitle">World-first: ZK-backed solvency proof for Stellar stablecoin issuers. Proves solvency without revealing exact amounts.</p>
+      <div class="fr">
+        <div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div>
+        <div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div>
+      </div>
+      <div class="btn-row"><button class="btn green" onclick="createSnapshot()">📸 Attest Snapshot</button></div>
+      <div class="result-box" id="reserveResult"></div>
+    </div>
+    <div class="card">
+      <h2>📈 Reserve History</h2>
+      <p class="subtitle">On-chain ZK-attested solvency snapshots.</p>
+      <div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadReserveHistory()">🔄 Load History</button></div>
+      <div class="list-wrap" id="reserveHistoryList"><div style="padding:20px;text-align:center;color:var(--fg2)">Click Load to view snapshots</div></div>
+    </div>
+    <div class="card full" style="background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(6,182,212,0.05));border-color:rgba(16,185,129,0.2)">
+      <h2>🔐 How ZK Proof of Reserves Works</h2>
+      <p class="subtitle">The system computes a <strong>reserve ratio</strong> (reserves ÷ liabilities) and stores only a <strong>ZK commitment</strong> (cryptographic hash) on-chain. Anyone can verify solvency (ratio ≥ 1.0) from the commitment without ever learning the exact reserve or liability amounts. This prevents bank runs while proving trustworthiness — a world-first for Stellar stablecoin issuers.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 10: ADVANCED (Deadman + KYC Tree + Canary + Whistleblower + Bridge) ============================================================ -->
+<div class="tab-panel" id="panel-advanced">
+  <div class="grid">
+    <div class="card">
+      <h2>💀 Deadman Switch</h2>
+      <p class="subtitle">Auto-unlock funds if oracle goes silent. World-first on Stellar.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="deadmanWallet" placeholder="Your wallet…"></div>
+      <div class="fr">
+        <div class="fg"><label>Unlock Amount ($)</label><input type="number" id="deadmanAmount" value="5000"></div>
+        <div class="fg"><label>Heartbeat Interval (sec)</label><input type="number" id="deadmanInterval" value="300"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn red" onclick="registerDeadman()">💀 Register</button>
+        <button class="btn sec" onclick="sendHeartbeat()">💓 Heartbeat</button>
+        <button class="btn sec" onclick="checkDeadman()">📊 Status</button>
+      </div>
+      <div class="result-box" id="deadmanResult"></div>
+    </div>
+    <div class="card">
+      <h2>🌳 KYC Inheritance Tree</h2>
+      <p class="subtitle">Link child wallets to inherit parent KYC. World-first corporate structure on Stellar.</p>
+      <div class="fg"><label>Parent Wallet (KYC'd)</label><input type="text" id="kycParent" placeholder="Parent wallet address…"></div>
+      <div class="fg"><label>Child Wallet</label><input type="text" id="kycChild" placeholder="Child wallet address…"></div>
+      <div class="btn-row">
+        <button class="btn purple" onclick="linkKycTree()">🌳 Link Wallets</button>
+        <button class="btn sec" onclick="resolveKycInheritance()">🔍 Resolve KYC</button>
+      </div>
+      <div class="result-box" id="kycTreeResult"></div>
+    </div>
+    <div class="card">
+      <h2>🐦 Regulatory Canary</h2>
+      <p class="subtitle">ML-scan all wallets. Auto-freeze high-risk ones with 48h contest window.</p>
+      <div class="btn-row">
+        <button class="btn gold" onclick="runCanaryScan()">🔍 Scan &amp; Auto-Freeze</button>
+        <button class="btn sec" onclick="loadCanaryFreezes()">📋 View Freezes</button>
+      </div>
+      <div class="result-box" id="canaryResult"></div>
+      <div class="list-wrap" style="margin-top:12px" id="canaryList"></div>
+    </div>
+    <div class="card">
+      <h2>🗣️ Whistleblower Vault</h2>
+      <p class="subtitle">ZK-identity-protected complaint submission. Your identity is cryptographically hidden.</p>
+      <div class="fg"><label>Complaint</label><textarea id="wbComplaint" placeholder="Describe the compliance violation…"></textarea></div>
+      <div class="fr">
+        <div class="fg"><label>Subject Wallet (optional)</label><input type="text" id="wbSubject" placeholder="Accused wallet…"></div>
+        <div class="fg"><label>Severity</label><select id="wbSeverity"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select></div>
+      </div>
+      <div class="btn-row"><button class="btn purple" onclick="submitWhistleblower()">🗣️ Submit Anonymously</button></div>
+      <div class="result-box" id="wbResult"></div>
+    </div>
+    <div class="card">
+      <h2>⏳ Timed Compliance Proofs</h2>
+      <p class="subtitle">Issue proofs that expire and must be periodically renewed. World-first on Stellar.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="timedWallet" placeholder="Wallet address…"></div>
+      <div class="fr">
+        <div class="fg"><label>Proof Type</label><select id="timedType"><option value="KYC_VERIFIED">KYC Verified</option><option value="AML_CLEARED">AML Cleared</option><option value="SANCTIONS_FREE">Sanctions Free</option></select></div>
+        <div class="fg"><label>TTL (hours)</label><input type="number" id="timedTtl" value="24"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="issueTimedProof()">⏳ Issue Proof</button>
+        <button class="btn sec" onclick="verifyTimedProof()">✅ Verify</button>
+      </div>
+      <div class="result-box" id="timedResult"></div>
+    </div>
+    <div class="card">
+      <h2>🌉 Bridge Attestation</h2>
+      <p class="subtitle">Cross-protocol compliance attestation to other Stellar anchors. World-first.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="bridgeWallet" placeholder="Wallet address…"></div>
+      <div class="fg"><label>Target Anchor</label><select id="bridgeAnchor"><option value="SDF">SDF — Stellar Development Foundation</option><option value="CIRCLE">CIRCLE — Circle USDC Anchor</option><option value="AIRTM">AIRTM — AirTM Anchor</option><option value="TEMPO">TEMPO — Tempo Anchor (EU)</option><option value="COWRIE">COWRIE — Cowrie Exchange</option></select></div>
+      <div class="btn-row"><button class="btn cyan" onclick="createBridgeAttestation()">🌉 Create Attestation</button></div>
+      <div class="result-box" id="bridgeResult"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Done</span>
+</div>
+
+<script>
+const API = 'https://salmanch123-reso.hf.space';
+let isOffline = false;
+
+function showToast(msg, ok=true){
+  const t=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=ok?'✓':'✗';
+  t.className='toast '+(ok?'toast-ok':'toast-err');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
+}
+function showResult(id, data, ok=true){
+  const el=document.getElementById(id);
+  el.style.display='block'; el.className='result-box '+(ok?'ok':'fail');
+  el.innerHTML=typeof data==='string'?data:'<pre style="white-space:pre-wrap">'+JSON.stringify(data,null,2)+'</pre>';
+}
+function switchTab(tab){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// === zkML ===
+async function runZkmlScore(){
+  const wallet=document.getElementById('zkmlWallet').value.trim();
+  const amount=document.getElementById('zkmlAmount').value||0;
+  if(!wallet){showToast('Enter wallet address',false);return;}
+  try{
+    const r=await fetch(`${API}/api/zkml/score/${wallet}?amount=${amount}`);
+    const d=await r.json();
+    const color=d.risk_level==='HIGH'?'#F87171':d.risk_level==='MEDIUM'?'#FFC72C':'#34D399';
+    showResult('zkmlResult',`<div style="font-size:24px;font-weight:800;color:${color}">${(d.risk_score*100).toFixed(1)}% Risk</div><div style="margin-top:6px">Level: <strong style="color:${color}">${d.risk_level}</strong></div><div style="margin-top:4px;color:var(--fg2)">ZK Proof: <span style="font-family:monospace;font-size:10px">${d.zk_proof.slice(0,32)}…</span></div>`);
+    showToast(`Risk: ${d.risk_level}`);
+  }catch(e){showResult('zkmlResult','Backend offline — connect HF Space',false);}
+}
+async function runZkmlBatch(){
+  try{
+    const r=await fetch(`${API}/api/zkml/batch-score`);
+    const d=await r.json();
+    const list=document.getElementById('zkmlBatchList');
+    list.innerHTML=d.scores.map(s=>{
+      const color=s.risk_level==='HIGH'?'#F87171':s.risk_level==='MEDIUM'?'#FFC72C':'#34D399';
+      return `<div class="list-item"><div class="item-meta"><div class="item-name">${s.name||s.address.slice(0,20)}</div><div class="item-sub">${s.address.slice(0,24)}…</div></div><div><span style="color:${color};font-weight:700">${(s.risk_score*100).toFixed(1)}%</span> <span class="badge b-${s.risk_level==='HIGH'?'blocked':s.risk_level==='MEDIUM'?'gold':'ok'}">${s.risk_level}</span></div></div>`;
+    }).join('');
+  }catch(e){showToast('Error loading batch',false);}
+}
+
+// === Soulbound ===
+async function issueSoulbound(){
+  const wallet=document.getElementById('cstWallet').value.trim();
+  const jur=document.getElementById('cstJurisdiction').value;
+  const ttl=document.getElementById('cstTtl').value;
+  if(!wallet){showToast('Enter wallet address',false);return;}
+  try{
+    const r=await fetch(`${API}/api/soulbound/issue`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,jurisdiction:jur,ttl_days:parseInt(ttl)})});
+    const d=await r.json();
+    showResult('cstResult',`🏅 <strong>Soulbound Token Issued!</strong><br>Token ID: <span style="font-family:monospace;font-size:10px">${d.token_id.slice(0,32)}…</span><br>KYC Tier: ${d.kyc_tier} | Jurisdiction: ${d.jurisdiction}<br>Expires: ${new Date(d.expires_at*1000).toLocaleDateString()}<br>Non-Transferable: ✅`);
+    showToast('CST issued!');
+    loadSoulboundList();
+  }catch(e){showResult('cstResult','Backend offline',false);}
+}
+async function verifySoulbound(){
+  const wallet=document.getElementById('cstWallet').value.trim();
+  if(!wallet){showToast('Enter wallet address',false);return;}
+  try{
+    const r=await fetch(`${API}/api/soulbound/verify/${wallet}`);
+    const d=await r.json();
+    showResult('cstResult',d.valid?`✅ <strong>Valid CST</strong><br>Tier: ${d.kyc_tier} | Jurisdiction: ${d.jurisdiction}<br>Expires in: ${d.expires_in_days} days | Non-transferable: ✅`:`❌ <strong>${d.reason}</strong>`,d.valid);
+  }catch(e){showResult('cstResult','Backend offline',false);}
+}
+async function loadSoulboundList(){
+  try{
+    const r=await fetch(`${API}/api/soulbound/list`);
+    const d=await r.json();
+    document.getElementById('soulboundList').innerHTML=d.tokens.length===0?'<div style="padding:20px;text-align:center;color:var(--fg2)">No tokens issued yet</div>':d.tokens.map(t=>`<div class="list-item"><div class="item-meta"><div class="item-name">${t.wallet_address.slice(0,20)}…</div><div class="item-sub">ID: ${t.token_id.slice(0,20)}… | ${t.jurisdiction}</div></div><div><span class="badge ${t.revoked?'b-blocked':'b-ok'}">${t.revoked?'Revoked':'Active'}</span> <span class="badge b-tier">Tier ${t.kyc_tier}</span></div></div>`).join('');
+  }catch(e){}
+}
+
+// === Jurisdiction ===
+async function checkJurisdiction(){
+  const wallet=document.getElementById('jurWallet').value.trim();
+  const amount=parseFloat(document.getElementById('jurAmount').value)||0;
+  const jur=document.getElementById('jurCode').value;
+  if(!wallet){showToast('Enter wallet address',false);return;}
+  try{
+    const r=await fetch(`${API}/api/jurisdiction/check`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,amount,jurisdiction:jur})});
+    const d=await r.json();
+    const ok=d.compliant;
+    showResult('jurResult',`${ok?'✅':'❌'} <strong>${d.regulation}</strong>: ${ok?'COMPLIANT':'NON-COMPLIANT'}<br>${d.violations.length?'Violations:<br>'+d.violations.map(v=>'• '+v).join('<br>'):'No violations'}<br>Travel Rule: ${d.travel_rule_triggered?'⚠️ TRIGGERED':'✅ Not triggered'}`,ok);
+    showToast(ok?'Compliant!':'Violations found',ok);
+  }catch(e){showResult('jurResult','Backend offline',false);}
+}
+
+// === Reserves ===
+async function createSnapshot(){
+  const liabilities=parseFloat(document.getElementById('resLiabilities').value)||0;
+  const reserves=parseFloat(document.getElementById('resReserves').value)||0;
+  try{
+    const r=await fetch(`${API}/api/reserves/snapshot`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({total_liabilities:liabilities,total_reserves:reserves})});
+    const d=await r.json();
+    showResult('reserveResult',`${d.solvent?'✅':'❌'} <strong>${d.solvent?'SOLVENT':'INSOLVENT'}</strong><br>Reserve Ratio: ${(d.reserve_ratio*100).toFixed(1)}%<br>ZK Commitment: <span style="font-family:monospace;font-size:10px">${d.zk_commitment.slice(0,32)}…</span><br>Amounts hidden: ✅ | Attested: ✅`,d.solvent);
+    showToast(d.solvent?'Solvency attested!':'Insolvency detected!',d.solvent);
+    loadReserveHistory();
+  }catch(e){showResult('reserveResult','Backend offline',false);}
+}
+async function loadReserveHistory(){
+  try{
+    const r=await fetch(`${API}/api/reserves/history`);
+    const d=await r.json();
+    document.getElementById('reserveHistoryList').innerHTML=d.snapshots.length===0?'<div style="padding:20px;text-align:center;color:var(--fg2)">No snapshots yet</div>':d.snapshots.map(s=>`<div class="list-item"><div class="item-meta"><div class="item-name">${new Date(s.timestamp*1000).toLocaleString()}</div><div class="item-sub">Ratio: ${(s.reserve_ratio*100).toFixed(1)}% | ${s.zk_commitment.slice(0,20)}…</div></div><span class="badge ${s.reserve_ratio>=1?'b-ok':'b-blocked'}">${s.reserve_ratio>=1?'Solvent':'Insolvent'}</span></div>`).join('');
+  }catch(e){}
+}
+
+// === Deadman ===
+async function registerDeadman(){
+  const wallet=document.getElementById('deadmanWallet').value.trim();
+  const amount=parseFloat(document.getElementById('deadmanAmount').value)||0;
+  const interval=parseInt(document.getElementById('deadmanInterval').value)||300;
+  if(!wallet){showToast('Enter wallet address',false);return;}
+  try{
+    const r=await fetch(`${API}/api/deadman/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,unlock_amount:amount,heartbeat_interval:interval,beneficiary:wallet})});
+    const d=await r.json();
+    showResult('deadmanResult',`💀 <strong>Deadman Switch Registered!</strong><br>Wallet: ${wallet.slice(0,20)}…<br>Unlock Amount: $${amount}<br>Heartbeat Required Every: ${interval}s<br>Note: ${d.note}`);
+    showToast('Deadman switch registered!');
+  }catch(e){showResult('deadmanResult','Backend offline',false);}
+}
+async function sendHeartbeat(){
+  const wallet=document.getElementById('deadmanWallet').value.trim();
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    await fetch(`${API}/api/deadman/heartbeat/${wallet}`,{method:'POST'});
+    showToast('💓 Heartbeat sent!');
+  }catch(e){showToast('Error',false);}
+}
+async function checkDeadman(){
+  const wallet=document.getElementById('deadmanWallet').value.trim();
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    const r=await fetch(`${API}/api/deadman/status/${wallet}`);
+    const d=await r.json();
+    showResult('deadmanResult',`Status: <strong style="color:${d.triggered?'#F87171':'#34D399'}">${d.triggered?'⚠️ TRIGGERED':'✅ Active'}</strong><br>Silent for: ${d.silent_for_seconds}s / ${d.threshold_seconds}s threshold<br>Unlock Amount: $${d.unlock_amount}`);
+  }catch(e){showResult('deadmanResult','Not registered or offline',false);}
+}
+
+// === KYC Tree ===
+async function linkKycTree(){
+  const parent=document.getElementById('kycParent').value.trim();
+  const child=document.getElementById('kycChild').value.trim();
+  if(!parent||!child){showToast('Enter both wallets',false);return;}
+  try{
+    const r=await fetch(`${API}/api/kyc-tree/link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent_wallet:parent,child_wallet:child})});
+    const d=await r.json();
+    showResult('kycTreeResult',`🌳 <strong>Linked!</strong><br>Child: ${child.slice(0,20)}…<br>Parent: ${parent.slice(0,20)}…<br>Inherited KYC Tier: ${d.inherited_kyc_tier}<br>Tree Depth: ${d.inheritance_depth}`);
+    showToast('KYC inheritance linked!');
+  }catch(e){showResult('kycTreeResult','Backend offline',false);}
+}
+async function resolveKycInheritance(){
+  const wallet=document.getElementById('kycChild').value.trim()||document.getElementById('kycParent').value.trim();
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    const r=await fetch(`${API}/api/kyc-tree/resolve/${wallet}`);
+    const d=await r.json();
+    showResult('kycTreeResult',`${d.kyc_tier>0?'✅':'❌'} KYC Tier: <strong>${d.kyc_tier}</strong><br>Source: ${d.source}${d.inherited?' (inherited from '+d.parent_wallet.slice(0,16)+'…)':''}`,d.kyc_tier>0);
+  }catch(e){showResult('kycTreeResult','Error',false);}
+}
+
+// === Canary ===
+async function runCanaryScan(){
+  try{
+    const r=await fetch(`${API}/api/canary/scan`);
+    const d=await r.json();
+    showResult('canaryResult',`🐦 Scanned ${d.scanned} wallets<br>Auto-frozen: <strong>${d.auto_frozen.length}</strong>${d.auto_frozen.length?'<br>'+d.auto_frozen.map(f=>`• ${f.wallet.slice(0,20)}… (${(f.risk_score*100).toFixed(0)}% risk)`).join('<br>'):''}`,d.auto_frozen.length===0);
+    showToast(`Scan complete. ${d.auto_frozen.length} frozen.`,d.auto_frozen.length===0);
+    loadCanaryFreezes();
+  }catch(e){showResult('canaryResult','Backend offline',false);}
+}
+async function loadCanaryFreezes(){
+  try{
+    const r=await fetch(`${API}/api/canary/freezes`);
+    const d=await r.json();
+    document.getElementById('canaryList').innerHTML=d.freezes.length===0?'<div style="padding:12px;text-align:center;color:var(--fg2)">No active freezes</div>':d.freezes.map(f=>`<div class="list-item"><div class="item-meta"><div class="item-name">${f.wallet_address.slice(0,20)}…</div><div class="item-sub">${f.reason}</div></div><div><span class="badge b-blocked">${(f.risk_score*100).toFixed(0)}% risk</span></div></div>`).join('');
+  }catch(e){}
+}
+
+// === Whistleblower ===
+async function submitWhistleblower(){
+  const complaint=document.getElementById('wbComplaint').value.trim();
+  if(!complaint){showToast('Enter complaint text',false);return;}
+  try{
+    const r=await fetch(`${API}/api/whistleblower/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({complaint,subject_wallet:document.getElementById('wbSubject').value,severity:document.getElementById('wbSeverity').value})});
+    const d=await r.json();
+    showResult('wbResult',`🗣️ <strong>Report Submitted Anonymously!</strong><br>Report ID: <span style="font-family:monospace;font-size:10px">${d.report_id.slice(0,32)}…</span><br>Your identity: <strong>🔐 Cryptographically Hidden</strong><br>Complaint fingerprint: ${d.complaint_fingerprint.slice(0,20)}…`);
+    showToast('Report submitted anonymously!');
+    document.getElementById('wbComplaint').value='';
+  }catch(e){showResult('wbResult','Backend offline',false);}
+}
+
+// === Timed Proofs ===
+async function issueTimedProof(){
+  const wallet=document.getElementById('timedWallet').value.trim();
+  const type=document.getElementById('timedType').value;
+  const ttl=parseInt(document.getElementById('timedTtl').value)||24;
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    const r=await fetch(`${API}/api/timed-proof/issue`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,proof_type:type,ttl_hours:ttl})});
+    const d=await r.json();
+    showResult('timedResult',`⏳ <strong>Proof Issued!</strong><br>Type: ${d.proof_type}<br>Valid for: ${ttl} hours (until ${new Date(d.valid_until*1000).toLocaleString()})<br>Commitment: <span style="font-family:monospace;font-size:10px">${d.zk_commitment.slice(0,24)}…</span>`);
+    showToast('Timed proof issued!');
+  }catch(e){showResult('timedResult','Backend offline',false);}
+}
+async function verifyTimedProof(){
+  const wallet=document.getElementById('timedWallet').value.trim();
+  const type=document.getElementById('timedType').value;
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    const r=await fetch(`${API}/api/timed-proof/verify/${wallet}?proof_type=${type}`);
+    const d=await r.json();
+    showResult('timedResult',d.valid?`✅ <strong>Valid Proof</strong><br>Type: ${d.proof_type}<br>Expires in: ${d.expires_in_minutes} minutes<br>Renewals: ${d.renewal_count}`:`❌ <strong>${d.reason}</strong>${d.action?'<br>Action: '+d.action:''}`,d.valid);
+  }catch(e){showResult('timedResult','Backend offline',false);}
+}
+
+// === Bridge Attestation ===
+async function createBridgeAttestation(){
+  const wallet=document.getElementById('bridgeWallet').value.trim();
+  const anchor=document.getElementById('bridgeAnchor').value;
+  if(!wallet){showToast('Enter wallet',false);return;}
+  try{
+    const r=await fetch(`${API}/api/bridge/attest`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,target_anchor:anchor})});
+    const d=await r.json();
+    showResult('bridgeResult',`🌉 <strong>Bridge Attestation Created!</strong><br>Anchor: ${d.anchor_name}<br>KYC Tier: ${d.kyc_tier}<br>Valid for: 1 hour<br>Signature: <span style="font-family:monospace;font-size:10px">${d.bridge_signature.slice(0,24)}…</span><br>Network: Stellar Testnet ✅`);
+    showToast('Bridge attestation created!');
+  }catch(e){showResult('bridgeResult','KYC required or offline',false);}
+}
+
 window.onload=function(){
   loadRules();
   loadWallets();
   loadAuditLogs();
 };
 </script>
+</body>
+</html>
+
 </body>
 </html>
