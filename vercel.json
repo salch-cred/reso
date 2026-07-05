@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "builds": [
+    {
+      "src": "dashboard/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://salmanch123-reso.hf.space/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dashboard/$1"
+    }
+  ]
+}
