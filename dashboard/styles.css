@@ -535,6 +535,78 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 }
 .foot-social a:hover{color:#fff; background:var(--ink); border-color:var(--ink); transform:translateY(-2px)}
 
+/* ---- GLOBAL 3D PROOF NETWORK ---- */
+.globe-sec{overflow:hidden}
+.globe-stage{
+  position:relative; max-width:1160px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 300px; align-items:center; gap:24px;
+  padding:0 24px 8px;
+}
+.globe-canvas-wrap{
+  position:relative; width:100%; aspect-ratio:1/1; max-width:520px; margin:0 auto;
+}
+#globeCanvas{width:100%; height:100%; display:block; cursor:grab; touch-action:none}
+#globeCanvas:active{cursor:grabbing}
+.globe-glow{
+  position:absolute; inset:-12%; z-index:-1; border-radius:50%;
+  background:radial-gradient(circle, rgba(79,70,229,.2), transparent 70%);
+  filter:blur(24px); animation:globePulse 4s ease-in-out infinite;
+}
+@keyframes globePulse{0%,100%{opacity:.55; transform:scale(1)}50%{opacity:1; transform:scale(1.07)}}
+.globe-feed{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--canvas); padding:16px; box-shadow:var(--shadow-sm);
+  max-height:400px; display:flex; flex-direction:column;
+}
+.gf-label{
+  display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:600;
+  color:var(--ink-2); text-transform:uppercase; letter-spacing:.07em;
+  margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--line);
+}
+.gf-label .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.gf-list{display:flex; flex-direction:column; gap:8px; overflow:hidden; flex:1; min-height:220px}
+.gf-item{
+  display:flex; align-items:flex-start; gap:8px; padding:9px 10px;
+  border:1px solid var(--line); border-radius:9px; background:var(--soft);
+  font-size:12px; line-height:1.5; color:var(--ink-2); opacity:0; transform:translateY(-6px);
+  animation:gfIn .5s var(--ease) forwards;
+}
+@keyframes gfIn{to{opacity:1; transform:none}}
+.gf-item i{color:var(--green); font-size:14px; flex-shrink:0; margin-top:1px}
+.gf-item b{color:var(--ink); font-weight:600}
+.globe-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:12px}
+.gstat{text-align:center; padding:20px; border:1px solid var(--line); border-radius:var(--radius); background:var(--canvas)}
+.gstat .gn{font-size:30px; font-weight:700; letter-spacing:-.03em; color:var(--indigo)}
+.gstat .gl{font-size:12.5px; color:var(--muted); margin-top:4px}
+@media(max-width:860px){
+  .globe-stage{grid-template-columns:1fr}
+  .globe-feed{max-height:220px}
+  .gf-list{min-height:120px}
+}
+
+/* ---- GRADIENT TEXT ---- */
+.grad-text{
+  background:linear-gradient(90deg,var(--indigo),#8B5CF6,var(--blue),var(--indigo));
+  background-size:300% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:gradShift 5s linear infinite;
+}
+@keyframes gradShift{to{background-position:300% center}}
+
+/* ---- SCROLL PROGRESS BAR ---- */
+.scroll-progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--indigo),var(--indigo-2),#8B5CF6);
+  z-index:999; transition:width .12s linear;
+}
+
+/* ---- CURSOR SPOTLIGHT ---- */
+.spotlight{
+  position:fixed; width:440px; height:440px; border-radius:50%;
+  pointer-events:none; z-index:1;
+  background:radial-gradient(circle, rgba(79,70,229,.08), transparent 70%);
+  transform:translate(-50%,-50%); left:0; top:0; opacity:0; transition:opacity .3s;
+}
+
 /* ---- RESPONSIVE ---- */
 @media(max-width:920px){
   .nav-links{display:none}
