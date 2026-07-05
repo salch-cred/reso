@@ -1,7 +1,6 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://salmanch123-reso.hf.space/api/:path*" },
-    { "source": "/app", "destination": "/app.html" }
+    { "source": "/api/:path*", "destination": "https://salmanch123-reso.hf.space/api/:path*" }
   ]
 }
