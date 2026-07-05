@@ -11,697 +11,285 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
 <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
 <style>
-/* ========================================
-   RESO PROOF CONSOLE — Light Mode
-   ======================================== */
 :root{
-  --bg:#F0F0F3;
-  --bg2:#E8E8EC;
+  --bg:#F0F0F3;--bg2:#E8E8EC;
   --surface:#FFFFFF;
-  --border:#E2E2E8;
-  --border2:#CACAD2;
-  --text:#0C0C0E;
-  --text2:#404048;
-  --text3:#6E6E7A;
-  --muted:#9999A8;
-  --accent:#4F46E5;
-  --accent2:#7C3AED;
-  --accent-light:#EEF0FE;
-  --accent-border:#C7D2FE;
-  --green:#15803D;
-  --green-light:#F0FDF4;
-  --green-border:#86EFAC;
-  --red:#B91C1C;
-  --red-light:#FEF2F2;
-  --red-border:#FECACA;
-  --amber:#92400E;
-  --amber-light:#FFFBEB;
-  --amber-border:#FDE68A;
-  --cyan:#0E7490;
-  --cyan-light:#ECFEFF;
-  --cyan-border:#A5F3FC;
-  --purple:#6D28D9;
-  --purple-light:#F5F3FF;
-  --purple-border:#DDD6FE;
-  --r:12px;
-  --r2:8px;
-  --r3:6px;
+  --border:#E2E2E8;--border2:#CACAD2;
+  --text:#0C0C0E;--text2:#404048;--text3:#6E6E7A;--muted:#9999A8;
+  --accent:#4F46E5;--accent2:#7C3AED;
+  --accent-light:#EEF0FE;--accent-border:#C7D2FE;
+  --accent-glow:rgba(79,70,229,.35);
+  --green:#15803D;--green-light:#F0FDF4;--green-border:#86EFAC;
+  --red:#B91C1C;--red-light:#FEF2F2;--red-border:#FECACA;
+  --amber:#92400E;--amber-light:#FFFBEB;--amber-border:#FDE68A;
+  --cyan:#0E7490;--cyan-light:#ECFEFF;--cyan-border:#A5F3FC;
+  --purple:#6D28D9;--purple-light:#F5F3FF;--purple-border:#DDD6FE;
+  --r:12px;--r2:8px;--r3:6px;
   --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.06);
   --shadow-md:0 2px 4px rgba(0,0,0,.05),0 12px 28px rgba(0,0,0,.09);
   --shadow-lg:0 4px 8px rgba(0,0,0,.06),0 24px 48px rgba(0,0,0,.12);
   --font:'Uncut Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
   --mono:ui-monospace,'SFMono-Regular',Menlo,'Courier New',monospace;
   --ease:cubic-bezier(.22,.61,.36,1);
+  /* Logo gradient — used everywhere */
+  --logo-grad:linear-gradient(135deg,var(--accent),var(--accent2));
+  --logo-grad-dark:linear-gradient(135deg,#4338CA,#6D28D9);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;scroll-behavior:smooth}
 body{
-  font-family:var(--font);
-  font-size:15px;
-  line-height:1.6;
-  color:var(--text);
-  background:var(--bg);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+  font-family:var(--font);font-size:15px;line-height:1.6;
+  color:var(--text);background:var(--bg);min-height:100vh;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   overflow-x:hidden;
 }
 a{color:inherit;text-decoration:none}
-button,input,select,textarea{
-  font-family:var(--font);
-  font-size:inherit;
-}
-/* canvas bg */
-#bgCanvas{
-  position:fixed;top:0;left:0;
-  width:100%;height:100%;
-  z-index:0;pointer-events:none;
-  opacity:.5;
-}
+button,input,select,textarea{font-family:var(--font);font-size:inherit;}
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5;}
+.shell{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 100px;}
 
-/* ====== LAYOUT ====== */
-.shell{
-  position:relative;z-index:1;
-  max-width:1400px;
-  margin:0 auto;
-  padding:0 24px 100px;
-}
-
-/* ====== HEADER ====== */
-#hdr{
-  position:sticky;top:0;z-index:500;
-  padding:12px 0;
-}
+/* HEADER */
+#hdr{position:sticky;top:0;z-index:500;padding:12px 0;}
 .hdr-inner{
   max-width:1400px;margin:0 auto;padding:0 24px;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  border:1px solid var(--border);
-  border-radius:16px;
-  display:flex;align-items:center;
-  justify-content:space-between;gap:20px;
-  height:60px;
-  box-shadow:var(--shadow);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--border);border-radius:16px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  height:60px;box-shadow:var(--shadow);
 }
-.brand{
-  display:flex;align-items:center;gap:11px;
-  text-decoration:none;color:var(--text);
-  flex-shrink:0;
-}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);flex-shrink:0;}
 .brand-mark{
   width:32px;height:32px;border-radius:9px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  background:var(--logo-grad);
   display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:16px;
-  box-shadow:0 2px 8px rgba(79,70,229,.35);
+  box-shadow:0 2px 8px var(--accent-glow);
 }
-.brand-name{
-  font-size:16px;font-weight:700;
-  letter-spacing:-.025em;
-}
-.brand-div{color:var(--border2);margin:0 3px;font-size:18px}
-.brand-sub{font-size:13px;color:var(--text3);font-weight:400}
-
+.brand-name{font-size:16px;font-weight:700;letter-spacing:-.025em;}
+.brand-div{color:var(--border2);margin:0 3px;font-size:18px;}
+.brand-sub{font-size:13px;color:var(--text3);font-weight:400;}
 .proof-counter{
-  display:flex;align-items:center;gap:8px;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:99px;
-  padding:6px 16px;
-  gap:14px;
-}
-.pc-item{
-  display:flex;align-items:center;gap:5px;
-  font-family:var(--mono);font-size:12px;
-  color:var(--text3);
-}
-.pc-item i{font-size:14px}
-.pc-val{
-  font-weight:700;font-size:13px;
-  color:var(--accent);
-  transition:all .25s;
-}
-.pc-val.flash{color:var(--accent2);transform:scale(1.2)}
-.pc-sep{color:var(--border2)}
-
-.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.status-badge{
-  display:flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:99px;
-  border:1px solid var(--green-border);
-  background:var(--green-light);
-  font-size:12.5px;font-weight:500;color:var(--green);
-}
-.status-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--green);
-  animation:pulse-dot 2s ease infinite;
-}
-@keyframes pulse-dot{
-  0%,100%{box-shadow:0 0 0 0 rgba(21,128,61,.3)}
-  50%{box-shadow:0 0 0 5px rgba(21,128,61,0)}
-}
-.hdr-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 12px;border-radius:var(--r3);
-  font-size:13px;font-weight:500;
-  color:var(--text2);border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;
-  transition:all .2s;white-space:nowrap;
-}
-.hdr-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
-.hdr-btn i{font-size:15px}
-
-/* offline */
-.offline-bar{
-  display:none;
-  background:var(--red-light);border:1px solid var(--red-border);
-  margin:8px 24px;border-radius:var(--r);
-  padding:10px 18px;font-size:13.5px;color:var(--red);
-  text-align:center;position:relative;z-index:1;
-}
-.offline-bar a{color:var(--accent);text-decoration:underline;font-weight:500}
-
-/* ====== TAB BAR ====== */
-.tab-bar-wrap{
-  position:sticky;top:84px;z-index:400;
-  background:rgba(240,240,243,.95);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  margin:0 -24px;padding:0 24px;
-}
-.tab-bar{
-  display:flex;overflow-x:auto;
-  scrollbar-width:none;
-  gap:2px;
-}
-.tab-bar::-webkit-scrollbar{display:none}
-.nav-tab{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:13px 16px;
-  font-size:13.5px;font-weight:500;
-  color:var(--text3);
-  cursor:pointer;white-space:nowrap;
-  transition:color .2s;
-  font-family:var(--font);
-  border:none;background:none;
-  border-bottom:2px solid transparent;
-  position:relative;
-  user-select:none;
-}
-.nav-tab i{font-size:16px}
-.nav-tab:hover{color:var(--text2)}
-.nav-tab.active{
-  color:var(--accent);
-  border-bottom-color:var(--accent);
-  font-weight:600;
-}
-.nav-tab.active::after{
-  content:'';
-  position:absolute;bottom:-2px;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  border-radius:2px;
-}
-
-/* ====== PANELS ====== */
-.tab-panel{display:none;padding-top:28px;animation:fadeUp .3s var(--ease)}
-.tab-panel.active{display:block}
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(14px)}
-  to{opacity:1;transform:none}
-}
-
-/* ====== GRID ====== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;margin-bottom:16px;
-}
-.full{grid-column:span 2}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.full{grid-column:span 1}}
-
-/* ====== CARDS ====== */
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:24px;
-  display:flex;flex-direction:column;
-  gap:0;
-  box-shadow:var(--shadow);
-  transition:border-color .2s,box-shadow .25s,transform .25s;
-}
-.card:hover{
-  border-color:var(--accent-border);
-  box-shadow:var(--shadow-md);
-  transform:translateY(-2px);
-}
-.card-title{
-  display:flex;align-items:center;gap:9px;
-  font-size:15px;font-weight:600;
-  color:var(--text);margin-bottom:5px;
-  letter-spacing:-.01em;
-}
-.card-title i{font-size:18px;color:var(--accent)}
-.card-desc{
-  font-size:13px;color:var(--text3);
-  margin-bottom:18px;line-height:1.5;
-}
-
-/* ====== PROOF HERO ====== */
-.proof-hero{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--r);
-  padding:32px;
-  margin-bottom:16px;
-  box-shadow:var(--shadow-md);
-  position:relative;overflow:hidden;
-}
-.proof-hero::before{
-  content:'';
-  position:absolute;top:0;left:0;right:0;
-  height:3px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2),#EC4899);
-}
-.ph-top{
-  display:flex;align-items:flex-start;
-  justify-content:space-between;
-  margin-bottom:24px;gap:16px;
-}
-.ph-left h2{
-  font-size:22px;font-weight:700;
-  letter-spacing:-.03em;color:var(--text);
-  margin-bottom:5px;
-}
-.ph-left p{
-  font-size:14px;color:var(--text3);line-height:1.5;
-}
-.ph-badge{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:8px 16px;border-radius:99px;
-  border:1px solid var(--accent-border);
-  background:var(--accent-light);
-  font-size:13px;font-weight:600;color:var(--accent);
-  white-space:nowrap;flex-shrink:0;
-}
-.ph-badge .spin{animation:spin .7s linear infinite;display:none;font-size:14px}
-.ph-badge.running .spin{display:inline-block}
-.ph-badge.done{border-color:var(--green-border);background:var(--green-light);color:var(--green)}
-.ph-badge.fail{border-color:var(--red-border);background:var(--red-light);color:var(--red)}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* circuit */
-.circuit-wrap{
-  position:relative;height:64px;margin-bottom:24px;
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--r2);overflow:hidden;
-}
-.circuit-track{
-  position:absolute;top:50%;left:24px;right:24px;
-  height:2px;background:var(--border);
-  transform:translateY(-50%);
-  border-radius:2px;
-}
-.circuit-nodes{
-  position:absolute;inset:0;
   display:flex;align-items:center;
-  justify-content:space-between;
-  padding:0 24px;
+  background:var(--bg);border:1px solid var(--border);border-radius:99px;
+  padding:6px 16px;gap:14px;
 }
-.cn{
-  width:14px;height:14px;border-radius:50%;
-  background:var(--surface);border:2px solid var(--border2);
-  transition:all .35s var(--ease);
-  z-index:1;
-}
-.cn.active{
-  background:var(--accent-light);
-  border-color:var(--accent);
-  box-shadow:0 0 0 4px rgba(79,70,229,.15);
-  transform:scale(1.3);
-}
-.cn.done{
-  background:var(--green);
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(21,128,61,.2);
-  transform:scale(1.1);
-}
-.cn.fail{
-  background:var(--red);
-  border-color:var(--red);
-  box-shadow:0 0 0 3px rgba(185,28,28,.2);
-}
-.circuit-scan{
-  position:absolute;top:0;bottom:0;width:3px;
-  background:linear-gradient(to bottom,transparent,var(--accent),transparent);
-  box-shadow:0 0 10px rgba(79,70,229,.4);
-  display:none;border-radius:2px;
-  transition:left .5s var(--ease);
-}
-.circuit-wrap.running .circuit-scan{display:block}
-.circuit-labels{
-  position:absolute;bottom:6px;left:0;right:0;
-  display:flex;justify-content:space-between;
-  padding:0 20px;
-}
-.circuit-labels span{
-  font-size:9.5px;color:var(--muted);
-  font-family:var(--mono);
-  text-transform:uppercase;letter-spacing:.03em;
-  text-align:center;flex:1;
-}
+.pc-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12px;color:var(--text3);}
+.pc-item i{font-size:14px;}
+.pc-val{font-weight:700;font-size:13px;color:var(--accent);transition:all .25s;}
+.pc-val.flash{color:var(--accent2);transform:scale(1.2);}
+.pc-sep{color:var(--border2);}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.status-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--green-border);background:var(--green-light);font-size:12.5px;font-weight:500;color:var(--green);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite;}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(21,128,61,.3)}50%{box-shadow:0 0 0 5px rgba(21,128,61,0)}}
+.hdr-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r3);font-size:13px;font-weight:500;color:var(--text2);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.hdr-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text);}
+.hdr-btn i{font-size:15px;}
+.offline-bar{display:none;background:var(--red-light);border:1px solid var(--red-border);margin:8px 24px;border-radius:var(--r);padding:10px 18px;font-size:13.5px;color:var(--red);text-align:center;position:relative;z-index:1;}
+.offline-bar a{color:var(--accent);text-decoration:underline;font-weight:500;}
 
-/* proof steps */
-.proof-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:0}
-.pstep{
-  display:flex;align-items:center;gap:12px;
-  padding:12px 16px;
-  border:1px solid var(--border);
-  border-radius:var(--r2);
-  background:var(--bg);
-  font-size:14px;color:var(--text3);
-  transition:all .3s var(--ease);
-}
-.pstep.active{
-  border-color:var(--accent-border);
-  background:var(--accent-light);
-  color:var(--accent);
-}
-.pstep.done{
-  border-color:var(--green-border);
-  background:var(--green-light);
-  color:var(--green);
-}
-.pstep.fail{
-  border-color:var(--red-border);
-  background:var(--red-light);
-  color:var(--red);
-}
-.ps-icon{
-  width:24px;height:24px;border-radius:50%;
-  border:2px solid currentColor;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;flex-shrink:0;opacity:.5;
-  transition:all .3s;
-}
-.pstep.active .ps-icon{opacity:1;animation:spin .7s linear infinite}
-.pstep.done .ps-icon,.pstep.fail .ps-icon{opacity:1}
-.ps-label{flex:1;font-weight:450}
-.ps-hash{
-  font-family:var(--mono);font-size:11px;
-  color:var(--muted);opacity:0;
-  transition:opacity .5s;
-  white-space:nowrap;
-}
-.pstep.done .ps-hash{opacity:1}
+/* TAB BAR */
+.tab-bar-wrap{position:sticky;top:84px;z-index:400;background:rgba(240,240,243,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);margin:0 -24px;padding:0 24px;}
+.tab-bar{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.nav-tab{display:inline-flex;align-items:center;gap:7px;padding:13px 16px;font-size:13.5px;font-weight:500;color:var(--text3);cursor:pointer;white-space:nowrap;transition:color .2s;font-family:var(--font);border:none;background:none;border-bottom:2px solid transparent;position:relative;user-select:none;}
+.nav-tab i{font-size:16px;}
+.nav-tab:hover{color:var(--text2);}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600;}
+.nav-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:var(--logo-grad);border-radius:2px;}
 
-/* proof result */
-.proof-result{
-  margin-top:16px;padding:16px 20px;
-  border-radius:var(--r);font-size:14px;
-  display:none;line-height:1.7;
-}
-.proof-result.ok{
-  background:var(--green-light);
-  border:1px solid var(--green-border);
-  color:var(--green);
-}
-.proof-result.fail{
-  background:var(--red-light);
-  border:1px solid var(--red-border);
-  color:var(--red);
-}
-.pr-title{
-  font-size:15px;font-weight:700;
-  margin-bottom:6px;
-  display:flex;align-items:center;gap:7px;
-}
-.pr-hash{
-  font-family:var(--mono);font-size:12px;
-  color:var(--text3);margin-top:8px;
-  word-break:break-all;
-}
+/* PANELS */
+.tab-panel{display:none;padding-top:28px;animation:fadeUp .3s var(--ease);}
+.tab-panel.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:16px;}
+.full{grid-column:span 2;}
+@media(max-width:800px){.grid{grid-template-columns:1fr;}.full{grid-column:span 1;}}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;gap:0;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .25s,transform .25s;}
+.card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.card-title{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px;letter-spacing:-.01em;}
+.card-title i{font-size:18px;color:var(--accent);}
+.card-desc{font-size:13px;color:var(--text3);margin-bottom:18px;line-height:1.5;}
+
+/* PROOF HERO */
+.proof-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;margin-bottom:16px;box-shadow:var(--shadow-md);position:relative;overflow:hidden;}
+.proof-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),#EC4899);}
+.ph-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;}
+.ph-left h2{font-size:22px;font-weight:700;letter-spacing:-.03em;color:var(--text);margin-bottom:5px;}
+.ph-left p{font-size:14px;color:var(--text3);line-height:1.5;}
+.ph-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:99px;border:1px solid var(--accent-border);background:var(--accent-light);font-size:13px;font-weight:600;color:var(--accent);white-space:nowrap;flex-shrink:0;}
+.ph-badge .spin{animation:spin .7s linear infinite;display:none;font-size:14px;}
+.ph-badge.running .spin{display:inline-block;}
+.ph-badge.done{border-color:var(--green-border);background:var(--green-light);color:var(--green);}
+.ph-badge.fail{border-color:var(--red-border);background:var(--red-light);color:var(--red);}
+@keyframes spin{to{transform:rotate(360deg)}}
+.circuit-wrap{position:relative;height:64px;margin-bottom:24px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.circuit-track{position:absolute;top:50%;left:24px;right:24px;height:2px;background:var(--border);transform:translateY(-50%);border-radius:2px;}
+.circuit-nodes{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.cn{width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--border2);transition:all .35s var(--ease);z-index:1;}
+.cn.active{background:var(--accent-light);border-color:var(--accent);box-shadow:0 0 0 4px rgba(79,70,229,.15);transform:scale(1.3);}
+.cn.done{background:var(--green);border-color:var(--green);box-shadow:0 0 0 3px rgba(21,128,61,.2);transform:scale(1.1);}
+.cn.fail{background:var(--red);border-color:var(--red);box-shadow:0 0 0 3px rgba(185,28,28,.2);}
+.circuit-scan{position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);box-shadow:0 0 10px rgba(79,70,229,.4);display:none;border-radius:2px;}
+.circuit-wrap.running .circuit-scan{display:block;}
+.circuit-labels{position:absolute;bottom:6px;left:0;right:0;display:flex;justify-content:space-between;padding:0 20px;}
+.circuit-labels span{font-size:9.5px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.03em;text-align:center;flex:1;}
+.proof-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:0;}
+.pstep{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:var(--r2);background:var(--bg);font-size:14px;color:var(--text3);transition:all .3s var(--ease);}
+.pstep.active{border-color:var(--accent-border);background:var(--accent-light);color:var(--accent);}
+.pstep.done{border-color:var(--green-border);background:var(--green-light);color:var(--green);}
+.pstep.fail{border-color:var(--red-border);background:var(--red-light);color:var(--red);}
+.ps-icon{width:24px;height:24px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;opacity:.5;transition:all .3s;}
+.pstep.active .ps-icon{opacity:1;animation:spin .7s linear infinite;}
+.pstep.done .ps-icon,.pstep.fail .ps-icon{opacity:1;}
+.ps-label{flex:1;font-weight:450;}
+.ps-hash{font-family:var(--mono);font-size:11px;color:var(--muted);opacity:0;transition:opacity .5s;white-space:nowrap;}
+.pstep.done .ps-hash{opacity:1;}
+.proof-result{margin-top:16px;padding:16px 20px;border-radius:var(--r);font-size:14px;display:none;line-height:1.7;}
+.proof-result.ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green);}
+.proof-result.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red);}
+.pr-title{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:7px;}
+.pr-hash{font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:8px;word-break:break-all;}
 @keyframes cursor-blink{0%,100%{opacity:1}50%{opacity:0}}
-.cursor::after{content:'_';animation:cursor-blink .65s infinite;color:var(--accent)}
+.cursor::after{content:'_';animation:cursor-blink .65s infinite;color:var(--accent);}
 
-/* ====== FORM ====== */
-.fg{margin-bottom:14px}
-.fg label{
-  display:block;font-size:12px;
-  font-weight:600;
-  color:var(--text3);
-  margin-bottom:5px;
-  text-transform:uppercase;letter-spacing:.05em;
-}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:520px){.fr{grid-template-columns:1fr}}
+/* FORM */
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.fr{grid-template-columns:1fr;}}
+input[type=text],input[type=number],select,textarea{display:block;width:100%;padding:10px 13px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r2);font-size:14px;font-family:var(--font);color:var(--text);transition:border-color .2s,box-shadow .2s,background .2s;-webkit-appearance:none;appearance:none;}
+textarea{resize:vertical;min-height:72px;line-height:1.5;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12);background:var(--surface);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;cursor:pointer;}
 
-input[type=text],input[type=number],select,textarea{
-  display:block;width:100%;
-  padding:10px 13px;
-  background:var(--bg);
-  border:1.5px solid var(--border);
-  border-radius:var(--r2);
-  font-size:14px;font-family:var(--font);
-  color:var(--text);
-  transition:border-color .2s,box-shadow .2s,background .2s;
-  -webkit-appearance:none;appearance:none;
-}
-textarea{resize:vertical;min-height:72px;line-height:1.5}
-input:focus,select:focus,textarea:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(79,70,229,.12);
-  background:var(--surface);
-}
-input::placeholder,textarea::placeholder{color:var(--muted)}
-select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 11px center;
-  padding-right:32px;
-  cursor:pointer;
-}
-
-/* ====== BUTTONS ====== */
-.btn-row{display:flex;gap:8px;margin-top:auto;padding-top:14px;flex-wrap:wrap}
+/* ====== BUTTONS — ALL USE LOGO COLOR ====== */
+.btn-row{display:flex;gap:8px;margin-top:auto;padding-top:14px;flex-wrap:wrap;}
 .btn{
   flex:1;min-width:0;
-  display:inline-flex;align-items:center;
-  justify-content:center;gap:7px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
   padding:10px 18px;
   border-radius:var(--r2);
   font-size:14px;font-weight:500;
   font-family:var(--font);
   cursor:pointer;
   border:1.5px solid transparent;
-  transition:all .2s var(--ease);
+  transition:all .22s var(--ease);
   white-space:nowrap;
   position:relative;overflow:hidden;
+  /* LOGO GRADIENT */
+  background:var(--logo-grad);
+  color:#fff;
 }
-.btn i{font-size:16px;flex-shrink:0}
-.btn:active{transform:scale(.97)}
-/* primary */
-.btn{
-  background:var(--accent);color:#fff;
-  border-color:var(--accent);
-}
+.btn i{font-size:16px;flex-shrink:0;}
+.btn:active{transform:scale(.97);}
+/* shimmer sweep on hover */
 .btn::after{
   content:'';
   position:absolute;inset:0;
-  background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent);
-  transform:translateX(-100%);transition:transform .5s;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.18),transparent);
+  transform:translateX(-100%);transition:transform .55s;
 }
-.btn:hover::after{transform:translateX(100%)}
-.btn:hover{background:#4338CA;box-shadow:0 4px 14px rgba(79,70,229,.35)}
-/* secondary */
-.btn.sec{background:var(--surface);color:var(--text2);border-color:var(--border)}
-.btn.sec::after{display:none}
-.btn.sec:hover{background:var(--bg);border-color:var(--border2);color:var(--text)}
-/* variants */
-.btn.green{background:var(--green-light);color:var(--green);border-color:var(--green-border)}
-.btn.green::after{display:none}
-.btn.green:hover{background:#DCFCE7;box-shadow:0 2px 8px rgba(21,128,61,.2)}
-.btn.red{background:var(--red-light);color:var(--red);border-color:var(--red-border)}
-.btn.red::after{display:none}
-.btn.red:hover{background:#FFE4E6}
-.btn.purple{background:var(--purple-light);color:var(--purple);border-color:var(--purple-border)}
-.btn.purple::after{display:none}
-.btn.purple:hover{background:#EDE9FE}
-.btn.gold{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border)}
-.btn.gold::after{display:none}
-.btn.gold:hover{background:#FEF3C7}
-.btn.cyan{background:var(--cyan-light);color:var(--cyan);border-color:var(--cyan-border)}
-.btn.cyan::after{display:none}
-.btn.cyan:hover{background:#CFFAFE}
+.btn:hover::after{transform:translateX(100%);}
+.btn:hover{background:var(--logo-grad-dark);box-shadow:0 4px 18px var(--accent-glow);}
 
-/* ====== BADGES ====== */
-.badge{
-  display:inline-flex;align-items:center;gap:4px;
-  padding:3px 10px;border-radius:99px;
-  font-size:12px;font-weight:500;
-}
-.b-ok{background:var(--green-light);color:var(--green);border:1.5px solid var(--green-border)}
-.b-blocked{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border)}
-.b-tier{background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent-border)}
-.b-gold{background:var(--amber-light);color:var(--amber);border:1.5px solid var(--amber-border)}
-.b-purple{background:var(--purple-light);color:var(--purple);border:1.5px solid var(--purple-border)}
-.b-cyan{background:var(--cyan-light);color:var(--cyan);border:1.5px solid var(--cyan-border)}
-.b-sanctioned{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border)}
-
-/* ====== DATA ====== */
-.merkle-box{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--r2);padding:11px 14px;
-  display:flex;justify-content:space-between;
-  align-items:center;margin-bottom:14px;gap:12px;
-}
-.merkle-label{
-  font-size:11.5px;text-transform:uppercase;
-  letter-spacing:.06em;color:var(--text3);font-weight:600;
-}
-.merkle-val{
-  font-family:var(--mono);font-size:12px;
-  color:var(--amber);max-width:240px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.list-wrap{
-  border:1px solid var(--border);border-radius:var(--r2);
-  overflow-y:auto;max-height:220px;
-  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
-}
-.list-item{
-  display:flex;justify-content:space-between;
-  align-items:center;padding:10px 14px;
-  border-bottom:1px solid var(--border);
-  gap:10px;transition:background .15s;
-}
-.list-item:last-child{border-bottom:none}
-.list-item:hover{background:var(--bg)}
-.item-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
-.item-name{font-size:13.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item-sub{font-size:11.5px;color:var(--text3);font-family:var(--mono)}
-
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-th{
-  text-align:left;color:var(--text3);
-  font-weight:600;font-size:11px;
-  text-transform:uppercase;letter-spacing:.05em;
-  padding:8px 12px;border-bottom:1.5px solid var(--border);
-  background:var(--bg);
-}
-td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
-td:first-child{color:var(--text);font-weight:500}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--bg)}
-.mono{font-family:var(--mono);font-size:12px;color:var(--text3)}
-
-.result-box{
-  margin-top:12px;padding:13px 16px;
-  border-radius:var(--r);font-size:13.5px;
-  display:none;line-height:1.65;
-}
-.result-box.ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green)}
-.result-box.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
-.result-box.info{background:var(--cyan-light);border:1px solid var(--cyan-border);color:var(--cyan)}
-
-.code-out{
-  font-family:var(--mono);font-size:12px;
-  background:var(--bg);padding:12px 14px;
-  border-radius:var(--r2);border:1px solid var(--border);
-  margin-top:10px;max-height:150px;overflow-y:auto;
-  color:var(--accent);word-break:break-all;line-height:1.6;
-  scrollbar-width:thin;
-}
-.secret-warn{
-  background:var(--red-light);border:1px solid var(--red-border);
-  border-radius:var(--r2);padding:10px 14px;
-  font-size:13px;color:var(--red);
-  margin-bottom:12px;
-  display:flex;align-items:flex-start;gap:8px;line-height:1.5;
-}
-.secret-warn i{font-size:16px;flex-shrink:0;margin-top:1px}
-.tx-link{
-  color:var(--accent);text-decoration:none;
-  font-weight:500;
-}
-.tx-link:hover{text-decoration:underline}
-.net-notice{
-  background:var(--cyan-light);border:1px solid var(--cyan-border);
-  border-radius:var(--r);padding:14px 18px;
-  font-size:13.5px;color:var(--cyan);
-  margin-bottom:20px;line-height:1.6;
-  display:flex;align-items:flex-start;gap:10px;
-}
-.net-notice i{font-size:17px;flex-shrink:0;margin-top:1px}
-
-.trustee-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
-.trustee-btn{
-  padding:10px 6px;
-  background:var(--bg);border:1.5px solid var(--border);
-  border-radius:var(--r2);
-  font-size:12.5px;font-weight:500;
-  cursor:pointer;text-align:center;
-  color:var(--text3);transition:all .2s;
-  font-family:var(--font);
-}
-.trustee-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
-.trustee-btn.approved{
-  background:var(--green-light);
-  border-color:var(--green-border);
-  color:var(--green);font-weight:600;
-}
-
-.feat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
-@media(max-width:640px){.feat-tiles{grid-template-columns:repeat(2,1fr)}}
-.feat-tile{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--r2);padding:16px;
-  text-align:center;
-}
-.feat-tile i{font-size:24px;color:var(--accent)}
-.feat-tile .ti-lbl{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.feat-tile .ti-val{font-size:15px;font-weight:700;margin-top:3px;color:var(--text)}
-
-/* ====== TOAST ====== */
-.toast{
-  position:fixed;bottom:28px;right:28px;
+/* SECONDARY — logo-tinted outline */
+.btn.sec{
   background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:14px 18px;
-  border-radius:var(--r);
-  box-shadow:var(--shadow-lg);
-  transform:translateY(130%);
-  transition:transform .3s var(--ease);
-  z-index:9999;
-  display:flex;align-items:center;gap:11px;
-  font-size:14px;max-width:320px;
+  color:var(--accent);
+  border-color:var(--accent-border);
 }
-.toast.show{transform:translateY(0)}
-.toast-ok i{color:var(--green);font-size:18px}
-.toast-err i{color:var(--red);font-size:18px}
-
-/* ====== MODAL ====== */
-#walletModal{
-  display:none;position:fixed;
-  inset:0;background:rgba(0,0,0,.35);
-  z-index:2000;
-  align-items:center;justify-content:center;
-  backdrop-filter:blur(6px);
-}
-#walletModal .card{
-  width:440px;max-width:calc(100vw - 32px);
-  box-shadow:var(--shadow-lg);
-  animation:fadeUp .3s var(--ease);
+.btn.sec::after{display:none;}
+.btn.sec:hover{
+  background:var(--accent-light);
+  border-color:var(--accent);
+  color:var(--accent2);
+  box-shadow:0 2px 10px rgba(79,70,229,.15);
 }
 
-/* ====== SCROLLBAR ====== */
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+/* All action-variant buttons — logo light tint (indigo palette) */
+.btn.green,.btn.red,.btn.purple,.btn.gold,.btn.cyan{
+  background:var(--accent-light);
+  color:var(--accent);
+  border-color:var(--accent-border);
+}
+.btn.green::after,.btn.red::after,.btn.purple::after,
+.btn.gold::after,.btn.cyan::after{display:none;}
+.btn.green:hover,.btn.red:hover,.btn.purple:hover,
+.btn.gold:hover,.btn.cyan:hover{
+  background:var(--accent-border);
+  color:var(--accent2);
+  border-color:var(--accent);
+  box-shadow:0 2px 12px rgba(79,70,229,.2);
+}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:500;}
+.b-ok{background:var(--green-light);color:var(--green);border:1.5px solid var(--green-border);}
+.b-blocked{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border);}
+.b-tier{background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent-border);}
+.b-gold{background:var(--amber-light);color:var(--amber);border:1.5px solid var(--amber-border);}
+.b-purple{background:var(--purple-light);color:var(--purple);border:1.5px solid var(--purple-border);}
+.b-cyan{background:var(--cyan-light);color:var(--cyan);border:1.5px solid var(--cyan-border);}
+.b-sanctioned{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border);}
+
+/* DATA */
+.merkle-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;}
+.merkle-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:600;}
+.merkle-val{font-family:var(--mono);font-size:12px;color:var(--amber);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.list-wrap{border:1px solid var(--border);border-radius:var(--r2);overflow-y:auto;max-height:220px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;transition:background .15s;}
+.list-item:last-child{border-bottom:none;}
+.list-item:hover{background:var(--bg);}
+.item-meta{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.item-name{font-size:13.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-sub{font-size:11.5px;color:var(--text3);font-family:var(--mono);}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
+th{text-align:left;color:var(--text3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 12px;border-bottom:1.5px solid var(--border);background:var(--bg);}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+td:first-child{color:var(--text);font-weight:500;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg);}
+.mono{font-family:var(--mono);font-size:12px;color:var(--text3);}
+.result-box{margin-top:12px;padding:13px 16px;border-radius:var(--r);font-size:13.5px;display:none;line-height:1.65;}
+.result-box.ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green);}
+.result-box.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red);}
+.result-box.info{background:var(--cyan-light);border:1px solid var(--cyan-border);color:var(--cyan);}
+.code-out{font-family:var(--mono);font-size:12px;background:var(--bg);padding:12px 14px;border-radius:var(--r2);border:1px solid var(--border);margin-top:10px;max-height:150px;overflow-y:auto;color:var(--accent);word-break:break-all;line-height:1.6;scrollbar-width:thin;}
+.secret-warn{background:var(--red-light);border:1px solid var(--red-border);border-radius:var(--r2);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;line-height:1.5;}
+.secret-warn i{font-size:16px;flex-shrink:0;margin-top:1px;}
+.tx-link{color:var(--accent);text-decoration:none;font-weight:500;}
+.tx-link:hover{text-decoration:underline;}
+.net-notice{background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--r);padding:14px 18px;font-size:13.5px;color:var(--accent);margin-bottom:20px;line-height:1.6;display:flex;align-items:flex-start;gap:10px;}
+.net-notice i{font-size:17px;flex-shrink:0;margin-top:1px;}
+.trustee-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0;}
+.trustee-btn{padding:10px 6px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r2);font-size:12.5px;font-weight:500;cursor:pointer;text-align:center;color:var(--text3);transition:all .2s;font-family:var(--font);}
+.trustee-btn:hover{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent);}
+.trustee-btn.approved{background:var(--accent-light);border-color:var(--accent);color:var(--accent);font-weight:600;}
+.feat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px;}
+@media(max-width:640px){.feat-tiles{grid-template-columns:repeat(2,1fr);}}
+.feat-tile{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center;}
+.feat-tile i{font-size:24px;color:var(--accent);}
+.feat-tile .ti-lbl{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;}
+.feat-tile .ti-val{font-size:15px;font-weight:700;margin-top:3px;color:var(--text);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:14px 18px;border-radius:var(--r);box-shadow:var(--shadow-lg);transform:translateY(130%);transition:transform .3s var(--ease);z-index:9999;display:flex;align-items:center;gap:11px;font-size:14px;max-width:320px;}
+.toast.show{transform:translateY(0);}
+.toast-ok i{color:var(--green);font-size:18px;}
+.toast-err i{color:var(--red);font-size:18px;}
+
+/* MODAL */
+#walletModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+#walletModal .card{width:440px;max-width:calc(100vw - 32px);box-shadow:var(--shadow-lg);animation:fadeUp .3s var(--ease);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 </style>
 </head>
 <body>
@@ -720,7 +308,6 @@ tr:hover td{background:var(--bg)}
       <span class="brand-div">/</span>
       <span class="brand-sub">Proof Console</span>
     </a>
-
     <div class="proof-counter">
       <div class="pc-item"><i class="hgi-stroke hgi-lightning-01" style="color:var(--accent)"></i>Proofs&nbsp;<span class="pc-val" id="pcProofs">0</span></div>
       <span class="pc-sep">&middot;</span>
@@ -728,19 +315,14 @@ tr:hover td{background:var(--bg)}
       <span class="pc-sep">&middot;</span>
       <div class="pc-item"><i class="hgi-stroke hgi-cancel-01" style="color:var(--red)"></i>Blocked&nbsp;<span class="pc-val" id="pcBlocked" style="color:var(--red)">0</span></div>
     </div>
-
     <div class="hdr-right">
       <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> Back to Landing</a>
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        <span id="statusLabel">Connected</span>
-      </div>
+      <div class="status-badge"><span class="status-dot"></span><span id="statusLabel">Connected</span></div>
     </div>
   </div>
 </header>
 
 <div class="shell">
-
 <div class="tab-bar-wrap">
   <div class="tab-bar">
     <div class="nav-tab active" onclick="switchTab('core',this)"><i class="hgi-stroke hgi-shield-01"></i> Compliance</div>
@@ -760,39 +342,20 @@ tr:hover td{background:var(--bg)}
 <div class="tab-panel active" id="panel-core">
   <div class="proof-hero">
     <div class="ph-top">
-      <div class="ph-left">
-        <h2>ZK-Proof Transaction Simulator</h2>
-        <p>Compile and verify zero-knowledge compliance proofs on Stellar testnet. Each step produces a cryptographic proof, not a log entry.</p>
-      </div>
-      <div class="ph-badge" id="phBadge">
-        <i class="hgi-stroke hgi-loading-03 spin"></i>
-        <span id="phBadgeTxt">Ready</span>
-      </div>
+      <div class="ph-left"><h2>ZK-Proof Transaction Simulator</h2><p>Compile and verify zero-knowledge compliance proofs on Stellar testnet. Each step produces a cryptographic proof, not a log entry.</p></div>
+      <div class="ph-badge" id="phBadge"><i class="hgi-stroke hgi-loading-03 spin"></i><span id="phBadgeTxt">Ready</span></div>
     </div>
-
     <div class="circuit-wrap" id="circuitWrap">
       <div class="circuit-track"></div>
       <div class="circuit-nodes" id="circuitNodes"></div>
       <div class="circuit-scan" id="circuitScan"></div>
-      <div class="circuit-labels">
-        <span>Revocation</span>
-        <span>Sanctions</span>
-        <span>KYC</span>
-        <span>Limits</span>
-        <span>On-chain</span>
-      </div>
+      <div class="circuit-labels"><span>Revocation</span><span>Sanctions</span><span>KYC</span><span>Limits</span><span>On-chain</span></div>
     </div>
-
     <div class="fr" style="margin-bottom:16px">
       <div class="fg"><label>Sender Wallet</label><select id="simSender"></select></div>
-      <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500" placeholder="e.g. 5000"></div>
+      <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500"></div>
     </div>
-    <div>
-      <button class="btn" onclick="runSimulation()" style="flex:none;padding:12px 28px;font-size:15px">
-        <i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify
-      </button>
-    </div>
-
+    <div><button class="btn" onclick="runSimulation()" style="flex:none;padding:12px 28px;font-size:15px"><i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify</button></div>
     <div class="proof-steps" style="margin-top:18px">
       <div class="pstep" id="ps-rev"><div class="ps-icon" id="si-rev"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Revocation check — wallet not in revocation registry</span><span class="ps-hash" id="ph-rev">sha256::0x—</span></div>
       <div class="pstep" id="ps-san"><div class="ps-icon" id="si-san"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Sanctions proof — address absent from Merkle tree</span><span class="ps-hash" id="ph-san">sha256::0x—</span></div>
@@ -800,53 +363,12 @@ tr:hover td{background:var(--bg)}
       <div class="pstep" id="ps-lim"><div class="ps-icon" id="si-lim"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Limits circuit — amount within daily and rolling caps</span><span class="ps-hash" id="ph-lim">sha256::0x—</span></div>
       <div class="pstep" id="ps-proof"><div class="ps-icon" id="si-proof"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">On-chain hook — BN254 pairing proof verified on Soroban</span><span class="ps-hash" id="ph-proof">bn254::0x—</span></div>
     </div>
-    <div class="proof-result" id="simResult">
-      <div class="pr-title" id="prTitle"></div>
-      <div id="prBody"></div>
-      <div class="pr-hash" id="prHash"></div>
-    </div>
+    <div class="proof-result" id="simResult"><div class="pr-title" id="prTitle"></div><div id="prBody"></div><div class="pr-hash" id="prHash"></div></div>
   </div>
-
   <div class="grid">
-    <div class="card">
-      <div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div>
-      <p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p>
-      <div class="fr">
-        <div class="fg"><label>Max Transaction ($)</label><input type="number" id="maxAmount" value="10000"></div>
-        <div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Required KYC Tier</label>
-          <select id="kycTier"><option value="0">Tier 0 — None</option><option value="1" selected>Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select>
-        </div>
-        <div class="fg"><label>Sanctions Screening</label>
-          <select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select>
-        </div>
-      </div>
-      <div class="btn-row"><button class="btn" onclick="saveRules()"><i class="hgi-stroke hgi-upload-02"></i> Publish Rules to Hook</button></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div>
-      <p class="card-desc">KYC attestations and sanctions directory used in proof circuits.</p>
-      <div class="merkle-box">
-        <span class="merkle-label">Sanctions Root</span>
-        <span class="merkle-val" id="merkleRoot">0x00000...0000</span>
-      </div>
-      <div class="list-wrap" id="walletList"></div>
-      <div class="btn-row">
-        <button class="btn sec" onclick="openWalletModal()"><i class="hgi-stroke hgi-add-01"></i> Register Wallet</button>
-      </div>
-    </div>
-
-    <div class="card full">
-      <div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div>
-      <p class="card-desc">Aggregated verification checks. No wallet addresses written on-chain — only proof hashes.</p>
-      <div style="overflow-x:auto">
-        <table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead>
-        <tbody id="auditRows"></tbody></table>
-      </div>
-    </div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div><p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p><div class="fr"><div class="fg"><label>Max Transaction ($)</label><input type="number" id="maxAmount" value="10000"></div><div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div></div><div class="fr"><div class="fg"><label>Required KYC Tier</label><select id="kycTier"><option value="0">Tier 0 — None</option><option value="1" selected>Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select></div><div class="fg"><label>Sanctions Screening</label><select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select></div></div><div class="btn-row"><button class="btn" onclick="saveRules()"><i class="hgi-stroke hgi-upload-02"></i> Publish Rules to Hook</button></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div><p class="card-desc">KYC attestations and sanctions directory used in proof circuits.</p><div class="merkle-box"><span class="merkle-label">Sanctions Root</span><span class="merkle-val" id="merkleRoot">0x00000...0000</span></div><div class="list-wrap" id="walletList"></div><div class="btn-row"><button class="btn sec" onclick="openWalletModal()"><i class="hgi-stroke hgi-add-01"></i> Register Wallet</button></div></div>
+    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div><p class="card-desc">Aggregated verification checks. No wallet addresses written on-chain — only proof hashes.</p><div style="overflow-x:auto"><table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead><tbody id="auditRows"></tbody></table></div></div>
   </div>
 </div>
 
@@ -886,10 +408,10 @@ tr:hover td{background:var(--bg)}
 <!-- SANDBOX TAB -->
 <div class="tab-panel" id="panel-sandbox">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div><p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p><div class="fr"><div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div><div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()" style="margin-top:17px"><i class="hgi-stroke hgi-lock-password"></i> Encrypt &amp; Add</button></div></div><div class="fg"><label>Ciphertext Queue</label><div class="code-out" id="paillierQueue">Empty.</div></div><div class="btn-row"><button class="btn" onclick="paillierSum()"><i class="hgi-stroke hgi-calculator"></i> Homomorphic Sum &amp; Decrypt</button><button class="btn sec" onclick="paillierReset()">Reset</button></div><div id="paillierResult" style="margin-top:12px;font-size:14px;font-weight:500;color:var(--amber)"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div><p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p><div class="fr"><div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div><div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()" style="margin-top:17px"><i class="hgi-stroke hgi-lock-password"></i> Encrypt &amp; Add</button></div></div><div class="fg"><label>Ciphertext Queue</label><div class="code-out" id="paillierQueue">Empty.</div></div><div class="btn-row"><button class="btn" onclick="paillierSum()"><i class="hgi-stroke hgi-calculator"></i> Homomorphic Sum &amp; Decrypt</button><button class="btn sec" onclick="paillierReset()">Reset</button></div><div id="paillierResult" style="margin-top:12px;font-size:14px;font-weight:500;color:var(--accent)"></div></div>
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-clock-05"></i> Threshold Time-Lock Disclosure</div><p class="card-desc">3-of-5 trustee approvals + 10s time delay to reveal identity (Shamir TSS).</p><div class="fg"><label>Identity Commitment</label><input type="text" id="identityCommit" value="987654321012345"></div><div class="btn-row" style="padding-top:0;margin-bottom:14px"><button class="btn purple" onclick="disclosureOpen()"><i class="hgi-stroke hgi-lock-password"></i> 1. Initiate (10s delay)</button></div><div id="disclosureStatus" style="font-size:12.5px;font-family:var(--mono);color:var(--text3);margin-bottom:12px">Not opened.</div><p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:8px">2. Trustee Approvals (3/5 needed):</p><div class="trustee-grid"><div class="trustee-btn" id="tb-1" onclick="disclosureApprove(1)">Trustee 1</div><div class="trustee-btn" id="tb-2" onclick="disclosureApprove(2)">Trustee 2</div><div class="trustee-btn" id="tb-3" onclick="disclosureApprove(3)">Trustee 3</div><div class="trustee-btn" id="tb-4" onclick="disclosureApprove(4)">Trustee 4</div><div class="trustee-btn" id="tb-5" onclick="disclosureApprove(5)">Trustee 5</div></div><div class="btn-row" style="margin-top:auto"><button class="btn" onclick="disclosureDecrypt()"><i class="hgi-stroke hgi-eye"></i> 3. Decrypt &amp; Reveal</button></div><div id="disclosureResult" style="margin-top:12px;font-size:14px;font-weight:600"></div></div>
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-cancel-01"></i> Credential Revocation</div><p class="card-desc">Instant KYC revocation via Merkle root update. Propagates in the same block.</p><div class="merkle-box"><span class="merkle-label">Revocation Root</span><span class="merkle-val" id="revRoot">loading...</span></div><div class="fr"><div class="fg"><label>Wallet to Revoke</label><select id="revokeSelect"></select></div><div class="fg"><label style="opacity:0">_</label><button class="btn red" onclick="revokeWallet()" style="margin-top:17px"><i class="hgi-stroke hgi-cancel-01"></i> Revoke KYC</button></div></div><div class="fg"><label>Revoked List</label><div class="code-out" id="revokedList" style="height:90px">None.</div></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div><p class="card-desc">Nova-style IVC: fold transaction proofs into one constant-size accumulator.</p><div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--purple)">loading...</span></div><div class="fr"><div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div><div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()" style="margin-top:17px"><i class="hgi-stroke hgi-layers-01"></i> Fold Step</button></div></div><div class="btn-row"><button class="btn sec" onclick="resetFolding()"><i class="hgi-stroke hgi-refresh"></i> Reset Accumulator</button></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div><p class="card-desc">Nova-style IVC: fold transaction proofs into one constant-size accumulator.</p><div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--accent)">loading...</span></div><div class="fr"><div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div><div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()" style="margin-top:17px"><i class="hgi-stroke hgi-layers-01"></i> Fold Step</button></div></div><div class="btn-row"><button class="btn sec" onclick="resetFolding()"><i class="hgi-stroke hgi-refresh"></i> Reset Accumulator</button></div></div>
   </div>
 </div>
 
@@ -898,7 +420,7 @@ tr:hover td{background:var(--bg)}
   <div class="grid">
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-brain"></i> zkML Risk Score</div><p class="card-desc">ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address"></div><div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div><div class="btn-row"><button class="btn purple" onclick="runZkmlScore()"><i class="hgi-stroke hgi-brain"></i> Score Wallet</button><button class="btn sec" onclick="runZkmlBatch()">Batch All</button></div><div class="result-box" id="zkmlResult"></div></div>
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Batch Risk Dashboard</div><p class="card-desc">ML risk scores for all registered wallets.</p><div class="list-wrap" id="zkmlBatchList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Batch Score All to load</div></div></div>
-    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div><p class="card-desc" style="margin-bottom:4px">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights or input data.</p><div class="feat-tiles"><div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div><div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div><div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div><div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div><div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val">SHA-256</div></div></div></div>
+    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div><p class="card-desc" style="margin-bottom:4px">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The proof hash confirms correctness without revealing model weights.</p><div class="feat-tiles"><div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div><div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div><div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div><div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div><div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val">SHA-256</div></div></div></div>
   </div>
 </div>
 
@@ -906,7 +428,7 @@ tr:hover td{background:var(--bg)}
 <div class="tab-panel" id="panel-soulbound">
   <div class="grid">
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-medal-first-place"></i> Issue Soulbound Token</div><p class="card-desc">Non-transferable compliance credential (CST) permanently bound to a wallet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to"></div><div class="fr"><div class="fg"><label>Jurisdiction</label><select id="cstJurisdiction"><option value="GLOBAL">Global</option><option value="EU">EU</option><option value="US">US</option><option value="UAE">UAE</option><option value="SG">Singapore</option></select></div><div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div></div><div class="btn-row"><button class="btn gold" onclick="issueSoulbound()"><i class="hgi-stroke hgi-medal-first-place"></i> Issue CST</button><button class="btn sec" onclick="verifySoulbound()">Verify</button></div><div class="result-box" id="cstResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div><p class="card-desc">Non-transferable credentials permanently bound to wallets on Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh</button></div><div class="list-wrap" id="soulboundList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Refresh to load tokens</div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div><p class="card-desc">Non-transferable credentials permanently bound to wallets on Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh</button></div><div class="list-wrap" id="soulboundList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Refresh to load</div></div></div>
   </div>
 </div>
 
@@ -922,7 +444,7 @@ tr:hover td{background:var(--bg)}
 <div class="tab-panel" id="panel-reserves">
   <div class="grid">
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-bank"></i> Create Reserve Snapshot</div><p class="card-desc">ZK-backed solvency proof. Proves solvency without revealing exact balance amounts.</p><div class="fr"><div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div><div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div></div><div class="btn-row"><button class="btn green" onclick="createSnapshot()"><i class="hgi-stroke hgi-bank"></i> Attest Snapshot</button></div><div class="result-box" id="reserveResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div><p class="card-desc">On-chain ZK-attested solvency snapshots, anchored to Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div><div class="list-wrap" id="reserveHistoryList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Load to view snapshots</div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div><p class="card-desc">On-chain ZK-attested solvency snapshots, anchored to Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div><div class="list-wrap" id="reserveHistoryList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Load to view</div></div></div>
   </div>
 </div>
 
@@ -965,7 +487,6 @@ tr:hover td{background:var(--bg)}
 </div>
 
 <script>
-// Animated light-mode background: indigo particle network
 (function(){
   const c=document.getElementById('bgCanvas');
   if(!c)return;
@@ -973,49 +494,14 @@ tr:hover td{background:var(--bg)}
   let W,H;
   const pts=[];
   function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
-  resize();
-  window.addEventListener('resize',resize);
-  for(let i=0;i<50;i++){
-    pts.push({
-      x:Math.random()*2000,y:Math.random()*1200,
-      vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25
-    });
-  }
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<50;i++){pts.push({x:Math.random()*2000,y:Math.random()*1200,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25});}
   let t=0;
   function frame(){
-    t++;
-    ctx.clearRect(0,0,W,H);
-    // pulsing dot grid
-    for(let x=0;x<W;x+=60){
-      for(let y=0;y<H;y+=60){
-        const a=.05+.025*Math.sin(t*.006+x*.0015+y*.0015);
-        ctx.fillStyle=`rgba(79,70,229,${a})`;
-        ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();
-      }
-    }
-    // move particles
-    pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
-      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-      ctx.fillStyle='rgba(79,70,229,.1)';
-      ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();
-    });
-    // connect close particles
-    for(let i=0;i<pts.length;i++){
-      for(let j=i+1;j<pts.length;j++){
-        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
-        const d=Math.sqrt(dx*dx+dy*dy);
-        if(d<140){
-          ctx.strokeStyle=`rgba(79,70,229,${.055*(1-d/140)})`;
-          ctx.lineWidth=1;
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x,pts[i].y);
-          ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.stroke();
-        }
-      }
-    }
+    t++;ctx.clearRect(0,0,W,H);
+    for(let x=0;x<W;x+=60){for(let y=0;y<H;y+=60){const a=.05+.025*Math.sin(t*.006+x*.0015+y*.0015);ctx.fillStyle=`rgba(79,70,229,${a})`;ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();}}
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.fillStyle='rgba(79,70,229,.1)';ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();});
+    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<140){ctx.strokeStyle=`rgba(79,70,229,${.055*(1-d/140)})`;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}}
     requestAnimationFrame(frame);
   }
   frame();
