@@ -69,25 +69,35 @@ img,svg{display:block}
 .btn-lg{padding:13px 22px; font-size:15.5px; border-radius:13px}
 
 /* ---- NAV ---- */
-header{position:sticky; top:0; z-index:200; padding:12px 0}
+header{position:sticky; top:0; z-index:200; padding:12px 0; transition:padding .3s var(--ease)}
+header.scrolled{padding:8px 0}
 .nav{
   display:flex; align-items:center; justify-content:space-between;
   height:52px; padding:0 16px;
-  background:rgba(255,255,255,.85); backdrop-filter:blur(16px) saturate(1.6);
+  background:rgba(255,255,255,.78); backdrop-filter:blur(16px) saturate(1.6);
   -webkit-backdrop-filter:blur(16px) saturate(1.6);
   border:1px solid var(--line); border-radius:var(--radius-lg);
   box-shadow:var(--shadow-sm);
   transition:all .3s var(--ease);
 }
+header.scrolled .nav{
+  background:rgba(255,255,255,.94);
+  border-color:var(--line-2);
+  box-shadow:var(--shadow-md);
+}
 .brand{
   display:flex; align-items:center; gap:9px;
   font-weight:700; font-size:18px; letter-spacing:-.02em;
+  transition:opacity .2s;
 }
+.brand:hover{opacity:.82}
 .brand .logo{
   width:28px; height:28px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
   background:var(--indigo); color:#fff;
+  transition:transform .3s var(--ease);
 }
+.brand:hover .logo{transform:rotate(-8deg) scale(1.07)}
 .brand .logo i{font-size:15px}
 .nav-links{display:flex; gap:2px}
 .nav-links a{
@@ -96,8 +106,10 @@ header{position:sticky; top:0; z-index:200; padding:12px 0}
   transition:background .15s, color .15s;
 }
 .nav-links a:hover{background:var(--soft-2); color:var(--ink)}
+.nav-links a.active{background:var(--indigo-light); color:var(--indigo); font-weight:600}
 .nav-cta{display:flex; align-items:center; gap:8px}
-.nav-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px; font-size:20px; color:var(--ink)}
+.nav-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px; font-size:20px; color:var(--ink); border-radius:8px; transition:background .15s}
+.nav-toggle:hover{background:var(--soft-2)}
 
 /* ---- HERO ---- */
 .hero{
