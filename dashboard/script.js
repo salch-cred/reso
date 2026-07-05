@@ -3,6 +3,25 @@ const hdr = document.getElementById('hdr');
 const onScroll = () => { hdr.classList.toggle('scrolled', window.scrollY > 12); };
 onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
+// nav scrollspy: highlight the nav link for the section currently in view
+const navLinkMap = new Map();
+document.querySelectorAll('.nav-links a[href^="#"]').forEach((a) => {
+  navLinkMap.set(a.getAttribute('href').slice(1), a);
+});
+const spySections = [...navLinkMap.keys()].map((id) => document.getElementById(id)).filter(Boolean);
+if (spySections.length) {
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const link = navLinkMap.get(entry.target.id);
+      if (!link) return;
+      navLinkMap.forEach((a) => a.classList.remove('active'));
+      link.classList.add('active');
+    });
+  }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+  spySections.forEach((sec) => spy.observe(sec));
+}
+
 // reveal on scroll
 const io = new IntersectionObserver((es) => {
   es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
