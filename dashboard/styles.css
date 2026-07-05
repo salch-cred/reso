@@ -1,8 +1,8 @@
 /* ============================================================
    RESO — Landing styles
    Font: Uncut Sans (Fontsource CDN)
-   Icons: Hugeicons stroke-rounded
-   Theme: Light only
+   Icons: Font Awesome
+   Theme: Light, Sky Blue accent
    ============================================================ */
 
 :root{
@@ -15,11 +15,11 @@
   --soft-2:#F2F2F5;
   --line:#E4E4E7;
   --line-2:#D4D4D8;
-  --indigo:#4F46E5;
-  --indigo-2:#6366F1;
-  --indigo-light:#EEF0FE;
-  --indigo-border:#C7D2FE;
-  --blue:#2563EB;
+  --indigo:#0EA5E9;
+  --indigo-2:#38BDF8;
+  --indigo-light:#E0F2FE;
+  --indigo-border:#BAE6FD;
+  --blue:#0284C7;
   --green:#16A34A;
   --green-light:#F0FDF4;
   --green-border:#BBF7D0;
@@ -59,7 +59,7 @@ img,svg{display:block}
 .btn-primary{background:var(--ink); color:#fff; border-color:var(--ink)}
 .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 20px -6px rgba(0,0,0,.4)}
 .btn-accent{background:var(--indigo); color:#fff; border-color:var(--indigo)}
-.btn-accent:hover{transform:translateY(-2px); box-shadow:0 10px 24px -6px rgba(79,70,229,.5); background:#4338CA}
+.btn-accent:hover{transform:translateY(-2px); box-shadow:0 10px 24px -6px rgba(14,165,233,.5); background:#0284C7}
 .btn-ghost{background:var(--canvas); color:var(--ink-2); border-color:var(--line-2)}
 .btn-ghost:hover{background:var(--soft); border-color:var(--line); transform:translateY(-1px)}
 .btn-white{background:#fff; color:var(--indigo); border-color:#fff; font-weight:600}
@@ -246,7 +246,7 @@ h1.display{
 }
 .proof-ico i{font-size:16px}
 .pi-indigo{background:var(--indigo-light); color:var(--indigo)}
-.pi-blue{background:#EFF6FF; color:var(--blue)}
+.pi-blue{background:#E0F2FE; color:var(--blue)}
 .pi-green{background:var(--green-light); color:var(--green)}
 .proof-txt{flex:1}
 .proof-txt .t{color:var(--ink); font-size:12.5px; font-weight:500}
@@ -561,7 +561,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 #globeCanvas:active{cursor:grabbing}
 .globe-glow{
   position:absolute; inset:-12%; z-index:-1; border-radius:50%;
-  background:radial-gradient(circle, rgba(79,70,229,.2), transparent 70%);
+  background:radial-gradient(circle, rgba(14,165,233,.2), transparent 70%);
   filter:blur(24px); animation:globePulse 4s ease-in-out infinite;
 }
 @keyframes globePulse{0%,100%{opacity:.55; transform:scale(1)}50%{opacity:1; transform:scale(1.07)}}
@@ -598,7 +598,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 
 /* ---- GRADIENT TEXT ---- */
 .grad-text{
-  background:linear-gradient(90deg,var(--indigo),#8B5CF6,var(--blue),var(--indigo));
+  background:linear-gradient(90deg,var(--indigo),#7DD3FC,var(--blue),var(--indigo));
   background-size:300% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:gradShift 5s linear infinite;
 }
@@ -607,7 +607,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 /* ---- SCROLL PROGRESS BAR ---- */
 .scroll-progress{
   position:fixed; top:0; left:0; height:3px; width:0%;
-  background:linear-gradient(90deg,var(--indigo),var(--indigo-2),#8B5CF6);
+  background:linear-gradient(90deg,var(--indigo),var(--indigo-2),#7DD3FC);
   z-index:999; transition:width .12s linear;
 }
 
@@ -615,7 +615,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 .spotlight{
   position:fixed; width:440px; height:440px; border-radius:50%;
   pointer-events:none; z-index:1;
-  background:radial-gradient(circle, rgba(79,70,229,.08), transparent 70%);
+  background:radial-gradient(circle, rgba(14,165,233,.08), transparent 70%);
   transform:translate(-50%,-50%); left:0; top:0; opacity:0; transition:opacity .3s;
 }
 
@@ -646,7 +646,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 /* ---- HERO ORBS (wow factor) ---- */
 .orb{position:absolute; z-index:0; border-radius:50%; filter:blur(60px); opacity:.32; pointer-events:none}
 .orb-1{width:340px; height:340px; background:var(--indigo); top:-100px; left:-70px; animation:orbFloat1 15s ease-in-out infinite}
-.orb-2{width:260px; height:260px; background:#8B5CF6; top:20px; right:-50px; animation:orbFloat2 19s ease-in-out infinite}
+.orb-2{width:260px; height:260px; background:#7DD3FC; top:20px; right:-50px; animation:orbFloat2 19s ease-in-out infinite}
 .orb-3{width:220px; height:220px; background:var(--blue); bottom:-70px; left:40%; animation:orbFloat3 17s ease-in-out infinite}
 @keyframes orbFloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(34px,42px)}}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-32px,30px)}}
