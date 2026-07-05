@@ -4,208 +4,704 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Reso — Proof Console</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/index.css"/>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/500.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/600.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
 <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px;scroll-behavior:smooth}
-body{background:#F4F4F6;color:#09090B;font-family:'Uncut Sans',system-ui,sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.55}
+/* ========================================
+   RESO PROOF CONSOLE — Light Mode
+   ======================================== */
 :root{
-  --bg:#F4F4F6;--bg2:#EBEBEE;
+  --bg:#F0F0F3;
+  --bg2:#E8E8EC;
   --surface:#FFFFFF;
-  --border:#E4E4E7;--border2:#D4D4D8;
-  --text:#09090B;--text2:#3F3F46;--text3:#71717A;--muted:#A1A1AA;
-  --accent:#4F46E5;--accent2:#7C3AED;
-  --accent-light:#EEF0FE;--accent-border:#C7D2FE;
-  --accent-glow:rgba(79,70,229,.2);
-  --green:#16A34A;--green-light:#F0FDF4;--green-border:#BBF7D0;--green-glow:rgba(22,163,74,.2);
-  --red:#DC2626;--red-light:#FEF2F2;--red-border:#FECACA;
-  --amber:#D97706;--amber-light:#FFFBEB;
-  --cyan:#0E7490;--cyan-light:#ECFEFF;
-  --r:10px;--r2:7px;
-  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.06);
-  --shadow-md:0 2px 6px rgba(0,0,0,.06),0 12px 32px rgba(0,0,0,.08);
+  --border:#E2E2E8;
+  --border2:#CACAD2;
+  --text:#0C0C0E;
+  --text2:#404048;
+  --text3:#6E6E7A;
+  --muted:#9999A8;
+  --accent:#4F46E5;
+  --accent2:#7C3AED;
+  --accent-light:#EEF0FE;
+  --accent-border:#C7D2FE;
+  --green:#15803D;
+  --green-light:#F0FDF4;
+  --green-border:#86EFAC;
+  --red:#B91C1C;
+  --red-light:#FEF2F2;
+  --red-border:#FECACA;
+  --amber:#92400E;
+  --amber-light:#FFFBEB;
+  --amber-border:#FDE68A;
+  --cyan:#0E7490;
+  --cyan-light:#ECFEFF;
+  --cyan-border:#A5F3FC;
+  --purple:#6D28D9;
+  --purple-light:#F5F3FF;
+  --purple-border:#DDD6FE;
+  --r:12px;
+  --r2:8px;
+  --r3:6px;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.06);
+  --shadow-md:0 2px 4px rgba(0,0,0,.05),0 12px 28px rgba(0,0,0,.09);
+  --shadow-lg:0 4px 8px rgba(0,0,0,.06),0 24px 48px rgba(0,0,0,.12);
+  --font:'Uncut Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:ui-monospace,'SFMono-Regular',Menlo,'Courier New',monospace;
+  --ease:cubic-bezier(.22,.61,.36,1);
 }
-.shell{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:0 20px 80px}
-/* HEADER */
-#hdr{position:sticky;top:0;z-index:500;padding:10px 0}
-.hdr-inner{max-width:1440px;margin:0 auto;padding:0 18px;background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px;box-shadow:var(--shadow)}
-.brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--text)}
-.brand-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;box-shadow:0 0 12px var(--accent-glow)}
-.brand-name{font-size:14px;font-weight:700;letter-spacing:-.02em}
-.brand-div{color:var(--border2);margin:0 2px}
-.brand-sub{font-size:12px;color:var(--text3)}
-.proof-counter{display:flex;align-items:center;gap:12px;font-family:'Courier New',monospace;font-size:11.5px}
-.pc-item{display:flex;align-items:center;gap:5px;color:var(--text3)}
-.pc-val{color:var(--accent);font-weight:700;transition:color .3s}
-.pc-val.flash{color:var(--accent2)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text);
+  background:var(--bg);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{
+  font-family:var(--font);
+  font-size:inherit;
+}
+/* canvas bg */
+#bgCanvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;pointer-events:none;
+  opacity:.5;
+}
+
+/* ====== LAYOUT ====== */
+.shell{
+  position:relative;z-index:1;
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 24px 100px;
+}
+
+/* ====== HEADER ====== */
+#hdr{
+  position:sticky;top:0;z-index:500;
+  padding:12px 0;
+}
+.hdr-inner{
+  max-width:1400px;margin:0 auto;padding:0 24px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border:1px solid var(--border);
+  border-radius:16px;
+  display:flex;align-items:center;
+  justify-content:space-between;gap:20px;
+  height:60px;
+  box-shadow:var(--shadow);
+}
+.brand{
+  display:flex;align-items:center;gap:11px;
+  text-decoration:none;color:var(--text);
+  flex-shrink:0;
+}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:16px;
+  box-shadow:0 2px 8px rgba(79,70,229,.35);
+}
+.brand-name{
+  font-size:16px;font-weight:700;
+  letter-spacing:-.025em;
+}
+.brand-div{color:var(--border2);margin:0 3px;font-size:18px}
+.brand-sub{font-size:13px;color:var(--text3);font-weight:400}
+
+.proof-counter{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:99px;
+  padding:6px 16px;
+  gap:14px;
+}
+.pc-item{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:12px;
+  color:var(--text3);
+}
+.pc-item i{font-size:14px}
+.pc-val{
+  font-weight:700;font-size:13px;
+  color:var(--accent);
+  transition:all .25s;
+}
+.pc-val.flash{color:var(--accent2);transform:scale(1.2)}
 .pc-sep{color:var(--border2)}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.status-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1px solid var(--green-border);background:var(--green-light);font-size:11.5px;font-weight:500;color:var(--green)}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:glow-pulse 2s infinite}
-@keyframes glow-pulse{0%,100%{box-shadow:0 0 0 0 var(--green-glow)}50%{box-shadow:0 0 0 4px var(--green-glow)}}
-.hdr-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--r2);font-size:12px;color:var(--text2);text-decoration:none;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;font-family:inherit}
+
+.hdr-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:99px;
+  border:1px solid var(--green-border);
+  background:var(--green-light);
+  font-size:12.5px;font-weight:500;color:var(--green);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  animation:pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{box-shadow:0 0 0 0 rgba(21,128,61,.3)}
+  50%{box-shadow:0 0 0 5px rgba(21,128,61,0)}
+}
+.hdr-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:var(--r3);
+  font-size:13px;font-weight:500;
+  color:var(--text2);border:1px solid var(--border);
+  background:var(--surface);cursor:pointer;
+  transition:all .2s;white-space:nowrap;
+}
 .hdr-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
-.hdr-btn i{font-size:13px}
-/* OFFLINE BAR */
-.offline-bar{display:none;background:var(--red-light);border:1px solid var(--red-border);margin:8px 20px;border-radius:var(--r);padding:8px 16px;font-size:12px;color:var(--red);text-align:center;position:relative;z-index:1}
-.offline-bar a{color:var(--accent);text-decoration:underline}
-/* TAB BAR */
-.tab-bar-wrap{position:sticky;top:72px;z-index:400;background:rgba(244,244,246,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);margin:0 -20px;padding:0 20px}
-.tab-bar{display:flex;overflow-x:auto;scrollbar-width:none}
+.hdr-btn i{font-size:15px}
+
+/* offline */
+.offline-bar{
+  display:none;
+  background:var(--red-light);border:1px solid var(--red-border);
+  margin:8px 24px;border-radius:var(--r);
+  padding:10px 18px;font-size:13.5px;color:var(--red);
+  text-align:center;position:relative;z-index:1;
+}
+.offline-bar a{color:var(--accent);text-decoration:underline;font-weight:500}
+
+/* ====== TAB BAR ====== */
+.tab-bar-wrap{
+  position:sticky;top:84px;z-index:400;
+  background:rgba(240,240,243,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  margin:0 -24px;padding:0 24px;
+}
+.tab-bar{
+  display:flex;overflow-x:auto;
+  scrollbar-width:none;
+  gap:2px;
+}
 .tab-bar::-webkit-scrollbar{display:none}
-.nav-tab{display:inline-flex;align-items:center;gap:6px;padding:11px 14px;font-size:12.5px;font-weight:500;color:var(--text3);cursor:pointer;white-space:nowrap;transition:color .2s;user-select:none;font-family:inherit;position:relative;border-bottom:2px solid transparent}
-.nav-tab i{font-size:14px}
+.nav-tab{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:13px 16px;
+  font-size:13.5px;font-weight:500;
+  color:var(--text3);
+  cursor:pointer;white-space:nowrap;
+  transition:color .2s;
+  font-family:var(--font);
+  border:none;background:none;
+  border-bottom:2px solid transparent;
+  position:relative;
+  user-select:none;
+}
+.nav-tab i{font-size:16px}
 .nav-tab:hover{color:var(--text2)}
-.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.nav-tab.active::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px}
-/* PANELS */
-.tab-panel{display:none;padding-top:24px;animation:fadeUp .3s ease}
+.nav-tab.active{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+  font-weight:600;
+}
+.nav-tab.active::after{
+  content:'';
+  position:absolute;bottom:-2px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:2px;
+}
+
+/* ====== PANELS ====== */
+.tab-panel{display:none;padding-top:28px;animation:fadeUp .3s var(--ease)}
 .tab-panel.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* GRID */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
+}
+
+/* ====== GRID ====== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;margin-bottom:16px;
+}
 .full{grid-column:span 2}
-@media(max-width:768px){.grid{grid-template-columns:1fr}.full{grid-column:span 1}}
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;transition:border-color .25s,box-shadow .25s;box-shadow:var(--shadow)}
-.card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-md)}
-.card-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
-.card-title i{font-size:16px;color:var(--text3)}
-.card-desc{font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.5}
-/* PROOF HERO */
-.proof-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;margin-bottom:12px;box-shadow:var(--shadow-md);position:relative;overflow:hidden}
-.proof-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
-.ph-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
-.ph-title{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;color:var(--text)}
-.ph-sub{font-size:12.5px;color:var(--text3)}
-.ph-badge{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1px solid var(--accent-border);background:var(--accent-light);font-size:11.5px;font-weight:600;color:var(--accent)}
-.ph-badge i{font-size:14px;animation:spin .8s linear infinite;display:none}
-.ph-badge.running i{display:inline-block}
-.ph-badge.running{border-color:var(--accent-border);background:var(--accent-light)}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.full{grid-column:span 1}}
+
+/* ====== CARDS ====== */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:24px;
+  display:flex;flex-direction:column;
+  gap:0;
+  box-shadow:var(--shadow);
+  transition:border-color .2s,box-shadow .25s,transform .25s;
+}
+.card:hover{
+  border-color:var(--accent-border);
+  box-shadow:var(--shadow-md);
+  transform:translateY(-2px);
+}
+.card-title{
+  display:flex;align-items:center;gap:9px;
+  font-size:15px;font-weight:600;
+  color:var(--text);margin-bottom:5px;
+  letter-spacing:-.01em;
+}
+.card-title i{font-size:18px;color:var(--accent)}
+.card-desc{
+  font-size:13px;color:var(--text3);
+  margin-bottom:18px;line-height:1.5;
+}
+
+/* ====== PROOF HERO ====== */
+.proof-hero{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:32px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow-md);
+  position:relative;overflow:hidden;
+}
+.proof-hero::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),#EC4899);
+}
+.ph-top{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:24px;gap:16px;
+}
+.ph-left h2{
+  font-size:22px;font-weight:700;
+  letter-spacing:-.03em;color:var(--text);
+  margin-bottom:5px;
+}
+.ph-left p{
+  font-size:14px;color:var(--text3);line-height:1.5;
+}
+.ph-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:99px;
+  border:1px solid var(--accent-border);
+  background:var(--accent-light);
+  font-size:13px;font-weight:600;color:var(--accent);
+  white-space:nowrap;flex-shrink:0;
+}
+.ph-badge .spin{animation:spin .7s linear infinite;display:none;font-size:14px}
+.ph-badge.running .spin{display:inline-block}
 .ph-badge.done{border-color:var(--green-border);background:var(--green-light);color:var(--green)}
-/* Circuit */
-.circuit-wrap{position:relative;height:52px;margin:0 0 20px;border:1px solid var(--border);border-radius:var(--r2);background:var(--bg);overflow:hidden}
-.circuit-track{position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border2);transform:translateY(-50%)}
-.circuit-nodes{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-.cn{width:10px;height:10px;border-radius:50%;background:var(--bg2);border:2px solid var(--border2);transition:all .4s}
-.cn.active{background:var(--accent-light);border-color:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-.cn.done{background:var(--green-light);border-color:var(--green);box-shadow:0 0 8px var(--green-glow)}
-.cn.fail{background:var(--red-light);border-color:var(--red)}
-.circuit-scan{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);display:none;box-shadow:0 0 8px var(--accent-glow)}
-.circuit-wrap.running .circuit-scan{display:block}
+.ph-badge.fail{border-color:var(--red-border);background:var(--red-light);color:var(--red)}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* Proof steps */
-.proof-steps{display:flex;flex-direction:column;gap:6px}
-.pstep{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r2);background:var(--bg);font-size:12.5px;color:var(--text3);transition:all .3s}
-.pstep.active{border-color:var(--accent-border);background:var(--accent-light);color:var(--accent)}
-.pstep.done{border-color:var(--green-border);background:var(--green-light);color:var(--green)}
-.pstep.fail{border-color:var(--red-border);background:var(--red-light);color:var(--red)}
-.ps-icon{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;opacity:.6;transition:all .3s}
-.pstep.active .ps-icon{opacity:1;animation:spin .8s linear infinite}
+
+/* circuit */
+.circuit-wrap{
+  position:relative;height:64px;margin-bottom:24px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;
+}
+.circuit-track{
+  position:absolute;top:50%;left:24px;right:24px;
+  height:2px;background:var(--border);
+  transform:translateY(-50%);
+  border-radius:2px;
+}
+.circuit-nodes{
+  position:absolute;inset:0;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 24px;
+}
+.cn{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--surface);border:2px solid var(--border2);
+  transition:all .35s var(--ease);
+  z-index:1;
+}
+.cn.active{
+  background:var(--accent-light);
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(79,70,229,.15);
+  transform:scale(1.3);
+}
+.cn.done{
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(21,128,61,.2);
+  transform:scale(1.1);
+}
+.cn.fail{
+  background:var(--red);
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(185,28,28,.2);
+}
+.circuit-scan{
+  position:absolute;top:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom,transparent,var(--accent),transparent);
+  box-shadow:0 0 10px rgba(79,70,229,.4);
+  display:none;border-radius:2px;
+  transition:left .5s var(--ease);
+}
+.circuit-wrap.running .circuit-scan{display:block}
+.circuit-labels{
+  position:absolute;bottom:6px;left:0;right:0;
+  display:flex;justify-content:space-between;
+  padding:0 20px;
+}
+.circuit-labels span{
+  font-size:9.5px;color:var(--muted);
+  font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.03em;
+  text-align:center;flex:1;
+}
+
+/* proof steps */
+.proof-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:0}
+.pstep{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  background:var(--bg);
+  font-size:14px;color:var(--text3);
+  transition:all .3s var(--ease);
+}
+.pstep.active{
+  border-color:var(--accent-border);
+  background:var(--accent-light);
+  color:var(--accent);
+}
+.pstep.done{
+  border-color:var(--green-border);
+  background:var(--green-light);
+  color:var(--green);
+}
+.pstep.fail{
+  border-color:var(--red-border);
+  background:var(--red-light);
+  color:var(--red);
+}
+.ps-icon{
+  width:24px;height:24px;border-radius:50%;
+  border:2px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;flex-shrink:0;opacity:.5;
+  transition:all .3s;
+}
+.pstep.active .ps-icon{opacity:1;animation:spin .7s linear infinite}
 .pstep.done .ps-icon,.pstep.fail .ps-icon{opacity:1}
-.ps-label{flex:1}
-.ps-hash{font-family:'Courier New',monospace;font-size:10.5px;color:var(--muted);opacity:0;transition:opacity .5s}
+.ps-label{flex:1;font-weight:450}
+.ps-hash{
+  font-family:var(--mono);font-size:11px;
+  color:var(--muted);opacity:0;
+  transition:opacity .5s;
+  white-space:nowrap;
+}
 .pstep.done .ps-hash{opacity:1}
-.proof-result{margin-top:14px;padding:14px 16px;border-radius:var(--r);font-size:12.5px;display:none;line-height:1.7}
-.proof-result.ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green)}
-.proof-result.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
-.pr-title{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-.pr-hash{font-family:'Courier New',monospace;font-size:11px;color:var(--text3);margin-top:6px;word-break:break-all}
+
+/* proof result */
+.proof-result{
+  margin-top:16px;padding:16px 20px;
+  border-radius:var(--r);font-size:14px;
+  display:none;line-height:1.7;
+}
+.proof-result.ok{
+  background:var(--green-light);
+  border:1px solid var(--green-border);
+  color:var(--green);
+}
+.proof-result.fail{
+  background:var(--red-light);
+  border:1px solid var(--red-border);
+  color:var(--red);
+}
+.pr-title{
+  font-size:15px;font-weight:700;
+  margin-bottom:6px;
+  display:flex;align-items:center;gap:7px;
+}
+.pr-hash{
+  font-family:var(--mono);font-size:12px;
+  color:var(--text3);margin-top:8px;
+  word-break:break-all;
+}
 @keyframes cursor-blink{0%,100%{opacity:1}50%{opacity:0}}
-.cursor::after{content:'_';animation:cursor-blink .7s infinite;color:var(--accent)}
-/* FORM */
-.fg{margin-bottom:12px}
-.fg label{display:block;font-size:11.5px;font-weight:500;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:480px){.fr{grid-template-columns:1fr}}
-input[type=text],input[type=number],select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:8px 10px;font-size:12.5px;color:var(--text);font-family:inherit;transition:border-color .2s,box-shadow .2s;appearance:none}
-textarea{resize:vertical;min-height:60px}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1);background:#fff}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:28px;cursor:pointer}
+.cursor::after{content:'_';animation:cursor-blink .65s infinite;color:var(--accent)}
+
+/* ====== FORM ====== */
+.fg{margin-bottom:14px}
+.fg label{
+  display:block;font-size:12px;
+  font-weight:600;
+  color:var(--text3);
+  margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.fr{grid-template-columns:1fr}}
+
+input[type=text],input[type=number],select,textarea{
+  display:block;width:100%;
+  padding:10px 13px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:var(--r2);
+  font-size:14px;font-family:var(--font);
+  color:var(--text);
+  transition:border-color .2s,box-shadow .2s,background .2s;
+  -webkit-appearance:none;appearance:none;
+}
+textarea{resize:vertical;min-height:72px;line-height:1.5}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,70,229,.12);
+  background:var(--surface);
+}
 input::placeholder,textarea::placeholder{color:var(--muted)}
-/* BUTTONS */
-.btn-row{display:flex;gap:6px;margin-top:auto;padding-top:12px}
-.btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:var(--r2);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .2s;font-family:inherit;position:relative;overflow:hidden}
-.btn i{font-size:14px}
+select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E6E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 11px center;
+  padding-right:32px;
+  cursor:pointer;
+}
+
+/* ====== BUTTONS ====== */
+.btn-row{display:flex;gap:8px;margin-top:auto;padding-top:14px;flex-wrap:wrap}
+.btn{
+  flex:1;min-width:0;
+  display:inline-flex;align-items:center;
+  justify-content:center;gap:7px;
+  padding:10px 18px;
+  border-radius:var(--r2);
+  font-size:14px;font-weight:500;
+  font-family:var(--font);
+  cursor:pointer;
+  border:1.5px solid transparent;
+  transition:all .2s var(--ease);
+  white-space:nowrap;
+  position:relative;overflow:hidden;
+}
+.btn i{font-size:16px;flex-shrink:0}
 .btn:active{transform:scale(.97)}
-.btn{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .5s}
+/* primary */
+.btn{
+  background:var(--accent);color:#fff;
+  border-color:var(--accent);
+}
+.btn::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
 .btn:hover::after{transform:translateX(100%)}
-.btn:hover{background:#4338CA;box-shadow:0 0 16px rgba(79,70,229,.3)}
+.btn:hover{background:#4338CA;box-shadow:0 4px 14px rgba(79,70,229,.35)}
+/* secondary */
 .btn.sec{background:var(--surface);color:var(--text2);border-color:var(--border)}
 .btn.sec::after{display:none}
-.btn.sec:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
+.btn.sec:hover{background:var(--bg);border-color:var(--border2);color:var(--text)}
+/* variants */
 .btn.green{background:var(--green-light);color:var(--green);border-color:var(--green-border)}
-.btn.green:hover{background:#DCFCE7}
+.btn.green::after{display:none}
+.btn.green:hover{background:#DCFCE7;box-shadow:0 2px 8px rgba(21,128,61,.2)}
 .btn.red{background:var(--red-light);color:var(--red);border-color:var(--red-border)}
+.btn.red::after{display:none}
 .btn.red:hover{background:#FFE4E6}
-.btn.purple{background:#F3E8FF;color:var(--accent2);border-color:#DDD6FE}
+.btn.purple{background:var(--purple-light);color:var(--purple);border-color:var(--purple-border)}
+.btn.purple::after{display:none}
 .btn.purple:hover{background:#EDE9FE}
-.btn.gold{background:var(--amber-light);color:var(--amber);border-color:#FDE68A}
+.btn.gold{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border)}
+.btn.gold::after{display:none}
 .btn.gold:hover{background:#FEF3C7}
-.btn.cyan{background:var(--cyan-light);color:var(--cyan);border-color:#A5F3FC}
+.btn.cyan{background:var(--cyan-light);color:var(--cyan);border-color:var(--cyan-border)}
+.btn.cyan::after{display:none}
 .btn.cyan:hover{background:#CFFAFE}
-/* BADGES */
-.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
-.b-ok{background:var(--green-light);color:var(--green);border:1px solid var(--green-border)}
-.b-blocked{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
-.b-tier{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border)}
-.b-gold{background:var(--amber-light);color:var(--amber);border:1px solid #FDE68A}
-.b-purple{background:#F3E8FF;color:var(--accent2);border:1px solid #DDD6FE}
-.b-cyan{background:var(--cyan-light);color:var(--cyan);border:1px solid #A5F3FC}
-.b-sanctioned{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
-/* DATA */
-.merkle-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
-.merkle-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);font-weight:600}
-.merkle-val{font-family:'Courier New',monospace;font-size:11px;color:var(--amber);word-break:break-all;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.list-wrap{border:1px solid var(--border);border-radius:var(--r2);overflow-y:auto;max-height:200px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-.list-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);gap:8px;transition:background .15s}
+
+/* ====== BADGES ====== */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:99px;
+  font-size:12px;font-weight:500;
+}
+.b-ok{background:var(--green-light);color:var(--green);border:1.5px solid var(--green-border)}
+.b-blocked{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border)}
+.b-tier{background:var(--accent-light);color:var(--accent);border:1.5px solid var(--accent-border)}
+.b-gold{background:var(--amber-light);color:var(--amber);border:1.5px solid var(--amber-border)}
+.b-purple{background:var(--purple-light);color:var(--purple);border:1.5px solid var(--purple-border)}
+.b-cyan{background:var(--cyan-light);color:var(--cyan);border:1.5px solid var(--cyan-border)}
+.b-sanctioned{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border)}
+
+/* ====== DATA ====== */
+.merkle-box{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r2);padding:11px 14px;
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:14px;gap:12px;
+}
+.merkle-label{
+  font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--text3);font-weight:600;
+}
+.merkle-val{
+  font-family:var(--mono);font-size:12px;
+  color:var(--amber);max-width:240px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.list-wrap{
+  border:1px solid var(--border);border-radius:var(--r2);
+  overflow-y:auto;max-height:220px;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.list-item{
+  display:flex;justify-content:space-between;
+  align-items:center;padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  gap:10px;transition:background .15s;
+}
 .list-item:last-child{border-bottom:none}
 .list-item:hover{background:var(--bg)}
-.item-meta{display:flex;flex-direction:column;gap:1px;min-width:0}
-.item-name{font-size:12.5px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item-sub{font-size:11px;color:var(--text3);font-family:'Courier New',monospace}
-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
-th{text-align:left;color:var(--text3);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 10px;border-bottom:1px solid var(--border);background:var(--bg)}
-td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
-td:first-child{color:var(--text)}
+.item-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.item-name{font-size:13.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-sub{font-size:11.5px;color:var(--text3);font-family:var(--mono)}
+
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+th{
+  text-align:left;color:var(--text3);
+  font-weight:600;font-size:11px;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:8px 12px;border-bottom:1.5px solid var(--border);
+  background:var(--bg);
+}
+td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text2)}
+td:first-child{color:var(--text);font-weight:500}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--bg)}
-.mono{font-family:'Courier New',monospace;font-size:11px;color:var(--text3)}
-.result-box{margin-top:10px;padding:11px 14px;border-radius:var(--r);font-size:12px;display:none;line-height:1.7}
+.mono{font-family:var(--mono);font-size:12px;color:var(--text3)}
+
+.result-box{
+  margin-top:12px;padding:13px 16px;
+  border-radius:var(--r);font-size:13.5px;
+  display:none;line-height:1.65;
+}
 .result-box.ok{background:var(--green-light);border:1px solid var(--green-border);color:var(--green)}
 .result-box.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
-.result-box.info{background:var(--cyan-light);border:1px solid #A5F3FC;color:var(--cyan)}
-.code-out{font-family:'Courier New',monospace;font-size:11px;background:var(--bg);padding:10px 12px;border-radius:var(--r2);border:1px solid var(--border);margin-top:8px;max-height:150px;overflow-y:auto;color:var(--accent);word-break:break-all;line-height:1.7;scrollbar-width:thin}
-.secret-warn{background:var(--red-light);border:1px solid var(--red-border);border-radius:var(--r2);padding:8px 12px;font-size:11.5px;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.secret-warn i{font-size:14px;flex-shrink:0}
-.tx-link{color:var(--accent);text-decoration:none;font-size:11.5px}
+.result-box.info{background:var(--cyan-light);border:1px solid var(--cyan-border);color:var(--cyan)}
+
+.code-out{
+  font-family:var(--mono);font-size:12px;
+  background:var(--bg);padding:12px 14px;
+  border-radius:var(--r2);border:1px solid var(--border);
+  margin-top:10px;max-height:150px;overflow-y:auto;
+  color:var(--accent);word-break:break-all;line-height:1.6;
+  scrollbar-width:thin;
+}
+.secret-warn{
+  background:var(--red-light);border:1px solid var(--red-border);
+  border-radius:var(--r2);padding:10px 14px;
+  font-size:13px;color:var(--red);
+  margin-bottom:12px;
+  display:flex;align-items:flex-start;gap:8px;line-height:1.5;
+}
+.secret-warn i{font-size:16px;flex-shrink:0;margin-top:1px}
+.tx-link{
+  color:var(--accent);text-decoration:none;
+  font-weight:500;
+}
 .tx-link:hover{text-decoration:underline}
-.net-notice{background:var(--cyan-light);border:1px solid #A5F3FC;border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--cyan);margin-bottom:18px;line-height:1.6;display:flex;align-items:flex-start;gap:8px}
-.net-notice i{font-size:15px;flex-shrink:0;margin-top:1px}
-.trustee-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
-.trustee-btn{padding:8px 4px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);font-size:11px;font-weight:500;cursor:pointer;text-align:center;color:var(--text3);transition:all .2s;font-family:inherit}
+.net-notice{
+  background:var(--cyan-light);border:1px solid var(--cyan-border);
+  border-radius:var(--r);padding:14px 18px;
+  font-size:13.5px;color:var(--cyan);
+  margin-bottom:20px;line-height:1.6;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.net-notice i{font-size:17px;flex-shrink:0;margin-top:1px}
+
+.trustee-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.trustee-btn{
+  padding:10px 6px;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r2);
+  font-size:12.5px;font-weight:500;
+  cursor:pointer;text-align:center;
+  color:var(--text3);transition:all .2s;
+  font-family:var(--font);
+}
 .trustee-btn:hover{background:var(--bg2);border-color:var(--border2);color:var(--text)}
-.trustee-btn.approved{background:var(--green-light);border-color:var(--green-border);color:var(--green)}
-.feat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
+.trustee-btn.approved{
+  background:var(--green-light);
+  border-color:var(--green-border);
+  color:var(--green);font-weight:600;
+}
+
+.feat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
 @media(max-width:640px){.feat-tiles{grid-template-columns:repeat(2,1fr)}}
-.feat-tile{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
-.feat-tile i{font-size:22px;color:var(--text3)}
-.feat-tile .ti-lbl{font-size:10.5px;color:var(--text3);margin-top:5px}
-.feat-tile .ti-val{font-size:14px;font-weight:700;margin-top:3px;color:var(--text)}
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 16px;border-radius:var(--r);box-shadow:var(--shadow-md);transform:translateY(120%);transition:transform .3s cubic-bezier(.22,.61,.36,1);z-index:9999;display:flex;align-items:center;gap:10px;font-size:12.5px;max-width:300px}
+.feat-tile{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px;
+  text-align:center;
+}
+.feat-tile i{font-size:24px;color:var(--accent)}
+.feat-tile .ti-lbl{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.feat-tile .ti-val{font-size:15px;font-weight:700;margin-top:3px;color:var(--text)}
+
+/* ====== TOAST ====== */
+.toast{
+  position:fixed;bottom:28px;right:28px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:14px 18px;
+  border-radius:var(--r);
+  box-shadow:var(--shadow-lg);
+  transform:translateY(130%);
+  transition:transform .3s var(--ease);
+  z-index:9999;
+  display:flex;align-items:center;gap:11px;
+  font-size:14px;max-width:320px;
+}
 .toast.show{transform:translateY(0)}
-.toast-ok i{color:var(--green)}
-.toast-err i{color:var(--red)}
-/* MODAL */
-#walletModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-#walletModal .card{width:400px;max-width:calc(100vw - 32px);box-shadow:0 24px 80px rgba(0,0,0,.15)}
-::-webkit-scrollbar{width:4px}
+.toast-ok i{color:var(--green);font-size:18px}
+.toast-err i{color:var(--red);font-size:18px}
+
+/* ====== MODAL ====== */
+#walletModal{
+  display:none;position:fixed;
+  inset:0;background:rgba(0,0,0,.35);
+  z-index:2000;
+  align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+}
+#walletModal .card{
+  width:440px;max-width:calc(100vw - 32px);
+  box-shadow:var(--shadow-lg);
+  animation:fadeUp .3s var(--ease);
+}
+
+/* ====== SCROLLBAR ====== */
+::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 </style>
 </head>
 <body>
@@ -213,7 +709,7 @@ tr:hover td{background:var(--bg)}
 
 <div class="offline-bar" id="offlineBar">
   Backend offline — running in demo mode.
-  <a href="https://huggingface.co/spaces/salmanch123/reso" target="_blank">Check HF Space &rarr;</a>
+  <a href="https://huggingface.co/spaces/salmanch123/reso" target="_blank">Check HF Space →</a>
 </div>
 
 <header id="hdr">
@@ -224,21 +720,27 @@ tr:hover td{background:var(--bg)}
       <span class="brand-div">/</span>
       <span class="brand-sub">Proof Console</span>
     </a>
+
     <div class="proof-counter">
-      <div class="pc-item"><i class="hgi-stroke hgi-lightning-01" style="font-size:13px;color:var(--accent)"></i>&nbsp;Proofs&nbsp;<span class="pc-val" id="pcProofs">0</span></div>
-      <span class="pc-sep">/</span>
-      <div class="pc-item"><i class="hgi-stroke hgi-checkmark-circle-01" style="font-size:13px;color:var(--green)"></i>&nbsp;Verified&nbsp;<span class="pc-val" id="pcVerified" style="color:var(--green)">0</span></div>
-      <span class="pc-sep">/</span>
-      <div class="pc-item"><i class="hgi-stroke hgi-cancel-01" style="font-size:13px;color:var(--red)"></i>&nbsp;Blocked&nbsp;<span class="pc-val" id="pcBlocked" style="color:var(--red)">0</span></div>
+      <div class="pc-item"><i class="hgi-stroke hgi-lightning-01" style="color:var(--accent)"></i>Proofs&nbsp;<span class="pc-val" id="pcProofs">0</span></div>
+      <span class="pc-sep">&middot;</span>
+      <div class="pc-item"><i class="hgi-stroke hgi-checkmark-circle-01" style="color:var(--green)"></i>Verified&nbsp;<span class="pc-val" id="pcVerified" style="color:var(--green)">0</span></div>
+      <span class="pc-sep">&middot;</span>
+      <div class="pc-item"><i class="hgi-stroke hgi-cancel-01" style="color:var(--red)"></i>Blocked&nbsp;<span class="pc-val" id="pcBlocked" style="color:var(--red)">0</span></div>
     </div>
+
     <div class="hdr-right">
-      <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> Landing</a>
-      <div class="status-badge"><span class="status-dot"></span><span id="statusLabel">Connected</span></div>
+      <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> Back to Landing</a>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span id="statusLabel">Connected</span>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="shell">
+
 <div class="tab-bar-wrap">
   <div class="tab-bar">
     <div class="nav-tab active" onclick="switchTab('core',this)"><i class="hgi-stroke hgi-shield-01"></i> Compliance</div>
@@ -258,101 +760,160 @@ tr:hover td{background:var(--bg)}
 <div class="tab-panel active" id="panel-core">
   <div class="proof-hero">
     <div class="ph-top">
-      <div><div class="ph-title">ZK-Proof Transaction Simulator</div><div class="ph-sub">Compile and verify zero-knowledge compliance proofs on Stellar testnet</div></div>
-      <div class="ph-badge" id="phBadge"><i class="hgi-stroke hgi-loading-03"></i><span id="phBadgeTxt">Ready</span></div>
+      <div class="ph-left">
+        <h2>ZK-Proof Transaction Simulator</h2>
+        <p>Compile and verify zero-knowledge compliance proofs on Stellar testnet. Each step produces a cryptographic proof, not a log entry.</p>
+      </div>
+      <div class="ph-badge" id="phBadge">
+        <i class="hgi-stroke hgi-loading-03 spin"></i>
+        <span id="phBadgeTxt">Ready</span>
+      </div>
     </div>
+
     <div class="circuit-wrap" id="circuitWrap">
       <div class="circuit-track"></div>
       <div class="circuit-nodes" id="circuitNodes"></div>
       <div class="circuit-scan" id="circuitScan"></div>
+      <div class="circuit-labels">
+        <span>Revocation</span>
+        <span>Sanctions</span>
+        <span>KYC</span>
+        <span>Limits</span>
+        <span>On-chain</span>
+      </div>
     </div>
-    <div class="fr" style="margin-bottom:12px">
+
+    <div class="fr" style="margin-bottom:16px">
       <div class="fg"><label>Sender Wallet</label><select id="simSender"></select></div>
-      <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500"></div>
+      <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500" placeholder="e.g. 5000"></div>
     </div>
-    <div class="btn-row" style="padding-top:0;margin-bottom:16px">
-      <button class="btn" onclick="runSimulation()" style="flex:none;padding:10px 24px"><i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify</button>
+    <div>
+      <button class="btn" onclick="runSimulation()" style="flex:none;padding:12px 28px;font-size:15px">
+        <i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify
+      </button>
     </div>
-    <div class="proof-steps">
-      <div class="pstep" id="ps-rev"><div class="ps-icon" id="si-rev"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div><span class="ps-label">Revocation check — wallet not in revocation registry</span><span class="ps-hash" id="ph-rev">sha256::0x—</span></div>
-      <div class="pstep" id="ps-san"><div class="ps-icon" id="si-san"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div><span class="ps-label">Sanctions proof — address absent from Merkle tree</span><span class="ps-hash" id="ph-san">sha256::0x—</span></div>
-      <div class="pstep" id="ps-kyc"><div class="ps-icon" id="si-kyc"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div><span class="ps-label">KYC circuit — tier &ge; required level</span><span class="ps-hash" id="ph-kyc">sha256::0x—</span></div>
-      <div class="pstep" id="ps-lim"><div class="ps-icon" id="si-lim"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div><span class="ps-label">Limits circuit — amount within daily and rolling caps</span><span class="ps-hash" id="ph-lim">sha256::0x—</span></div>
-      <div class="pstep" id="ps-proof"><div class="ps-icon" id="si-proof"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div><span class="ps-label">On-chain hook — BN254 pairing proof verification on Soroban</span><span class="ps-hash" id="ph-proof">bn254::0x—</span></div>
+
+    <div class="proof-steps" style="margin-top:18px">
+      <div class="pstep" id="ps-rev"><div class="ps-icon" id="si-rev"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Revocation check — wallet not in revocation registry</span><span class="ps-hash" id="ph-rev">sha256::0x—</span></div>
+      <div class="pstep" id="ps-san"><div class="ps-icon" id="si-san"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Sanctions proof — address absent from Merkle tree</span><span class="ps-hash" id="ph-san">sha256::0x—</span></div>
+      <div class="pstep" id="ps-kyc"><div class="ps-icon" id="si-kyc"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">KYC circuit — tier &ge; required level</span><span class="ps-hash" id="ph-kyc">sha256::0x—</span></div>
+      <div class="pstep" id="ps-lim"><div class="ps-icon" id="si-lim"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">Limits circuit — amount within daily and rolling caps</span><span class="ps-hash" id="ph-lim">sha256::0x—</span></div>
+      <div class="pstep" id="ps-proof"><div class="ps-icon" id="si-proof"><i class="hgi-stroke hgi-time-01" style="font-size:11px"></i></div><span class="ps-label">On-chain hook — BN254 pairing proof verified on Soroban</span><span class="ps-hash" id="ph-proof">bn254::0x—</span></div>
     </div>
-    <div class="proof-result" id="simResult"><div class="pr-title" id="prTitle"></div><div id="prBody"></div><div class="pr-hash" id="prHash"></div></div>
+    <div class="proof-result" id="simResult">
+      <div class="pr-title" id="prTitle"></div>
+      <div id="prBody"></div>
+      <div class="pr-hash" id="prHash"></div>
+    </div>
   </div>
+
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div><p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p><div class="fr"><div class="fg"><label>Max Transaction ($)</label><input type="number" id="maxAmount" value="10000"></div><div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div></div><div class="fr"><div class="fg"><label>Required KYC Tier</label><select id="kycTier"><option value="0">Tier 0 — None</option><option value="1" selected>Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select></div><div class="fg"><label>Sanctions Screening</label><select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select></div></div><div class="btn-row"><button class="btn" onclick="saveRules()">Publish Rules to Hook</button></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div><p class="card-desc">KYC attestations and sanctions directory.</p><div class="merkle-box"><span class="merkle-label">Sanctions Root</span><span class="merkle-val" id="merkleRoot">0x00000...0000</span></div><div class="list-wrap" id="walletList"></div><div class="btn-row"><button class="btn sec" onclick="openWalletModal()"><i class="hgi-stroke hgi-add-01"></i> Register Wallet</button></div></div>
-    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div><p class="card-desc">Aggregated verification checks. No addresses written on-chain.</p><div style="overflow-x:auto"><table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead><tbody id="auditRows"></tbody></table></div></div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div>
+      <p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p>
+      <div class="fr">
+        <div class="fg"><label>Max Transaction ($)</label><input type="number" id="maxAmount" value="10000"></div>
+        <div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Required KYC Tier</label>
+          <select id="kycTier"><option value="0">Tier 0 — None</option><option value="1" selected>Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select>
+        </div>
+        <div class="fg"><label>Sanctions Screening</label>
+          <select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn" onclick="saveRules()"><i class="hgi-stroke hgi-upload-02"></i> Publish Rules to Hook</button></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div>
+      <p class="card-desc">KYC attestations and sanctions directory used in proof circuits.</p>
+      <div class="merkle-box">
+        <span class="merkle-label">Sanctions Root</span>
+        <span class="merkle-val" id="merkleRoot">0x00000...0000</span>
+      </div>
+      <div class="list-wrap" id="walletList"></div>
+      <div class="btn-row">
+        <button class="btn sec" onclick="openWalletModal()"><i class="hgi-stroke hgi-add-01"></i> Register Wallet</button>
+      </div>
+    </div>
+
+    <div class="card full">
+      <div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div>
+      <p class="card-desc">Aggregated verification checks. No wallet addresses written on-chain — only proof hashes.</p>
+      <div style="overflow-x:auto">
+        <table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead>
+        <tbody id="auditRows"></tbody></table>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- STELLAR TAB -->
 <div class="tab-panel" id="panel-stellar">
-  <div class="net-notice"><i class="hgi-stroke hgi-information-circle"></i><span>All operations use the <strong>real Stellar Testnet</strong> via Horizon API. Transactions visible on <a class="tx-link" href="https://stellar.expert/explorer/testnet" target="_blank">stellar.expert/explorer/testnet</a>.</span></div>
+  <div class="net-notice"><i class="hgi-stroke hgi-information-circle"></i><span>All operations use the <strong>real Stellar Testnet</strong> via Horizon API. Transactions visible on <a class="tx-link" href="https://stellar.expert/explorer/testnet" target="_blank">stellar.expert/explorer/testnet →</a></span></div>
   <div class="grid">
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-key-01"></i> Create &amp; Fund Account</div><p class="card-desc">Generate a Stellar keypair funded with 10,000 XLM via Friendbot.</p><div class="fg"><label>Label (optional)</label><input type="text" id="newAccLabel" placeholder="e.g. Alice Testing"></div><div class="btn-row"><button class="btn green" onclick="stellarCreateAccount()"><i class="hgi-stroke hgi-add-circle"></i> Generate &amp; Fund</button></div><div class="result-box" id="createAccResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-search-01"></i> Account Inspector</div><p class="card-desc">Load live balances and signers from Horizon testnet.</p><div class="fg"><label>Public Key (G...)</label><input type="text" id="inspectAddr" placeholder="GABC...XYZ"></div><div class="btn-row"><button class="btn" onclick="stellarInspect()">Load Account</button></div><div class="result-box" id="inspectResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-sent"></i> Send XLM</div><p class="card-desc">Submit a real payment to Stellar testnet.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only. Never use mainnet secret keys.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="transferSecret" placeholder="SABCD..."></div><div class="fr"><div class="fg"><label>Destination (G...)</label><input type="text" id="transferDest" placeholder="GXYZ..."></div><div class="fg"><label>Amount (XLM)</label><input type="number" id="transferAmt" value="10"></div></div><div class="fg"><label>Memo</label><input type="text" id="transferMemo" placeholder="Payment memo" maxlength="28"></div><div class="btn-row"><button class="btn" onclick="stellarTransfer()">Send XLM</button></div><div class="result-box" id="transferResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-01"></i> Transaction History</div><p class="card-desc">Live payment history from Horizon.</p><div class="fg"><label>Public Key (G...)</label><input type="text" id="txHistAddr" placeholder="GABC...XYZ"></div><div class="btn-row"><button class="btn sec" onclick="stellarLoadTxHistory()">Load History</button></div><div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Asset</th><th>Tx</th></tr></thead><tbody id="txHistRows"></tbody></table></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-user-multiple-02"></i> Multisig Setup</div><p class="card-desc">Add a co-signer and configure thresholds.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Permanently changes account settings.</div><div class="fg"><label>Account Secret (S...)</label><input type="text" id="msigSecret" placeholder="SABCD..."></div><div class="fg"><label>New Co-Signer (G...)</label><input type="text" id="msigNewSigner" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Weight</label><input type="number" id="msigWeight" value="1"></div><div class="fg"><label>Med Threshold</label><input type="number" id="msigThreshold" value="2"></div></div><div class="btn-row"><button class="btn purple" onclick="stellarMultisig()">Configure</button></div><div class="result-box" id="msigResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-exchange-01"></i> Cross-Asset Path Payment</div><p class="card-desc">Send one asset, recipient gets another.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="pathSecret" placeholder="SABCD..."></div><div class="fg"><label>Destination (G...)</label><input type="text" id="pathDest" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Dest Asset</label><input type="text" id="pathDestCode" value="XLM"></div><div class="fg"><label>Dest Issuer</label><input type="text" id="pathDestIssuer" placeholder="GISSUER..."></div></div><div class="fr"><div class="fg"><label>Send Asset</label><select id="pathSendAsset"><option value="XLM">XLM (native)</option></select></div><div class="fg"><label>Dest Amount</label><input type="number" id="pathDestAmt" value="5"></div></div><div class="btn-row"><button class="btn gold" onclick="stellarPathPayment()">Execute</button></div><div class="result-box" id="pathResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-search-01"></i> Account Inspector</div><p class="card-desc">Load live balances and signers from Horizon testnet.</p><div class="fg"><label>Public Key (G...)</label><input type="text" id="inspectAddr" placeholder="GABC...XYZ"></div><div class="btn-row"><button class="btn" onclick="stellarInspect()"><i class="hgi-stroke hgi-search-01"></i> Load Account</button></div><div class="result-box" id="inspectResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-sent"></i> Send XLM</div><p class="card-desc">Submit a real payment to Stellar testnet.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only. Never use mainnet secret keys.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="transferSecret" placeholder="SABCD..."></div><div class="fr"><div class="fg"><label>Destination (G...)</label><input type="text" id="transferDest" placeholder="GXYZ..."></div><div class="fg"><label>Amount (XLM)</label><input type="number" id="transferAmt" value="10"></div></div><div class="fg"><label>Memo</label><input type="text" id="transferMemo" placeholder="Payment memo" maxlength="28"></div><div class="btn-row"><button class="btn" onclick="stellarTransfer()"><i class="hgi-stroke hgi-sent"></i> Send XLM</button></div><div class="result-box" id="transferResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-01"></i> Transaction History</div><p class="card-desc">Live payment history from Horizon for any address.</p><div class="fg"><label>Public Key (G...)</label><input type="text" id="txHistAddr" placeholder="GABC...XYZ"></div><div class="btn-row"><button class="btn sec" onclick="stellarLoadTxHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div><div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Asset</th><th>Tx</th></tr></thead><tbody id="txHistRows"></tbody></table></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-user-multiple-02"></i> Multisig Setup</div><p class="card-desc">Add a co-signer and configure thresholds.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Permanently changes account settings.</div><div class="fg"><label>Account Secret (S...)</label><input type="text" id="msigSecret" placeholder="SABCD..."></div><div class="fg"><label>New Co-Signer (G...)</label><input type="text" id="msigNewSigner" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Weight</label><input type="number" id="msigWeight" value="1"></div><div class="fg"><label>Med Threshold</label><input type="number" id="msigThreshold" value="2"></div></div><div class="btn-row"><button class="btn purple" onclick="stellarMultisig()"><i class="hgi-stroke hgi-user-multiple-02"></i> Configure</button></div><div class="result-box" id="msigResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-exchange-01"></i> Cross-Asset Path Payment</div><p class="card-desc">Send one asset, recipient gets another via DEX.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="pathSecret" placeholder="SABCD..."></div><div class="fg"><label>Destination (G...)</label><input type="text" id="pathDest" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Dest Asset</label><input type="text" id="pathDestCode" value="XLM"></div><div class="fg"><label>Dest Issuer</label><input type="text" id="pathDestIssuer" placeholder="GISSUER..."></div></div><div class="fr"><div class="fg"><label>Send Asset</label><select id="pathSendAsset"><option value="XLM">XLM (native)</option></select></div><div class="fg"><label>Dest Amount</label><input type="number" id="pathDestAmt" value="5"></div></div><div class="btn-row"><button class="btn gold" onclick="stellarPathPayment()"><i class="hgi-stroke hgi-exchange-01"></i> Execute</button></div><div class="result-box" id="pathResult"></div></div>
   </div>
 </div>
 
 <!-- ASSETS TAB -->
 <div class="tab-panel" id="panel-assets">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-coins-01"></i> Issue Custom Asset</div><p class="card-desc">Mint a new token on Stellar testnet.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Both accounts must be funded.</div><div class="fg"><label>Issuer Secret (S...)</label><input type="text" id="issuerSecret" placeholder="SABCD..."></div><div class="fg"><label>Distributor Secret (S...)</label><input type="text" id="distSecret" placeholder="SXYZ..."></div><div class="fr"><div class="fg"><label>Asset Code</label><input type="text" id="assetCode" placeholder="RESO" maxlength="12"></div><div class="fg"><label>Initial Supply</label><input type="number" id="assetSupply" value="1000000"></div></div><div class="btn-row"><button class="btn gold" onclick="stellarIssueAsset()">Issue Asset</button></div><div class="result-box" id="issueResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-link-01"></i> Add Trustline</div><p class="card-desc">Allow an account to hold a custom asset.</p><div class="fg"><label>Account Secret (S...)</label><input type="text" id="trustSecret" placeholder="SABCD..."></div><div class="fg"><label>Asset Code</label><input type="text" id="trustAssetCode" placeholder="RESO"></div><div class="fg"><label>Asset Issuer (G...)</label><input type="text" id="trustIssuer" placeholder="GISSUER..."></div><div class="btn-row"><button class="btn" onclick="stellarTrustline()">Add Trustline</button></div><div class="result-box" id="trustResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-clock"></i> Create Claimable Balance</div><p class="card-desc">Lock XLM on testnet with a time lock.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Real on-chain transaction.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="claimSrcSecret" placeholder="SABCD..."></div><div class="fg"><label>Claimant (G...)</label><input type="text" id="claimClaimant" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Amount (XLM)</label><input type="number" id="claimAmt" value="5"></div><div class="fg"><label>Timelock (sec)</label><input type="number" id="claimDelay" value="60"></div></div><div class="btn-row"><button class="btn purple" onclick="stellarCreateClaimable()">Lock Funds</button></div><div class="result-box" id="claimCreateResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-checkmark-circle-01"></i> Claim Balance</div><p class="card-desc">Claim an unlocked claimable balance.</p><div class="fg"><label>Claimant Secret (S...)</label><input type="text" id="claimSecret" placeholder="SABCD..."></div><div class="fg"><label>Balance ID</label><textarea id="claimBalanceId" placeholder="00000000..." rows="2"></textarea></div><div class="btn-row"><button class="btn green" onclick="stellarClaimBalance()">Claim Balance</button></div><div class="result-box" id="claimResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Live DEX Orderbook</div><p class="card-desc">Real-time bids/asks from Stellar testnet DEX.</p><div class="fr"><div class="fg"><label>Selling</label><select id="obSell"><option value="XLM">XLM (native)</option></select></div><div class="fg"><label>Buying Code</label><input type="text" id="obBuyCode" value="USDC"></div></div><div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="obBuyIssuer" value="GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"></div><div class="btn-row"><button class="btn sec" onclick="stellarOrderbook()">Load Orderbook</button></div><div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Side</th><th>Price</th><th>Amount</th></tr></thead><tbody id="obRows"></tbody></table></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-sale-tag-01"></i> Place DEX Offer</div><p class="card-desc">Post a real sell offer on the Stellar testnet DEX.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Requires trustline for buying asset.</div><div class="fg"><label>Account Secret (S...)</label><input type="text" id="offerSecret" placeholder="SABCD..."></div><div class="fr"><div class="fg"><label>Selling</label><select id="offerSell"><option value="XLM">XLM</option></select></div><div class="fg"><label>Buying Code</label><input type="text" id="offerBuyCode" placeholder="USDC"></div></div><div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="offerBuyIssuer" placeholder="GISSUER..."></div><div class="fr"><div class="fg"><label>Amount</label><input type="number" id="offerAmt" value="100"></div><div class="fg"><label>Price</label><input type="number" id="offerPrice" value="1" step="0.0001"></div></div><div class="btn-row"><button class="btn" onclick="stellarOffer()">Post Offer</button></div><div class="result-box" id="offerResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-coins-01"></i> Issue Custom Asset</div><p class="card-desc">Mint a new token on Stellar testnet with a trustline setup.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Both accounts must be funded.</div><div class="fg"><label>Issuer Secret (S...)</label><input type="text" id="issuerSecret" placeholder="SABCD..."></div><div class="fg"><label>Distributor Secret (S...)</label><input type="text" id="distSecret" placeholder="SXYZ..."></div><div class="fr"><div class="fg"><label>Asset Code</label><input type="text" id="assetCode" placeholder="RESO" maxlength="12"></div><div class="fg"><label>Initial Supply</label><input type="number" id="assetSupply" value="1000000"></div></div><div class="btn-row"><button class="btn gold" onclick="stellarIssueAsset()"><i class="hgi-stroke hgi-coins-01"></i> Issue Asset</button></div><div class="result-box" id="issueResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-link-01"></i> Add Trustline</div><p class="card-desc">Allow an account to hold a custom asset.</p><div class="fg"><label>Account Secret (S...)</label><input type="text" id="trustSecret" placeholder="SABCD..."></div><div class="fg"><label>Asset Code</label><input type="text" id="trustAssetCode" placeholder="RESO"></div><div class="fg"><label>Asset Issuer (G...)</label><input type="text" id="trustIssuer" placeholder="GISSUER..."></div><div class="btn-row"><button class="btn" onclick="stellarTrustline()"><i class="hgi-stroke hgi-link-01"></i> Add Trustline</button></div><div class="result-box" id="trustResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-clock"></i> Create Claimable Balance</div><p class="card-desc">Lock real XLM on testnet with a time lock.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Real on-chain transaction.</div><div class="fg"><label>Source Secret (S...)</label><input type="text" id="claimSrcSecret" placeholder="SABCD..."></div><div class="fg"><label>Claimant (G...)</label><input type="text" id="claimClaimant" placeholder="GXYZ..."></div><div class="fr"><div class="fg"><label>Amount (XLM)</label><input type="number" id="claimAmt" value="5"></div><div class="fg"><label>Timelock (sec)</label><input type="number" id="claimDelay" value="60"></div></div><div class="btn-row"><button class="btn purple" onclick="stellarCreateClaimable()"><i class="hgi-stroke hgi-lock-01"></i> Lock Funds</button></div><div class="result-box" id="claimCreateResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-checkmark-circle-01"></i> Claim Balance</div><p class="card-desc">Claim an unlocked claimable balance on testnet.</p><div class="fg"><label>Claimant Secret (S...)</label><input type="text" id="claimSecret" placeholder="SABCD..."></div><div class="fg"><label>Balance ID</label><textarea id="claimBalanceId" placeholder="00000000..." rows="2"></textarea></div><div class="btn-row"><button class="btn green" onclick="stellarClaimBalance()"><i class="hgi-stroke hgi-checkmark-circle-01"></i> Claim Balance</button></div><div class="result-box" id="claimResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Live DEX Orderbook</div><p class="card-desc">Real-time bids/asks from Stellar testnet DEX.</p><div class="fr"><div class="fg"><label>Selling</label><select id="obSell"><option value="XLM">XLM (native)</option></select></div><div class="fg"><label>Buying Code</label><input type="text" id="obBuyCode" value="USDC"></div></div><div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="obBuyIssuer" value="GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"></div><div class="btn-row"><button class="btn sec" onclick="stellarOrderbook()"><i class="hgi-stroke hgi-chart-bar-line"></i> Load Orderbook</button></div><div style="overflow-x:auto;margin-top:10px"><table><thead><tr><th>Side</th><th>Price</th><th>Amount</th></tr></thead><tbody id="obRows"></tbody></table></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-sale-tag-01"></i> Place DEX Offer</div><p class="card-desc">Post a real sell offer on the Stellar testnet DEX.</p><div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Requires trustline for buying asset.</div><div class="fg"><label>Account Secret (S...)</label><input type="text" id="offerSecret" placeholder="SABCD..."></div><div class="fr"><div class="fg"><label>Selling</label><select id="offerSell"><option value="XLM">XLM</option></select></div><div class="fg"><label>Buying Code</label><input type="text" id="offerBuyCode" placeholder="USDC"></div></div><div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="offerBuyIssuer" placeholder="GISSUER..."></div><div class="fr"><div class="fg"><label>Amount</label><input type="number" id="offerAmt" value="100"></div><div class="fg"><label>Price</label><input type="number" id="offerPrice" value="1" step="0.0001"></div></div><div class="btn-row"><button class="btn" onclick="stellarOffer()"><i class="hgi-stroke hgi-sale-tag-01"></i> Post Offer</button></div><div class="result-box" id="offerResult"></div></div>
   </div>
 </div>
 
 <!-- ESCROW TAB -->
 <div class="tab-panel" id="panel-escrow">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-safe"></i> ZK-Gated Escrow Deposit</div><p class="card-desc">Lock funds with ZK proof requirement for release.</p><div class="fg"><label>Sender</label><select id="escrowSender"></select></div><div class="fr"><div class="fg"><label>Recipient</label><select id="escrowRecipient"></select></div><div class="fg"><label>Timelock (sec)</label><input type="number" id="escrowDelay" value="30"></div></div><div class="fg"><label>Amount (USD)</label><input type="number" id="escrowAmount" value="2500"></div><div class="btn-row"><button class="btn purple" onclick="depositEscrow()">Deposit Escrow</button></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-01"></i> Active Escrows</div><p class="card-desc">Simulated locked balances awaiting ZK claim or refund.</p><div class="list-wrap" id="escrowsList" style="max-height:280px"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-safe"></i> ZK-Gated Escrow Deposit</div><p class="card-desc">Lock funds. Release requires a valid ZK proof from the recipient.</p><div class="fg"><label>Sender</label><select id="escrowSender"></select></div><div class="fr"><div class="fg"><label>Recipient</label><select id="escrowRecipient"></select></div><div class="fg"><label>Timelock (sec)</label><input type="number" id="escrowDelay" value="30"></div></div><div class="fg"><label>Amount (USD)</label><input type="number" id="escrowAmount" value="2500"></div><div class="btn-row"><button class="btn purple" onclick="depositEscrow()"><i class="hgi-stroke hgi-safe"></i> Deposit Escrow</button></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-01"></i> Active Escrows</div><p class="card-desc">Locked balances awaiting ZK claim or timelock expiry for refund.</p><div class="list-wrap" id="escrowsList" style="max-height:300px"></div></div>
   </div>
 </div>
 
 <!-- SANDBOX TAB -->
 <div class="tab-panel" id="panel-sandbox">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div><p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p><div class="fr"><div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div><div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()">Encrypt &amp; Add</button></div></div><div class="fg"><label>Queue (Ciphertexts)</label><div class="code-out" id="paillierQueue">Empty.</div></div><div class="btn-row"><button class="btn" onclick="paillierSum()">Homomorphic Sum &amp; Decrypt</button><button class="btn sec" onclick="paillierReset()">Reset</button></div><div id="paillierResult" style="margin-top:10px;font-size:12px;color:var(--amber)"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-clock-05"></i> Threshold Time-Lock Disclosure</div><p class="card-desc">3-of-5 trustee approvals + 10s time delay to reveal identity (Shamir TSS).</p><div class="fg"><label>Identity Commitment</label><input type="text" id="identityCommit" value="987654321012345"></div><div class="btn-row"><button class="btn purple" onclick="disclosureOpen()">1. Initiate (10s delay)</button></div><div id="disclosureStatus" style="font-size:11px;margin-top:8px;font-family:'Courier New',monospace;color:var(--text3)">Not opened.</div><label style="margin-top:12px;font-size:11px;color:var(--text2);display:block;font-weight:600;text-transform:uppercase;letter-spacing:.04em">2. Trustee Approvals (3/5 needed):</label><div class="trustee-grid"><div class="trustee-btn" id="tb-1" onclick="disclosureApprove(1)">Trustee 1</div><div class="trustee-btn" id="tb-2" onclick="disclosureApprove(2)">Trustee 2</div><div class="trustee-btn" id="tb-3" onclick="disclosureApprove(3)">Trustee 3</div><div class="trustee-btn" id="tb-4" onclick="disclosureApprove(4)">Trustee 4</div><div class="trustee-btn" id="tb-5" onclick="disclosureApprove(5)">Trustee 5</div></div><div class="btn-row" style="margin-top:auto"><button class="btn" onclick="disclosureDecrypt()">3. Decrypt &amp; Reveal</button></div><div id="disclosureResult" style="margin-top:10px;font-size:12.5px;font-weight:600"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-cancel-01"></i> Credential Revocation</div><p class="card-desc">Instant KYC revocation via Merkle root update.</p><div class="merkle-box"><span class="merkle-label">Revocation Root</span><span class="merkle-val" id="revRoot">loading...</span></div><div class="fr"><div class="fg"><label>Wallet to Revoke</label><select id="revokeSelect"></select></div><div class="fg"><label style="opacity:0">_</label><button class="btn red" onclick="revokeWallet()">Revoke KYC</button></div></div><div class="fg"><label>Revoked List</label><div class="code-out" id="revokedList" style="height:80px">None.</div></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div><p class="card-desc">Nova-style IVC: fold transaction proofs into a constant-size accumulator.</p><div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--accent2)">loading...</span></div><div class="fr"><div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div><div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()">Fold Step</button></div></div><div class="btn-row"><button class="btn sec" onclick="resetFolding()">Reset Accumulator</button></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div><p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p><div class="fr"><div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div><div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()" style="margin-top:17px"><i class="hgi-stroke hgi-lock-password"></i> Encrypt &amp; Add</button></div></div><div class="fg"><label>Ciphertext Queue</label><div class="code-out" id="paillierQueue">Empty.</div></div><div class="btn-row"><button class="btn" onclick="paillierSum()"><i class="hgi-stroke hgi-calculator"></i> Homomorphic Sum &amp; Decrypt</button><button class="btn sec" onclick="paillierReset()">Reset</button></div><div id="paillierResult" style="margin-top:12px;font-size:14px;font-weight:500;color:var(--amber)"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-clock-05"></i> Threshold Time-Lock Disclosure</div><p class="card-desc">3-of-5 trustee approvals + 10s time delay to reveal identity (Shamir TSS).</p><div class="fg"><label>Identity Commitment</label><input type="text" id="identityCommit" value="987654321012345"></div><div class="btn-row" style="padding-top:0;margin-bottom:14px"><button class="btn purple" onclick="disclosureOpen()"><i class="hgi-stroke hgi-lock-password"></i> 1. Initiate (10s delay)</button></div><div id="disclosureStatus" style="font-size:12.5px;font-family:var(--mono);color:var(--text3);margin-bottom:12px">Not opened.</div><p style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:8px">2. Trustee Approvals (3/5 needed):</p><div class="trustee-grid"><div class="trustee-btn" id="tb-1" onclick="disclosureApprove(1)">Trustee 1</div><div class="trustee-btn" id="tb-2" onclick="disclosureApprove(2)">Trustee 2</div><div class="trustee-btn" id="tb-3" onclick="disclosureApprove(3)">Trustee 3</div><div class="trustee-btn" id="tb-4" onclick="disclosureApprove(4)">Trustee 4</div><div class="trustee-btn" id="tb-5" onclick="disclosureApprove(5)">Trustee 5</div></div><div class="btn-row" style="margin-top:auto"><button class="btn" onclick="disclosureDecrypt()"><i class="hgi-stroke hgi-eye"></i> 3. Decrypt &amp; Reveal</button></div><div id="disclosureResult" style="margin-top:12px;font-size:14px;font-weight:600"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-cancel-01"></i> Credential Revocation</div><p class="card-desc">Instant KYC revocation via Merkle root update. Propagates in the same block.</p><div class="merkle-box"><span class="merkle-label">Revocation Root</span><span class="merkle-val" id="revRoot">loading...</span></div><div class="fr"><div class="fg"><label>Wallet to Revoke</label><select id="revokeSelect"></select></div><div class="fg"><label style="opacity:0">_</label><button class="btn red" onclick="revokeWallet()" style="margin-top:17px"><i class="hgi-stroke hgi-cancel-01"></i> Revoke KYC</button></div></div><div class="fg"><label>Revoked List</label><div class="code-out" id="revokedList" style="height:90px">None.</div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div><p class="card-desc">Nova-style IVC: fold transaction proofs into one constant-size accumulator.</p><div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--purple)">loading...</span></div><div class="fr"><div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div><div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()" style="margin-top:17px"><i class="hgi-stroke hgi-layers-01"></i> Fold Step</button></div></div><div class="btn-row"><button class="btn sec" onclick="resetFolding()"><i class="hgi-stroke hgi-refresh"></i> Reset Accumulator</button></div></div>
   </div>
 </div>
 
 <!-- zkML TAB -->
 <div class="tab-panel" id="panel-zkml">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-brain"></i> zkML Risk Score</div><p class="card-desc">ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address"></div><div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div><div class="btn-row"><button class="btn purple" onclick="runZkmlScore()">Score Wallet</button><button class="btn sec" onclick="runZkmlBatch()">Batch Score All</button></div><div class="result-box" id="zkmlResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Batch Risk Dashboard</div><p class="card-desc">ML risk scores for all registered wallets.</p><div class="list-wrap" id="zkmlBatchList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Batch Score All to load</div></div></div>
-    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div><p class="card-desc" style="margin-bottom:0">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights.</p><div class="feat-tiles"><div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div><div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div><div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div><div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div><div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val" style="color:var(--accent2)">SHA-256</div></div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-brain"></i> zkML Risk Score</div><p class="card-desc">ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address"></div><div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div><div class="btn-row"><button class="btn purple" onclick="runZkmlScore()"><i class="hgi-stroke hgi-brain"></i> Score Wallet</button><button class="btn sec" onclick="runZkmlBatch()">Batch All</button></div><div class="result-box" id="zkmlResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Batch Risk Dashboard</div><p class="card-desc">ML risk scores for all registered wallets.</p><div class="list-wrap" id="zkmlBatchList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Batch Score All to load</div></div></div>
+    <div class="card full"><div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div><p class="card-desc" style="margin-bottom:4px">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights or input data.</p><div class="feat-tiles"><div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div><div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div><div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div><div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div><div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val">SHA-256</div></div></div></div>
   </div>
 </div>
 
 <!-- SOULBOUND TAB -->
 <div class="tab-panel" id="panel-soulbound">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-medal-first-place"></i> Issue Soulbound Token</div><p class="card-desc">Non-transferable compliance credential (CST) on Stellar Testnet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to"></div><div class="fr"><div class="fg"><label>Jurisdiction</label><select id="cstJurisdiction"><option value="GLOBAL">Global</option><option value="EU">EU</option><option value="US">US</option><option value="UAE">UAE</option><option value="SG">Singapore</option></select></div><div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div></div><div class="btn-row"><button class="btn gold" onclick="issueSoulbound()">Issue CST</button><button class="btn sec" onclick="verifySoulbound()">Verify</button></div><div class="result-box" id="cstResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div><p class="card-desc">Non-transferable credentials permanently bound to wallets.</p><div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh</button></div><div class="list-wrap" id="soulboundList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Refresh to load tokens</div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-medal-first-place"></i> Issue Soulbound Token</div><p class="card-desc">Non-transferable compliance credential (CST) permanently bound to a wallet.</p><div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to"></div><div class="fr"><div class="fg"><label>Jurisdiction</label><select id="cstJurisdiction"><option value="GLOBAL">Global</option><option value="EU">EU</option><option value="US">US</option><option value="UAE">UAE</option><option value="SG">Singapore</option></select></div><div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div></div><div class="btn-row"><button class="btn gold" onclick="issueSoulbound()"><i class="hgi-stroke hgi-medal-first-place"></i> Issue CST</button><button class="btn sec" onclick="verifySoulbound()">Verify</button></div><div class="result-box" id="cstResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div><p class="card-desc">Non-transferable credentials permanently bound to wallets on Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh</button></div><div class="list-wrap" id="soulboundList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Refresh to load tokens</div></div></div>
   </div>
 </div>
 
 <!-- JURISDICTION TAB -->
 <div class="tab-panel" id="panel-jurisdiction">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-scale-01"></i> Jurisdiction Compliance Check</div><p class="card-desc">Auto-applies EU MiCA / US FinCEN / UAE VARA / SG MAS rules.</p><div class="fg"><label>Wallet Address</label><input type="text" id="jurWallet" placeholder="Wallet to check"></div><div class="fr"><div class="fg"><label>Amount ($)</label><input type="number" id="jurAmount" value="1500"></div><div class="fg"><label>Jurisdiction</label><select id="jurCode"><option value="GLOBAL">Global</option><option value="EU">EU MiCA</option><option value="US">US FinCEN</option><option value="UAE">UAE VARA</option><option value="SG">SG MAS</option></select></div></div><div class="btn-row"><button class="btn" onclick="checkJurisdiction()">Check Compliance</button></div><div class="result-box" id="jurResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-scale-01"></i> Jurisdiction Compliance Check</div><p class="card-desc">Auto-applies EU MiCA / US FinCEN / UAE VARA / SG MAS rules to any transaction.</p><div class="fg"><label>Wallet Address</label><input type="text" id="jurWallet" placeholder="Wallet to check"></div><div class="fr"><div class="fg"><label>Amount ($)</label><input type="number" id="jurAmount" value="1500"></div><div class="fg"><label>Jurisdiction</label><select id="jurCode"><option value="GLOBAL">Global</option><option value="EU">EU MiCA</option><option value="US">US FinCEN</option><option value="UAE">UAE VARA</option><option value="SG">SG MAS</option></select></div></div><div class="btn-row"><button class="btn" onclick="checkJurisdiction()"><i class="hgi-stroke hgi-scale-01"></i> Check Compliance</button></div><div class="result-box" id="jurResult"></div></div>
     <div class="card"><div class="card-title"><i class="hgi-stroke hgi-table-01"></i> Jurisdiction Rule Comparison</div><p class="card-desc">Side-by-side limits across all supported regulatory frameworks.</p><div style="overflow-x:auto"><table><thead><tr><th>Jurisdiction</th><th>Max Tx</th><th>Daily Limit</th><th>Min KYC</th><th>Travel Rule</th></tr></thead><tbody><tr><td>Global</td><td>$10,000</td><td>$25,000</td><td>Tier 1</td><td>$1,000</td></tr><tr><td>US FinCEN</td><td>$3,000</td><td>$10,000</td><td>Tier 1</td><td>$3,000</td></tr><tr><td>UAE VARA</td><td>$5,000</td><td>$20,000</td><td>Tier 1</td><td>$5,000</td></tr><tr><td>SG MAS</td><td>$2,000</td><td>$8,000</td><td>Tier 2</td><td>$1,500</td></tr><tr><td>EU MiCA</td><td>$1,000</td><td>$5,000</td><td>Tier 2</td><td>$1,000</td></tr></tbody></table></div></div>
   </div>
 </div>
@@ -360,20 +921,20 @@ tr:hover td{background:var(--bg)}
 <!-- RESERVES TAB -->
 <div class="tab-panel" id="panel-reserves">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-bank"></i> Create Reserve Snapshot</div><p class="card-desc">ZK-backed solvency proof. Proves solvency without revealing exact amounts.</p><div class="fr"><div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div><div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div></div><div class="btn-row"><button class="btn green" onclick="createSnapshot()">Attest Snapshot</button></div><div class="result-box" id="reserveResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div><p class="card-desc">On-chain ZK-attested solvency snapshots.</p><div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div><div class="list-wrap" id="reserveHistoryList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Load to view snapshots</div></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-bank"></i> Create Reserve Snapshot</div><p class="card-desc">ZK-backed solvency proof. Proves solvency without revealing exact balance amounts.</p><div class="fr"><div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div><div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div></div><div class="btn-row"><button class="btn green" onclick="createSnapshot()"><i class="hgi-stroke hgi-bank"></i> Attest Snapshot</button></div><div class="result-box" id="reserveResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div><p class="card-desc">On-chain ZK-attested solvency snapshots, anchored to Stellar.</p><div class="btn-row" style="padding-top:0;margin-bottom:12px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div><div class="list-wrap" id="reserveHistoryList"><div style="padding:20px;text-align:center;color:var(--text3);font-size:13.5px">Click Load to view snapshots</div></div></div>
   </div>
 </div>
 
 <!-- ADVANCED TAB -->
 <div class="tab-panel" id="panel-advanced">
   <div class="grid">
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-hourglass-01"></i> Deadman Switch</div><p class="card-desc">Auto-unlock funds if oracle goes silent.</p><div class="fg"><label>Wallet Address</label><input type="text" id="deadmanWallet" placeholder="Your wallet"></div><div class="fr"><div class="fg"><label>Unlock Amount ($)</label><input type="number" id="deadmanAmount" value="5000"></div><div class="fg"><label>Heartbeat Interval (sec)</label><input type="number" id="deadmanInterval" value="300"></div></div><div class="btn-row"><button class="btn red" onclick="registerDeadman()">Register</button><button class="btn sec" onclick="sendHeartbeat()">Heartbeat</button><button class="btn sec" onclick="checkDeadman()">Status</button></div><div class="result-box" id="deadmanResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-git-fork"></i> KYC Inheritance Tree</div><p class="card-desc">Link child wallets to inherit parent KYC.</p><div class="fg"><label>Parent Wallet</label><input type="text" id="kycParent" placeholder="Parent wallet address"></div><div class="fg"><label>Child Wallet</label><input type="text" id="kycChild" placeholder="Child wallet address"></div><div class="btn-row"><button class="btn purple" onclick="linkKycTree()">Link Wallets</button><button class="btn sec" onclick="resolveKycInheritance()">Resolve KYC</button></div><div class="result-box" id="kycTreeResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-radar-01"></i> Regulatory Canary</div><p class="card-desc">ML-scan all wallets. Auto-freeze high-risk ones with 48h contest window.</p><div class="btn-row"><button class="btn gold" onclick="runCanaryScan()">Scan &amp; Auto-Freeze</button><button class="btn sec" onclick="loadCanaryFreezes()">View Freezes</button></div><div class="result-box" id="canaryResult"></div><div class="list-wrap" style="margin-top:10px" id="canaryList"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-message-01"></i> Whistleblower Vault</div><p class="card-desc">ZK-identity-protected complaint submission.</p><div class="fg"><label>Complaint</label><textarea id="wbComplaint" placeholder="Describe the compliance violation"></textarea></div><div class="fr"><div class="fg"><label>Subject Wallet (optional)</label><input type="text" id="wbSubject" placeholder="Accused wallet"></div><div class="fg"><label>Severity</label><select id="wbSeverity"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select></div></div><div class="btn-row"><button class="btn purple" onclick="submitWhistleblower()">Submit Anonymously</button></div><div class="result-box" id="wbResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-clock-03"></i> Timed Compliance Proofs</div><p class="card-desc">Issue proofs that expire and must be periodically renewed.</p><div class="fg"><label>Wallet Address</label><input type="text" id="timedWallet" placeholder="Wallet address"></div><div class="fr"><div class="fg"><label>Proof Type</label><select id="timedType"><option value="KYC_VERIFIED">KYC Verified</option><option value="AML_CLEARED">AML Cleared</option><option value="SANCTIONS_FREE">Sanctions Free</option></select></div><div class="fg"><label>TTL (hours)</label><input type="number" id="timedTtl" value="24"></div></div><div class="btn-row"><button class="btn" onclick="issueTimedProof()">Issue Proof</button><button class="btn sec" onclick="verifyTimedProof()">Verify</button></div><div class="result-box" id="timedResult"></div></div>
-    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-route-01"></i> Bridge Attestation</div><p class="card-desc">Cross-protocol compliance attestation to other Stellar anchors.</p><div class="fg"><label>Wallet Address</label><input type="text" id="bridgeWallet" placeholder="Wallet address"></div><div class="fg"><label>Target Anchor</label><select id="bridgeAnchor"><option value="SDF">SDF — Stellar Development Foundation</option><option value="CIRCLE">CIRCLE — Circle USDC Anchor</option><option value="AIRTM">AIRTM — AirTM Anchor</option><option value="TEMPO">TEMPO — Tempo Anchor (EU)</option><option value="COWRIE">COWRIE — Cowrie Exchange</option></select></div><div class="btn-row"><button class="btn cyan" onclick="createBridgeAttestation()">Create Attestation</button></div><div class="result-box" id="bridgeResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-hourglass-01"></i> Deadman Switch</div><p class="card-desc">Auto-unlock funds if oracle goes silent for too long. Heartbeat-based.</p><div class="fg"><label>Wallet Address</label><input type="text" id="deadmanWallet" placeholder="Your wallet"></div><div class="fr"><div class="fg"><label>Unlock Amount ($)</label><input type="number" id="deadmanAmount" value="5000"></div><div class="fg"><label>Heartbeat Interval (sec)</label><input type="number" id="deadmanInterval" value="300"></div></div><div class="btn-row"><button class="btn red" onclick="registerDeadman()">Register</button><button class="btn sec" onclick="sendHeartbeat()">Heartbeat</button><button class="btn sec" onclick="checkDeadman()">Status</button></div><div class="result-box" id="deadmanResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-git-fork"></i> KYC Inheritance Tree</div><p class="card-desc">Link child wallets to inherit parent KYC attestation automatically.</p><div class="fg"><label>Parent Wallet</label><input type="text" id="kycParent" placeholder="Parent wallet address"></div><div class="fg"><label>Child Wallet</label><input type="text" id="kycChild" placeholder="Child wallet address"></div><div class="btn-row"><button class="btn purple" onclick="linkKycTree()"><i class="hgi-stroke hgi-git-fork"></i> Link Wallets</button><button class="btn sec" onclick="resolveKycInheritance()">Resolve KYC</button></div><div class="result-box" id="kycTreeResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-radar-01"></i> Regulatory Canary</div><p class="card-desc">ML-scan all wallets. Auto-freeze high-risk ones with 48h contest window.</p><div class="btn-row"><button class="btn gold" onclick="runCanaryScan()"><i class="hgi-stroke hgi-radar-01"></i> Scan &amp; Auto-Freeze</button><button class="btn sec" onclick="loadCanaryFreezes()">View Freezes</button></div><div class="result-box" id="canaryResult"></div><div class="list-wrap" style="margin-top:12px" id="canaryList"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-message-01"></i> Whistleblower Vault</div><p class="card-desc">ZK-identity-protected anonymous complaint submission for compliance violations.</p><div class="fg"><label>Complaint</label><textarea id="wbComplaint" placeholder="Describe the compliance violation in detail"></textarea></div><div class="fr"><div class="fg"><label>Subject Wallet (optional)</label><input type="text" id="wbSubject" placeholder="Accused wallet"></div><div class="fg"><label>Severity</label><select id="wbSeverity"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select></div></div><div class="btn-row"><button class="btn purple" onclick="submitWhistleblower()"><i class="hgi-stroke hgi-message-01"></i> Submit Anonymously</button></div><div class="result-box" id="wbResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-clock-03"></i> Timed Compliance Proofs</div><p class="card-desc">Issue proofs with expiry TTL that must be periodically renewed.</p><div class="fg"><label>Wallet Address</label><input type="text" id="timedWallet" placeholder="Wallet address"></div><div class="fr"><div class="fg"><label>Proof Type</label><select id="timedType"><option value="KYC_VERIFIED">KYC Verified</option><option value="AML_CLEARED">AML Cleared</option><option value="SANCTIONS_FREE">Sanctions Free</option></select></div><div class="fg"><label>TTL (hours)</label><input type="number" id="timedTtl" value="24"></div></div><div class="btn-row"><button class="btn" onclick="issueTimedProof()">Issue Proof</button><button class="btn sec" onclick="verifyTimedProof()">Verify</button></div><div class="result-box" id="timedResult"></div></div>
+    <div class="card"><div class="card-title"><i class="hgi-stroke hgi-route-01"></i> Bridge Attestation</div><p class="card-desc">Cross-protocol compliance attestation to other Stellar anchors.</p><div class="fg"><label>Wallet Address</label><input type="text" id="bridgeWallet" placeholder="Wallet address"></div><div class="fg"><label>Target Anchor</label><select id="bridgeAnchor"><option value="SDF">SDF — Stellar Development Foundation</option><option value="CIRCLE">CIRCLE — Circle USDC Anchor</option><option value="AIRTM">AIRTM — AirTM Anchor</option><option value="TEMPO">TEMPO — Tempo Anchor (EU)</option><option value="COWRIE">COWRIE — Cowrie Exchange</option></select></div><div class="btn-row"><button class="btn cyan" onclick="createBridgeAttestation()"><i class="hgi-stroke hgi-route-01"></i> Create Attestation</button></div><div class="result-box" id="bridgeResult"></div></div>
   </div>
 </div>
 
@@ -383,11 +944,17 @@ tr:hover td{background:var(--bg)}
 <div id="walletModal">
   <div class="card">
     <div class="card-title"><i class="hgi-stroke hgi-user-add-01"></i> Register Wallet</div>
-    <p class="card-desc">Add a user to test compliance rules.</p>
+    <p class="card-desc">Add a wallet to the compliance registry for proof testing.</p>
     <div class="fg"><label>Name</label><input type="text" id="nwName" placeholder="Alice"></div>
     <div class="fg"><label>Stellar Address</label><input type="text" id="nwAddr" placeholder="GDAV..."></div>
-    <div class="fr"><div class="fg"><label>KYC Level</label><select id="nwKyc"><option value="0">Tier 0</option><option value="1">Tier 1</option><option value="2">Tier 2</option></select></div><div class="fg"><label>Sanctioned</label><select id="nwSanc"><option value="false">Clear</option><option value="true">Sanctioned</option></select></div></div>
-    <div class="btn-row"><button class="btn sec" onclick="closeWalletModal()">Cancel</button><button class="btn" onclick="submitWallet()">Add Wallet</button></div>
+    <div class="fr">
+      <div class="fg"><label>KYC Level</label><select id="nwKyc"><option value="0">Tier 0 — None</option><option value="1">Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select></div>
+      <div class="fg"><label>Sanctioned</label><select id="nwSanc"><option value="false">Clear</option><option value="true">Sanctioned</option></select></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn sec" onclick="closeWalletModal()">Cancel</button>
+      <button class="btn" onclick="submitWallet()"><i class="hgi-stroke hgi-user-add-01"></i> Add Wallet</button>
+    </div>
   </div>
 </div>
 
@@ -398,7 +965,7 @@ tr:hover td{background:var(--bg)}
 </div>
 
 <script>
-// Light-mode background: animated indigo dot grid + soft particles
+// Animated light-mode background: indigo particle network
 (function(){
   const c=document.getElementById('bgCanvas');
   if(!c)return;
@@ -406,21 +973,49 @@ tr:hover td{background:var(--bg)}
   let W,H;
   const pts=[];
   function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  for(let i=0;i<40;i++)pts.push({x:Math.random()*1600,y:Math.random()*900,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2});
+  resize();
+  window.addEventListener('resize',resize);
+  for(let i=0;i<50;i++){
+    pts.push({
+      x:Math.random()*2000,y:Math.random()*1200,
+      vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25
+    });
+  }
   let t=0;
   function frame(){
-    t++;ctx.clearRect(0,0,W,H);
-    // dot grid
-    for(let x=0;x<W;x+=56)for(let y=0;y<H;y+=56){
-      const a=.06+.03*Math.sin(t*.008+x*.002+y*.002);
-      ctx.fillStyle=`rgba(79,70,229,${a})`;
-      ctx.beginPath();ctx.arc(x,y,1.2,0,Math.PI*2);ctx.fill();
+    t++;
+    ctx.clearRect(0,0,W,H);
+    // pulsing dot grid
+    for(let x=0;x<W;x+=60){
+      for(let y=0;y<H;y+=60){
+        const a=.05+.025*Math.sin(t*.006+x*.0015+y*.0015);
+        ctx.fillStyle=`rgba(79,70,229,${a})`;
+        ctx.beginPath();ctx.arc(x,y,1.5,0,Math.PI*2);ctx.fill();
+      }
     }
-    // moving particles
-    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.fillStyle='rgba(79,70,229,.12)';ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill();});
-    // connections
-    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.strokeStyle=`rgba(79,70,229,${.06*(1-d/130)})`;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}
+    // move particles
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.fillStyle='rgba(79,70,229,.1)';
+      ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();
+    });
+    // connect close particles
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<140){
+          ctx.strokeStyle=`rgba(79,70,229,${.055*(1-d/140)})`;
+          ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
     requestAnimationFrame(frame);
   }
   frame();
