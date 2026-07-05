@@ -108,3 +108,51 @@ window.addEventListener('mousemove', (e) => {
   spotlight.style.top = e.clientY + 'px';
 }, { passive: true });
 window.addEventListener('mouseleave', () => { spotlight.style.opacity = '0'; });
+
+// magnetic buttons + 3D tilt cards (desktop pointer only, respects reduced motion)
+(function () {
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!canHover || reduced) return;
+
+  document.querySelectorAll('.btn-lg').forEach((btn) => {
+    let raf = null;
+    let lastEvent = null;
+    const apply = () => {
+      if (!lastEvent) return;
+      const r = btn.getBoundingClientRect();
+      const x = lastEvent.clientX - (r.left + r.width / 2);
+      const y = lastEvent.clientY - (r.top + r.height / 2);
+      btn.style.transform = `translate(${(x * 0.18).toFixed(2)}px, ${(y * 0.35).toFixed(2)}px)`;
+      raf = null;
+    };
+    btn.addEventListener('pointermove', (e) => {
+      lastEvent = e;
+      if (raf === null) raf = requestAnimationFrame(apply);
+    });
+    btn.addEventListener('pointerleave', () => { btn.style.transform = ''; });
+  });
+
+  const tiltEls = document.querySelectorAll('.card, .feat, .step, .uc, .integ, .quote, .gstat');
+  tiltEls.forEach((el) => {
+    let raf = null;
+    let lastEvent = null;
+    const apply = () => {
+      if (!lastEvent) return;
+      const r = el.getBoundingClientRect();
+      const px = (lastEvent.clientX - r.left) / r.width - 0.5;
+      const py = (lastEvent.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(700px) rotateX(${(-py * 7).toFixed(2)}deg) rotateY(${(px * 9).toFixed(2)}deg) translateY(-4px)`;
+      raf = null;
+    };
+    el.addEventListener('pointerenter', () => { el.style.willChange = 'transform'; });
+    el.addEventListener('pointermove', (e) => {
+      lastEvent = e;
+      if (raf === null) raf = requestAnimationFrame(apply);
+    });
+    el.addEventListener('pointerleave', () => {
+      el.style.transform = '';
+      el.style.willChange = 'auto';
+    });
+  });
+})();
