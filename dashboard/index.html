@@ -1,162 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Reso — Compliance Console</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/index.css" />
-<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
-<link rel="shortcut icon" href="logo.png" type="image/png">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reso — Proof Console</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/index.css"/>
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
 <style>
+/* ====================================================
+   RESO PROOF CONSOLE — Succinct-inspired ZK dashboard
+   ==================================================== */
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px;scroll-behavior:smooth}
 body{
-  background:#F4F4F5;
-  color:#09090B;
+  background:#07070C;
+  color:#F0F0F6;
   font-family:'Uncut Sans',system-ui,sans-serif;
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ─ CANVAS BACKGROUND ─ */
+#bgCanvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;pointer-events:none;
+  opacity:.45;
 }
 
 /* ─ VARS ─ */
 :root{
-  --bg:#F4F4F5;
-  --surface:#FFFFFF;
-  --border:#E4E4E7;
-  --border2:#D4D4D8;
-  --text:#09090B;
-  --text2:#52525B;
-  --text3:#A1A1AA;
-  --accent:#4F46E5;
-  --accent-light:#EEF2FF;
-  --accent-border:#C7D2FE;
-  --green:#16A34A;
-  --green-light:#F0FDF4;
-  --green-border:#BBF7D0;
-  --red:#DC2626;
-  --red-light:#FEF2F2;
-  --red-border:#FECACA;
-  --amber:#B45309;
-  --amber-light:#FFFBEB;
-  --amber-border:#FDE68A;
-  --cyan:#0369A1;
-  --cyan-light:#F0F9FF;
-  --cyan-border:#BAE6FD;
-  --violet:#7C3AED;
-  --violet-light:#F5F3FF;
-  --violet-border:#DDD6FE;
-  --r:8px;
-  --r2:6px;
+  --bg:#07070C;
+  --bg2:#0E0E18;
+  --glass:rgba(255,255,255,.04);
+  --glass2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.09);
+  --border2:rgba(255,255,255,.16);
+  --text:#F0F0F6;
+  --text2:#94949E;
+  --text3:#56565E;
+  --accent:#6366F1;
+  --accent2:#8B5CF6;
+  --accent-glow:rgba(99,102,241,.35);
+  --green:#22C55E;
+  --green-glow:rgba(34,197,94,.3);
+  --red:#EF4444;
+  --amber:#F59E0B;
+  --cyan:#06B6D4;
+  --r:10px;
+  --r2:7px;
 }
 
-/* ─ OFFLINE BAR ─ */
-.offline-bar{
-  display:none;
-  background:var(--red-light);
-  border-bottom:1px solid var(--red-border);
-  padding:9px 20px;
-  font-size:12.5px;
-  color:var(--red);
-  text-align:center;
+/* ─ LAYOUT ─ */
+.shell{
+  position:relative;z-index:1;
+  max-width:1440px;margin:0 auto;
+  padding:0 20px 80px;
 }
-.offline-bar a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
 
 /* ─ HEADER ─ */
 #hdr{
   position:sticky;top:0;z-index:500;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  height:52px;
-  display:flex;
-  align-items:center;
+  padding:12px 0;
 }
 .hdr-inner{
   max-width:1440px;margin:0 auto;padding:0 20px;
-  width:100%;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:rgba(7,7,12,.8);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:14px;
+  display:flex;align-items:center;
+  justify-content:space-between;gap:16px;
+  padding:0 18px;
+  height:52px;
 }
 .brand{
-  display:flex;align-items:center;gap:8px;
+  display:flex;align-items:center;gap:9px;
   text-decoration:none;color:var(--text);
 }
 .brand-mark{
-  width:26px;height:26px;border-radius:6px;
-  background:var(--accent);
+  width:26px;height:26px;border-radius:7px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
   display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:13px;
+  box-shadow:0 0 16px var(--accent-glow);
 }
 .brand-mark i{font-size:13px}
-.brand-name{font-size:14px;font-weight:600;letter-spacing:-.01em}
-.brand-sep{color:var(--border2);font-size:16px;margin:0 2px}
-.brand-sub{font-size:12.5px;color:var(--text3)}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.02em}
+.brand-div{color:var(--border2);margin:0 2px}
+.brand-sub{font-size:12px;color:var(--text3)}
+
+/* live proof counter */
+.proof-counter{
+  display:flex;align-items:center;gap:12px;
+  font-family:'Courier New',monospace;
+  font-size:11.5px;
+}
+.pc-item{
+  display:flex;align-items:center;gap:6px;
+  color:var(--text3);
+}
+.pc-val{
+  color:var(--accent);
+  font-weight:600;
+  transition:color .3s;
+}
+.pc-val.flash{color:#fff}
+.pc-sep{color:var(--border2)}
+
 .hdr-right{display:flex;align-items:center;gap:8px}
 .status-badge{
   display:flex;align-items:center;gap:5px;
-  padding:4px 10px;
-  border-radius:99px;
-  border:1px solid var(--green-border);
-  background:var(--green-light);
+  padding:4px 10px;border-radius:99px;
+  border:1px solid rgba(34,197,94,.3);
+  background:rgba(34,197,94,.08);
   font-size:11.5px;font-weight:500;color:var(--green);
 }
 .status-dot{
   width:6px;height:6px;border-radius:50%;
   background:var(--green);
-  animation:pulse 2s infinite;
+  box-shadow:0 0 8px var(--green-glow);
+  animation:glow-pulse 2s infinite;
 }
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(22,163,74,.4)}
-  70%{box-shadow:0 0 0 6px rgba(22,163,74,0)}
-  100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}
+@keyframes glow-pulse{
+  0%,100%{box-shadow:0 0 4px var(--green-glow)}
+  50%{box-shadow:0 0 14px var(--green-glow),0 0 4px #fff}
 }
 .hdr-btn{
   display:inline-flex;align-items:center;gap:5px;
-  padding:5px 10px;
-  border-radius:var(--r2);
-  font-size:12.5px;color:var(--text2);
+  padding:5px 10px;border-radius:var(--r2);
+  font-size:12px;color:var(--text2);
   text-decoration:none;
   border:1px solid var(--border);
-  background:var(--surface);
-  cursor:pointer;
-  transition:background .15s,border-color .15s;
+  background:var(--glass);
+  cursor:pointer;transition:all .2s;
   font-family:inherit;
 }
-.hdr-btn:hover{background:var(--bg);border-color:var(--border2)}
-.hdr-btn i{font-size:14px}
+.hdr-btn:hover{background:var(--glass2);border-color:var(--border2);color:var(--text)}
+.hdr-btn i{font-size:13px}
 
-/* ─ LAYOUT ─ */
-.shell{max-width:1440px;margin:0 auto;padding:0 20px 60px}
+/* ─ OFFLINE BAR ─ */
+.offline-bar{
+  display:none;
+  background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.25);
+  margin:8px 20px;
+  border-radius:var(--r);
+  padding:8px 16px;
+  font-size:12px;color:var(--red);
+  text-align:center;position:relative;z-index:1;
+}
+.offline-bar a{color:var(--accent);text-decoration:underline}
 
 /* ─ TAB BAR ─ */
 .tab-bar-wrap{
-  position:sticky;top:52px;z-index:400;
-  background:var(--surface);
+  position:sticky;top:76px;z-index:400;
+  background:rgba(7,7,12,.9);
+  backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
   margin:0 -20px;padding:0 20px;
 }
 .tab-bar{
   display:flex;gap:0;
   overflow-x:auto;scrollbar-width:none;
+  position:relative;
 }
 .tab-bar::-webkit-scrollbar{display:none}
 .nav-tab{
   display:inline-flex;align-items:center;gap:6px;
-  padding:11px 14px;
+  padding:12px 14px;
   font-size:12.5px;font-weight:500;
   color:var(--text3);
   cursor:pointer;
-  border-bottom:2px solid transparent;
   white-space:nowrap;
-  transition:color .15s,border-color .15s;
+  transition:color .2s;
   user-select:none;
   font-family:inherit;
+  position:relative;
+  border-bottom:2px solid transparent;
 }
-.nav-tab i{font-size:15px}
+.nav-tab i{font-size:14px}
 .nav-tab:hover{color:var(--text2)}
-.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.nav-tab.active{
+  color:#fff;
+  border-bottom-color:var(--accent);
+}
+.nav-tab.active::after{
+  content:'';
+  position:absolute;bottom:-2px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:2px;
+  box-shadow:0 0 8px var(--accent-glow);
+}
 
 /* ─ PANELS ─ */
-.tab-panel{display:none;padding-top:24px}
+.tab-panel{display:none;padding-top:24px;animation:fadeUp .35s ease}
 .tab-panel.active{display:block}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
 
 /* ─ GRID ─ */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -165,17 +210,29 @@ body{
 
 /* ─ CARDS ─ */
 .card{
-  background:var(--surface);
+  background:var(--glass);
   border:1px solid var(--border);
   border-radius:var(--r);
   padding:20px;
   display:flex;flex-direction:column;
+  transition:border-color .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover::before{opacity:1}
+.card:hover{
+  border-color:rgba(99,102,241,.25);
+  box-shadow:0 0 24px rgba(99,102,241,.06),0 8px 32px rgba(0,0,0,.3);
 }
 .card-title{
   display:flex;align-items:center;gap:8px;
   font-size:13px;font-weight:600;
-  color:var(--text);
-  margin-bottom:4px;
+  color:var(--text);margin-bottom:4px;
 }
 .card-title i{font-size:16px;color:var(--text3)}
 .card-desc{
@@ -183,94 +240,269 @@ body{
   margin-bottom:16px;line-height:1.5;
 }
 
-/* ─ DIVIDER ─ */
-.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
+/* ─ PROOF HERO (compliance tab) ─ */
+.proof-hero{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:28px;
+  margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.proof-hero::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(99,102,241,.08),transparent 70%);
+  pointer-events:none;
+}
+.ph-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:20px;position:relative;z-index:1;
+}
+.ph-title{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.ph-sub{font-size:12.5px;color:var(--text2)}
+.ph-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:99px;
+  border:1px solid rgba(99,102,241,.35);
+  background:rgba(99,102,241,.1);
+  font-size:11.5px;font-weight:600;color:var(--accent);
+}
+.ph-badge i{font-size:14px;animation:spin .8s linear infinite;display:none}
+.ph-badge.running i{display:inline-block}
+.ph-badge.running{border-color:rgba(99,102,241,.5);background:rgba(99,102,241,.15)}
+.ph-badge.done{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.1);color:var(--green)}
+
+/* circuit diagram */
+.circuit-wrap{
+  position:relative;height:56px;margin:0 0 20px;
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  background:rgba(0,0,0,.3);
+  overflow:hidden;
+}
+.circuit-track{
+  position:absolute;top:50%;left:0;right:0;
+  height:1px;background:rgba(99,102,241,.2);
+  transform:translateY(-50%);
+}
+.circuit-nodes{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+}
+.cn{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--border);
+  border:1px solid var(--text3);
+  transition:all .4s;
+  position:relative;
+}
+.cn.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  box-shadow:0 0 12px var(--accent-glow);
+}
+.cn.done{
+  background:var(--green);
+  border-color:var(--green);
+  box-shadow:0 0 10px var(--green-glow);
+}
+.cn.fail{
+  background:var(--red);
+  border-color:var(--red);
+  box-shadow:0 0 10px rgba(239,68,68,.4);
+}
+.circuit-scan{
+  position:absolute;top:0;bottom:0;
+  width:2px;
+  background:linear-gradient(to bottom,transparent,var(--accent),transparent);
+  box-shadow:0 0 12px var(--accent-glow),0 0 4px var(--accent);
+  display:none;
+  transition:left 0.6s var(--ease);
+}
+.circuit-wrap.running .circuit-scan{display:block}
+@keyframes scan-move{
+  from{left:0}
+  to{left:calc(100% - 2px)}
+}
+
+/* proof steps */
+.proof-steps{
+  display:flex;flex-direction:column;gap:6px;
+  position:relative;z-index:1;
+}
+.pstep{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  background:rgba(0,0,0,.2);
+  font-size:12.5px;color:var(--text2);
+  transition:all .3s;
+}
+.pstep.active{
+  border-color:rgba(99,102,241,.3);
+  background:rgba(99,102,241,.05);
+  color:var(--text);
+}
+.pstep.done{
+  border-color:rgba(34,197,94,.2);
+  background:rgba(34,197,94,.04);
+  color:var(--green);
+}
+.pstep.fail{
+  border-color:rgba(239,68,68,.3);
+  background:rgba(239,68,68,.05);
+  color:var(--red);
+}
+.ps-icon{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;flex-shrink:0;opacity:.6;
+  transition:all .3s;
+}
+.pstep.active .ps-icon{opacity:1;border-color:var(--accent);color:var(--accent);animation:spin .8s linear infinite}
+.pstep.done .ps-icon{opacity:1;border-color:var(--green);color:var(--green);background:rgba(34,197,94,.15)}
+.pstep.fail .ps-icon{opacity:1;border-color:var(--red);color:var(--red)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ps-label{flex:1}
+.ps-hash{
+  font-family:'Courier New',monospace;font-size:10.5px;
+  color:var(--text3);opacity:0;transition:opacity .5s;
+}
+.pstep.done .ps-hash{opacity:1}
+
+/* proof result */
+.proof-result{
+  margin-top:14px;padding:14px 16px;
+  border-radius:var(--r);
+  font-size:12.5px;display:none;
+  line-height:1.7;
+  position:relative;z-index:1;
+}
+.proof-result.ok{
+  background:rgba(34,197,94,.07);
+  border:1px solid rgba(34,197,94,.2);
+  color:var(--green);
+}
+.proof-result.fail{
+  background:rgba(239,68,68,.07);
+  border:1px solid rgba(239,68,68,.2);
+  color:var(--red);
+}
+.pr-title{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.pr-hash{
+  font-family:'Courier New',monospace;font-size:11px;
+  color:var(--text2);margin-top:6px;word-break:break-all;
+  overflow:hidden;
+}
+.pr-hash span{display:inline-block}
+
+/* typing animation */
+@keyframes cursor-blink{
+  0%,100%{opacity:1}50%{opacity:0}
+}
+.cursor::after{content:'_';animation:cursor-blink .7s infinite;color:var(--accent)}
 
 /* ─ FORM ─ */
 .fg{margin-bottom:12px}
 .fg label{
-  display:block;
-  font-size:11.5px;font-weight:500;
-  color:var(--text2);
-  margin-bottom:4px;
+  display:block;font-size:11.5px;font-weight:500;
+  color:var(--text3);margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.04em;
 }
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.fr{grid-template-columns:1fr}}
+
 input[type=text],input[type=number],select,textarea{
   width:100%;
-  background:var(--bg);
+  background:rgba(0,0,0,.4);
   border:1px solid var(--border);
   border-radius:var(--r2);
   padding:8px 10px;
   font-size:12.5px;
   color:var(--text);
   font-family:inherit;
-  transition:border-color .15s,box-shadow .15s;
+  transition:border-color .2s,box-shadow .2s;
   appearance:none;
 }
 textarea{resize:vertical;min-height:60px}
 input:focus,select:focus,textarea:focus{
   outline:none;
   border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(79,70,229,.1);
-  background:var(--surface);
+  box-shadow:0 0 0 3px rgba(99,102,241,.15);
+  background:rgba(0,0,0,.5);
 }
 select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2356565E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat:no-repeat;
   background-position:right 9px center;
   padding-right:28px;
   cursor:pointer;
 }
+input::placeholder,textarea::placeholder{color:var(--text3)}
 
 /* ─ BUTTONS ─ */
 .btn-row{display:flex;gap:6px;margin-top:auto;padding-top:12px}
 .btn{
   flex:1;
-  display:inline-flex;align-items:center;justify-content:center;gap:5px;
-  padding:8px 14px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:9px 14px;
   border-radius:var(--r2);
   font-size:12.5px;font-weight:500;
   cursor:pointer;
   border:1px solid transparent;
-  transition:all .15s;
+  transition:all .2s;
   font-family:inherit;
+  position:relative;overflow:hidden;
 }
 .btn i{font-size:14px}
-.btn:active{transform:scale(.98)}
+.btn:active{transform:scale(.97)}
 .btn{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn:hover{background:#4338CA;border-color:#4338CA}
-.btn.sec{background:var(--surface);color:var(--text2);border-color:var(--border)}
-.btn.sec:hover{background:var(--bg);border-color:var(--border2);color:var(--text)}
-.btn.green{background:var(--green);color:#fff;border-color:var(--green)}
-.btn.green:hover{background:#15803D}
-.btn.red{background:var(--red);color:#fff;border-color:var(--red)}
-.btn.red:hover{background:#B91C1C}
-.btn.purple{background:var(--violet);color:#fff;border-color:var(--violet)}
-.btn.purple:hover{background:#6D28D9}
-.btn.gold{background:#D97706;color:#fff;border-color:#D97706}
-.btn.gold:hover{background:#B45309}
-.btn.cyan{background:#0284C7;color:#fff;border-color:#0284C7}
-.btn.cyan:hover{background:#0369A1}
+.btn::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.1),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.btn:hover::after{transform:translateX(100%)}
+.btn:hover{background:#5558E8;box-shadow:0 0 20px rgba(99,102,241,.4)}
+.btn.sec{
+  background:var(--glass);color:var(--text2);border-color:var(--border);
+}
+.btn.sec::after{display:none}
+.btn.sec:hover{background:var(--glass2);border-color:var(--border2);color:var(--text)}
+.btn.green{background:rgba(34,197,94,.15);color:var(--green);border-color:rgba(34,197,94,.3)}
+.btn.green:hover{background:rgba(34,197,94,.25);box-shadow:0 0 16px rgba(34,197,94,.2)}
+.btn.red{background:rgba(239,68,68,.15);color:var(--red);border-color:rgba(239,68,68,.3)}
+.btn.red:hover{background:rgba(239,68,68,.25);box-shadow:0 0 16px rgba(239,68,68,.2)}
+.btn.purple{background:rgba(139,92,246,.15);color:var(--accent2);border-color:rgba(139,92,246,.3)}
+.btn.purple:hover{background:rgba(139,92,246,.25);box-shadow:0 0 16px rgba(139,92,246,.2)}
+.btn.gold{background:rgba(245,158,11,.15);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.btn.gold:hover{background:rgba(245,158,11,.25);box-shadow:0 0 16px rgba(245,158,11,.2)}
+.btn.cyan{background:rgba(6,182,212,.15);color:var(--cyan);border-color:rgba(6,182,212,.3)}
+.btn.cyan:hover{background:rgba(6,182,212,.25);box-shadow:0 0 16px rgba(6,182,212,.2)}
 
 /* ─ BADGES ─ */
 .badge{
   display:inline-flex;align-items:center;gap:3px;
-  padding:2px 7px;
-  border-radius:99px;
+  padding:2px 8px;border-radius:99px;
   font-size:11px;font-weight:500;
 }
-.b-ok{background:var(--green-light);color:var(--green);border:1px solid var(--green-border)}
-.b-blocked{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
-.b-tier{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border)}
-.b-gold{background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)}
-.b-purple{background:var(--violet-light);color:var(--violet);border:1px solid var(--violet-border)}
-.b-cyan{background:var(--cyan-light);color:var(--cyan);border:1px solid var(--cyan-border)}
-.b-sanctioned{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
+.b-ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.b-blocked{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.b-tier{background:rgba(99,102,241,.1);color:var(--accent);border:1px solid rgba(99,102,241,.25)}
+.b-gold{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.25)}
+.b-purple{background:rgba(139,92,246,.1);color:var(--accent2);border:1px solid rgba(139,92,246,.25)}
+.b-cyan{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.25)}
+.b-sanctioned{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25)}
 
 /* ─ DATA DISPLAYS ─ */
 .merkle-box{
-  background:var(--bg);
+  background:rgba(0,0,0,.3);
   border:1px solid var(--border);
   border-radius:var(--r2);
   padding:10px 12px;
@@ -280,94 +512,66 @@ select{
 .merkle-label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);font-weight:600}
 .merkle-val{
   font-family:'Courier New',monospace;
-  font-size:11px;color:#B45309;
-  background:var(--amber-light);
-  padding:2px 8px;border-radius:4px;
-  border:1px solid var(--amber-border);
+  font-size:11px;color:var(--amber);
   word-break:break-all;
-  max-width:220px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .list-wrap{
   border:1px solid var(--border);
   border-radius:var(--r2);
   overflow-y:auto;
-  max-height:220px;
+  max-height:200px;
   scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
 }
 .list-item{
   display:flex;justify-content:space-between;align-items:center;
   padding:9px 12px;
   border-bottom:1px solid var(--border);
   gap:8px;
+  transition:background .15s;
 }
 .list-item:last-child{border-bottom:none}
+.list-item:hover{background:var(--glass)}
 .item-meta{display:flex;flex-direction:column;gap:1px;min-width:0}
 .item-name{font-size:12.5px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item-sub{font-size:11px;color:var(--text3);font-family:'Courier New',monospace}
 
-/* ─ PIPELINE ─ */
-.pipeline{
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:var(--r2);
-  padding:14px;margin-top:12px;display:none;
-}
-.p-step{display:flex;align-items:center;gap:9px;margin-bottom:8px;font-size:12px;color:var(--text2)}
-.p-step:last-child{margin-bottom:0}
-.step-icon{
-  width:18px;height:18px;border-radius:50%;
-  border:1.5px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:700;
-  transition:all .25s;flex-shrink:0;
-  color:var(--text3);
-}
-.step-icon.pend{border-color:var(--accent);border-top-color:transparent;animation:spin 1s linear infinite}
-.step-icon.ok{background:var(--green);border-color:var(--green);color:#fff}
-.step-icon.fail{background:var(--red);border-color:var(--red);color:#fff}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sim-result{
-  margin-top:12px;padding:11px 12px;
-  border-radius:var(--r2);font-size:12.5px;display:none;line-height:1.6;
-}
-.sim-result.ok{background:var(--green-light);border:1px solid var(--green-border);color:#15803D}
-.sim-result.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
-
-/* ─ TABLES ─ */
+/* ─ AUDIT TABLE ─ */
 table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
 th{
   text-align:left;color:var(--text3);
   font-weight:600;font-size:10.5px;
-  text-transform:uppercase;letter-spacing:.04em;
+  text-transform:uppercase;letter-spacing:.05em;
   padding:7px 10px;
   border-bottom:1px solid var(--border);
 }
 td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
 td:first-child{color:var(--text)}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--bg)}
+tr:hover td{background:var(--glass)}
 .mono{font-family:'Courier New',monospace;font-size:11px;color:var(--text3)}
 
 /* ─ RESULT BOXES ─ */
 .result-box{
-  margin-top:10px;padding:11px 12px;
-  border-radius:var(--r2);
+  margin-top:10px;padding:11px 14px;
+  border-radius:var(--r);
   font-size:12px;display:none;line-height:1.7;
 }
-.result-box.ok{background:var(--green-light);border:1px solid var(--green-border);color:#15803D}
-.result-box.fail{background:var(--red-light);border:1px solid var(--red-border);color:var(--red)}
-.result-box.info{background:var(--cyan-light);border:1px solid var(--cyan-border);color:var(--cyan)}
+.result-box.ok{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);color:var(--green)}
+.result-box.fail{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);color:var(--red)}
+.result-box.info{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.2);color:var(--cyan)}
 .code-out{
   font-family:'Courier New',monospace;font-size:11px;
-  background:var(--bg);padding:9px 10px;
+  background:rgba(0,0,0,.4);padding:10px 12px;
   border-radius:var(--r2);border:1px solid var(--border);
   margin-top:8px;max-height:150px;overflow-y:auto;
-  color:var(--accent);word-break:break-all;line-height:1.6;
+  color:var(--accent);word-break:break-all;line-height:1.7;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
 }
 .secret-warn{
-  background:var(--red-light);border:1px solid var(--red-border);
-  border-radius:var(--r2);padding:8px 10px;
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
+  border-radius:var(--r2);padding:8px 12px;
   font-size:11.5px;color:var(--red);margin-bottom:10px;
   display:flex;align-items:center;gap:6px;
 }
@@ -377,8 +581,8 @@ tr:hover td{background:var(--bg)}
 
 /* ─ NET NOTICE ─ */
 .net-notice{
-  background:var(--cyan-light);border:1px solid var(--cyan-border);
-  border-radius:var(--r2);padding:10px 12px;
+  background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.2);
+  border-radius:var(--r);padding:12px 14px;
   font-size:12px;color:var(--cyan);
   margin-bottom:18px;line-height:1.6;
   display:flex;align-items:flex-start;gap:8px;
@@ -388,64 +592,78 @@ tr:hover td{background:var(--bg)}
 /* ─ TRUSTEE ─ */
 .trustee-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}
 .trustee-btn{
-  padding:7px 4px;background:var(--bg);
-  border:1px solid var(--border);border-radius:var(--r2);
+  padding:8px 4px;
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
   font-size:11px;font-weight:500;cursor:pointer;
-  text-align:center;color:var(--text2);
-  transition:all .15s;font-family:inherit;
+  text-align:center;color:var(--text3);
+  transition:all .2s;font-family:inherit;
 }
-.trustee-btn:hover{background:var(--surface);border-color:var(--border2)}
-.trustee-btn.approved{background:var(--green-light);border-color:var(--green-border);color:var(--green)}
+.trustee-btn:hover{background:var(--glass);border-color:var(--border2);color:var(--text)}
+.trustee-btn.approved{
+  background:rgba(34,197,94,.1);
+  border-color:rgba(34,197,94,.3);color:var(--green);
+  box-shadow:0 0 12px rgba(34,197,94,.15);
+}
 
 /* ─ FEAT TILES ─ */
 .feat-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
 @media(max-width:640px){.feat-tiles{grid-template-columns:repeat(2,1fr)}}
 .feat-tile{
-  background:var(--bg);border:1px solid var(--border);
+  background:rgba(0,0,0,.3);border:1px solid var(--border);
   border-radius:var(--r2);padding:14px;text-align:center;
 }
 .feat-tile i{font-size:22px;color:var(--text3)}
 .feat-tile .ti-lbl{font-size:10.5px;color:var(--text3);margin-top:5px}
 .feat-tile .ti-val{font-size:14px;font-weight:700;margin-top:3px}
 
-/* ─ INFO CARD VARIANT ─ */
-.card.info-card{background:var(--accent-light);border-color:var(--accent-border)}
-.card.info-card .card-title i{color:var(--accent)}
-
 /* ─ TOAST ─ */
 .toast{
-  position:fixed;bottom:20px;right:20px;
-  background:var(--text);
-  color:#fff;
-  padding:10px 16px;border-radius:var(--r);
-  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  position:fixed;bottom:24px;right:24px;
+  background:rgba(14,14,24,.95);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:12px 16px;border-radius:var(--r);
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
   transform:translateY(120%);
-  transition:transform .25s cubic-bezier(.22,.61,.36,1);
+  transition:transform .3s cubic-bezier(.22,.61,.36,1);
   z-index:9999;
-  display:flex;align-items:center;gap:8px;
+  display:flex;align-items:center;gap:10px;
   font-size:12.5px;max-width:300px;
+  backdrop-filter:blur(20px);
 }
 .toast.show{transform:translateY(0)}
-.toast-ok i{color:#4ADE80}
-.toast-err i{color:#F87171}
+.toast-ok i{color:var(--green)}
+.toast-err i{color:var(--red)}
 
 /* ─ MODAL ─ */
 #walletModal{
   display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.3);
+  background:rgba(0,0,0,.7);
   z-index:2000;align-items:center;justify-content:center;
-  backdrop-filter:blur(2px);
+  backdrop-filter:blur(4px);
 }
 #walletModal .card{
   width:400px;max-width:calc(100vw - 32px);
-  box-shadow:0 20px 50px rgba(0,0,0,.12);
+  background:rgba(14,14,24,.98);
+  border:1px solid var(--border2);
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
 }
+
+/* ─ SCROLLBAR ─ */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 </style>
 </head>
 <body>
 
+<!-- ANIMATED BACKGROUND -->
+<canvas id="bgCanvas"></canvas>
+
 <div class="offline-bar" id="offlineBar">
-  Backend offline — running in demo mode.
+  Backend offline &mdash; running in demo mode.
   <a href="https://huggingface.co/spaces/salmanch123/reso" target="_blank">Check HF Space &rarr;</a>
 </div>
 
@@ -453,17 +671,34 @@ tr:hover td{background:var(--bg)}
 <header id="hdr">
   <div class="hdr-inner">
     <a href="/landing" class="brand">
-      <span class="brand-mark" style="background:none;border:none;box-shadow:none;display:flex;align-items:center;justify-content:center;width:24px;height:24px;margin-right:8px">
-        <img src="logo.png" alt="Reso Logo" style="width:100%;height:100%;object-fit:contain">
-      </span>
+      <span class="brand-mark"><i class="hgi-stroke hgi-shield-01"></i></span>
       <span class="brand-name">Reso</span>
-      <span class="brand-sep">/</span>
-      <span class="brand-sub">Compliance Console</span>
+      <span class="brand-div">/</span>
+      <span class="brand-sub">Proof Console</span>
     </a>
+
+    <div class="proof-counter">
+      <div class="pc-item">
+        <i class="hgi-stroke hgi-lightning-01" style="font-size:13px;color:var(--accent)"></i>
+        Proofs Generated
+        <span class="pc-val" id="pcProofs">0</span>
+      </div>
+      <span class="pc-sep">/</span>
+      <div class="pc-item">
+        <i class="hgi-stroke hgi-checkmark-circle-01" style="font-size:13px;color:var(--green)"></i>
+        Verified
+        <span class="pc-val" id="pcVerified" style="color:var(--green)">0</span>
+      </div>
+      <span class="pc-sep">/</span>
+      <div class="pc-item">
+        <i class="hgi-stroke hgi-cancel-01" style="font-size:13px;color:var(--red)"></i>
+        Blocked
+        <span class="pc-val" id="pcBlocked" style="color:var(--red)">0</span>
+      </div>
+    </div>
+
     <div class="hdr-right">
-      <a href="/landing" class="hdr-btn">
-        <i class="hgi-stroke hgi-arrow-left-01"></i> Landing
-      </a>
+      <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> Landing</a>
       <div class="status-badge">
         <span class="status-dot"></span>
         <span id="statusLabel">Connected</span>
@@ -474,586 +709,572 @@ tr:hover td{background:var(--bg)}
 
 <div class="shell">
 
-  <!-- TAB BAR -->
-  <div class="tab-bar-wrap">
-    <div class="tab-bar">
-      <div class="nav-tab active" onclick="switchTab('core',this)">
-        <i class="hgi-stroke hgi-setting-07"></i> Compliance
+<!-- TAB BAR -->
+<div class="tab-bar-wrap">
+  <div class="tab-bar">
+    <div class="nav-tab active" onclick="switchTab('core',this)"><i class="hgi-stroke hgi-shield-01"></i> Compliance</div>
+    <div class="nav-tab" onclick="switchTab('stellar',this)"><i class="hgi-stroke hgi-global"></i> Stellar</div>
+    <div class="nav-tab" onclick="switchTab('assets',this)"><i class="hgi-stroke hgi-layers-01"></i> Assets &amp; DEX</div>
+    <div class="nav-tab" onclick="switchTab('escrow',this)"><i class="hgi-stroke hgi-lock-01"></i> ZK Escrow</div>
+    <div class="nav-tab" onclick="switchTab('sandbox',this)"><i class="hgi-stroke hgi-test-tube-01"></i> Crypto Sandbox</div>
+    <div class="nav-tab" onclick="switchTab('zkml',this)"><i class="hgi-stroke hgi-brain"></i> zkML Oracle</div>
+    <div class="nav-tab" onclick="switchTab('soulbound',this)"><i class="hgi-stroke hgi-medal-first-place"></i> Soulbound</div>
+    <div class="nav-tab" onclick="switchTab('jurisdiction',this)"><i class="hgi-stroke hgi-scale-01"></i> Jurisdiction</div>
+    <div class="nav-tab" onclick="switchTab('reserves',this)"><i class="hgi-stroke hgi-bank"></i> Reserves</div>
+    <div class="nav-tab" onclick="switchTab('advanced',this)"><i class="hgi-stroke hgi-more-horizontal"></i> Advanced</div>
+  </div>
+</div>
+
+<!-- ======= TAB 1: COMPLIANCE ======= -->
+<div class="tab-panel active" id="panel-core">
+
+  <!-- PROOF HERO -->
+  <div class="proof-hero">
+    <div class="ph-top">
+      <div>
+        <div class="ph-title">ZK-Proof Transaction Simulator</div>
+        <div class="ph-sub">Compile and verify zero-knowledge compliance proofs on Stellar testnet</div>
       </div>
-      <div class="nav-tab" onclick="switchTab('stellar',this)">
-        <i class="hgi-stroke hgi-global"></i> Stellar Testnet
+      <div class="ph-badge" id="phBadge">
+        <i class="hgi-stroke hgi-loading-03"></i>
+        <span id="phBadgeTxt">Ready</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('assets',this)">
-        <i class="hgi-stroke hgi-layers-01"></i> Assets &amp; DEX
+    </div>
+
+    <!-- circuit viz -->
+    <div class="circuit-wrap" id="circuitWrap">
+      <div class="circuit-track"></div>
+      <div class="circuit-nodes" id="circuitNodes"></div>
+      <div class="circuit-scan" id="circuitScan"></div>
+    </div>
+
+    <!-- sender + amount -->
+    <div class="fr" style="margin-bottom:12px">
+      <div class="fg"><label>Sender Wallet</label><select id="simSender"></select></div>
+      <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500"></div>
+    </div>
+    <div class="btn-row" style="padding-top:0;margin-bottom:16px">
+      <button class="btn" onclick="runSimulation()" style="flex:none;padding:10px 24px">
+        <i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify
+      </button>
+    </div>
+
+    <!-- steps -->
+    <div class="proof-steps">
+      <div class="pstep" id="ps-rev">
+        <div class="ps-icon" id="si-rev"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div>
+        <span class="ps-label">Revocation check &mdash; wallet not in revocation registry</span>
+        <span class="ps-hash" id="ph-rev">sha256::0x&mdash;</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('escrow',this)">
-        <i class="hgi-stroke hgi-lock-01"></i> ZK Escrow
+      <div class="pstep" id="ps-san">
+        <div class="ps-icon" id="si-san"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div>
+        <span class="ps-label">Sanctions proof &mdash; address absent from Merkle tree</span>
+        <span class="ps-hash" id="ph-san">sha256::0x&mdash;</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('sandbox',this)">
-        <i class="hgi-stroke hgi-test-tube-01"></i> Crypto Sandbox
+      <div class="pstep" id="ps-kyc">
+        <div class="ps-icon" id="si-kyc"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div>
+        <span class="ps-label">KYC circuit &mdash; tier &ge; required level</span>
+        <span class="ps-hash" id="ph-kyc">sha256::0x&mdash;</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('zkml',this)">
-        <i class="hgi-stroke hgi-brain"></i> zkML Oracle
+      <div class="pstep" id="ps-lim">
+        <div class="ps-icon" id="si-lim"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div>
+        <span class="ps-label">Limits circuit &mdash; amount within daily and rolling caps</span>
+        <span class="ps-hash" id="ph-lim">sha256::0x&mdash;</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('soulbound',this)">
-        <i class="hgi-stroke hgi-medal-first-place"></i> Soulbound
+      <div class="pstep" id="ps-proof">
+        <div class="ps-icon" id="si-proof"><i class="hgi-stroke hgi-time-01" style="font-size:10px"></i></div>
+        <span class="ps-label">On-chain hook &mdash; BN254 pairing proof verification on Soroban</span>
+        <span class="ps-hash" id="ph-proof">bn254::0x&mdash;</span>
       </div>
-      <div class="nav-tab" onclick="switchTab('jurisdiction',this)">
-        <i class="hgi-stroke hgi-scale-01"></i> Jurisdiction
-      </div>
-      <div class="nav-tab" onclick="switchTab('reserves',this)">
-        <i class="hgi-stroke hgi-bank"></i> Reserves
-      </div>
-      <div class="nav-tab" onclick="switchTab('advanced',this)">
-        <i class="hgi-stroke hgi-more-horizontal"></i> Advanced
-      </div>
+    </div>
+
+    <!-- result -->
+    <div class="proof-result" id="simResult">
+      <div class="pr-title" id="prTitle"></div>
+      <div id="prBody"></div>
+      <div class="pr-hash cursor" id="prHash"></div>
     </div>
   </div>
 
-  <!-- ============ TAB 1: COMPLIANCE ============ -->
-  <div class="tab-panel active" id="panel-core">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div>
-        <p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p>
-        <div class="fr">
-          <div class="fg"><label>Max Transaction Limit ($)</label><input type="number" id="maxAmount" value="10000"></div>
-          <div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div>
-        </div>
-        <div class="fr">
-          <div class="fg"><label>Required KYC Tier</label>
-            <select id="kycTier">
-              <option value="0">Tier 0 — None</option>
-              <option value="1" selected>Tier 1 — Basic</option>
-              <option value="2">Tier 2 — Enhanced</option>
-            </select>
-          </div>
-          <div class="fg"><label>Sanctions Screening</label>
-            <select id="sanctionsCheck">
-              <option value="true" selected>Enabled</option>
-              <option value="false">Disabled</option>
-            </select>
-          </div>
-        </div>
-        <div class="btn-row"><button class="btn" onclick="saveRules()">Publish Rules to Hook</button></div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-setting-07"></i> Rule Configuration</div>
+      <p class="card-desc">Parameters compiled into ZK compliance verification circuits.</p>
+      <div class="fr">
+        <div class="fg"><label>Max Transaction ($)</label><input type="number" id="maxAmount" value="10000"></div>
+        <div class="fg"><label>Daily Rolling Limit ($)</label><input type="number" id="dailyLimit" value="25000"></div>
       </div>
-
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div>
-        <p class="card-desc">KYC attestations and sanctions directory.</p>
-        <div class="merkle-box">
-          <span class="merkle-label">Sanctions Merkle Root</span>
-          <span class="merkle-val" id="merkleRoot">0x00000...0000</span>
+      <div class="fr">
+        <div class="fg"><label>Required KYC Tier</label>
+          <select id="kycTier"><option value="0">Tier 0 &mdash; None</option><option value="1" selected>Tier 1 &mdash; Basic</option><option value="2">Tier 2 &mdash; Enhanced</option></select>
         </div>
-        <div class="list-wrap" id="walletList"></div>
-        <div class="btn-row">
-          <button class="btn sec" onclick="openWalletModal()">
-            <i class="hgi-stroke hgi-add-01"></i> Register Wallet
-          </button>
+        <div class="fg"><label>Sanctions Screening</label>
+          <select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select>
         </div>
       </div>
+      <div class="btn-row"><button class="btn" onclick="saveRules()">Publish Rules to Hook</button></div>
+    </div>
 
-      <div class="card full">
-        <div class="card-title"><i class="hgi-stroke hgi-lightning-01"></i> ZK-Proof Transaction Simulator</div>
-        <p class="card-desc">Submit a transfer. Compiles a ZK-proof and verifies against compliance rules on-chain.</p>
-        <div class="fr">
-          <div class="fg"><label>Sender Wallet</label><select id="simSender"></select></div>
-          <div class="fg"><label>Transfer Amount (USD)</label><input type="number" id="simAmount" value="500"></div>
-        </div>
-        <div class="btn-row"><button class="btn" onclick="runSimulation()"><i class="hgi-stroke hgi-lightning-01"></i> Generate ZK-Proof &amp; Verify</button></div>
-        <div class="pipeline" id="pipeline">
-          <div class="p-step"><div class="step-icon" id="si-rev">&ndash;</div>ZK Revocation Check: wallet not in revocation registry</div>
-          <div class="p-step"><div class="step-icon" id="si-san">&ndash;</div>ZK Sanctions Check: address absent from Merkle tree</div>
-          <div class="p-step"><div class="step-icon" id="si-kyc">&ndash;</div>ZK KYC Check: tier &ge; required level</div>
-          <div class="p-step"><div class="step-icon" id="si-lim">&ndash;</div>ZK Limits Check: amount within daily and rolling caps</div>
-          <div class="p-step"><div class="step-icon" id="si-proof">&ndash;</div>On-Chain Soroban Hook: BN254 pairing proof verification</div>
-        </div>
-        <div class="sim-result" id="simResult"></div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-wallet-01"></i> Wallet Registry</div>
+      <p class="card-desc">KYC attestations and sanctions directory.</p>
+      <div class="merkle-box">
+        <span class="merkle-label">Sanctions Root</span>
+        <span class="merkle-val" id="merkleRoot">0x00000...0000</span>
       </div>
+      <div class="list-wrap" id="walletList"></div>
+      <div class="btn-row">
+        <button class="btn sec" onclick="openWalletModal()"><i class="hgi-stroke hgi-add-01"></i> Register Wallet</button>
+      </div>
+    </div>
 
-      <div class="card full">
-        <div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div>
-        <p class="card-desc">Aggregated verification checks. No addresses written on-chain.</p>
-        <div style="overflow-x:auto">
-          <table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead>
-          <tbody id="auditRows"></tbody></table>
-        </div>
+    <div class="card full">
+      <div class="card-title"><i class="hgi-stroke hgi-analytics-up"></i> Regulator Audit Ledger</div>
+      <p class="card-desc">Aggregated verification checks. No addresses written on-chain.</p>
+      <div style="overflow-x:auto">
+        <table><thead><tr><th>Timestamp</th><th>Rule</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead>
+        <tbody id="auditRows"></tbody></table>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ============ TAB 2: STELLAR TESTNET ============ -->
-  <div class="tab-panel" id="panel-stellar">
-    <div class="net-notice">
-      <i class="hgi-stroke hgi-information-circle"></i>
-      <span>All operations use the <strong>real Stellar Testnet</strong> via Horizon API. Transactions are visible on <a class="tx-link" href="https://stellar.expert/explorer/testnet" target="_blank">stellar.expert/explorer/testnet</a>. Secret keys are sent over HTTPS only.</span>
+<!-- ======= TAB 2: STELLAR ======= -->
+<div class="tab-panel" id="panel-stellar">
+  <div class="net-notice">
+    <i class="hgi-stroke hgi-information-circle"></i>
+    <span>All operations use the <strong>real Stellar Testnet</strong> via Horizon API. Transactions are visible on <a class="tx-link" href="https://stellar.expert/explorer/testnet" target="_blank">stellar.expert/explorer/testnet</a>.</span>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-key-01"></i> Create &amp; Fund Account</div>
+      <p class="card-desc">Generates a Stellar keypair and funds it with 10,000 XLM via Friendbot.</p>
+      <div class="fg"><label>Label (optional)</label><input type="text" id="newAccLabel" placeholder="e.g. Alice Testing"></div>
+      <div class="btn-row"><button class="btn green" onclick="stellarCreateAccount()"><i class="hgi-stroke hgi-add-circle"></i> Generate &amp; Fund</button></div>
+      <div class="result-box" id="createAccResult"></div>
     </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-key-01"></i> Create &amp; Fund Testnet Account</div>
-        <p class="card-desc">Generates a real Stellar keypair and funds it with 10,000 XLM via Friendbot.</p>
-        <div class="fg"><label>Account Label (optional)</label><input type="text" id="newAccLabel" placeholder="e.g. Alice Testing"></div>
-        <div class="btn-row"><button class="btn green" onclick="stellarCreateAccount()"><i class="hgi-stroke hgi-add-circle"></i> Generate &amp; Fund</button></div>
-        <div class="result-box" id="createAccResult"></div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-search-01"></i> Account Inspector</div>
+      <p class="card-desc">Load live balances, signers, and sequence from Horizon testnet.</p>
+      <div class="fg"><label>Public Key (G...)</label><input type="text" id="inspectAddr" placeholder="GABC...XYZ"></div>
+      <div class="btn-row"><button class="btn" onclick="stellarInspect()">Load Account</button></div>
+      <div class="result-box" id="inspectResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-sent"></i> Send XLM</div>
+      <p class="card-desc">Submit a real payment transaction to Stellar testnet.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only. Never use mainnet secret keys.</div>
+      <div class="fg"><label>Source Secret Key (S...)</label><input type="text" id="transferSecret" placeholder="SABCD..."></div>
+      <div class="fr">
+        <div class="fg"><label>Destination (G...)</label><input type="text" id="transferDest" placeholder="GXYZ..."></div>
+        <div class="fg"><label>Amount (XLM)</label><input type="number" id="transferAmt" value="10"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-search-01"></i> Account Inspector</div>
-        <p class="card-desc">Load live balances, signers, and sequence from Horizon testnet.</p>
-        <div class="fg"><label>Public Key (G...)</label><input type="text" id="inspectAddr" placeholder="GABC...XYZ"></div>
-        <div class="btn-row"><button class="btn" onclick="stellarInspect()">Load Account</button></div>
-        <div class="result-box" id="inspectResult"></div>
+      <div class="fg"><label>Memo (optional)</label><input type="text" id="transferMemo" placeholder="Payment memo" maxlength="28"></div>
+      <div class="btn-row"><button class="btn" onclick="stellarTransfer()">Send XLM</button></div>
+      <div class="result-box" id="transferResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-time-01"></i> Transaction History</div>
+      <p class="card-desc">Live payment history from Horizon for any address.</p>
+      <div class="fg"><label>Public Key (G...)</label><input type="text" id="txHistAddr" placeholder="GABC...XYZ"></div>
+      <div class="btn-row"><button class="btn sec" onclick="stellarLoadTxHistory()">Load History</button></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Asset</th><th>Tx</th></tr></thead><tbody id="txHistRows"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-user-multiple-02"></i> Multisig Setup</div>
+      <p class="card-desc">Add a co-signer and configure thresholds on a testnet account.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Permanently changes account settings.</div>
+      <div class="fg"><label>Account Secret (S...)</label><input type="text" id="msigSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>New Co-Signer (G...)</label><input type="text" id="msigNewSigner" placeholder="GXYZ..."></div>
+      <div class="fr">
+        <div class="fg"><label>Signer Weight</label><input type="number" id="msigWeight" value="1"></div>
+        <div class="fg"><label>Med Threshold</label><input type="number" id="msigThreshold" value="2"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-sent"></i> Send XLM (Real Testnet)</div>
-        <p class="card-desc">Submit a real payment transaction to Stellar testnet.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only. Never use real mainnet secret keys here.</div>
-        <div class="fg"><label>Source Secret Key (S...)</label><input type="text" id="transferSecret" placeholder="SABCD..."></div>
-        <div class="fr">
-          <div class="fg"><label>Destination (G...)</label><input type="text" id="transferDest" placeholder="GXYZ..."></div>
-          <div class="fg"><label>Amount (XLM)</label><input type="number" id="transferAmt" value="10"></div>
-        </div>
-        <div class="fg"><label>Memo (optional)</label><input type="text" id="transferMemo" placeholder="Payment memo" maxlength="28"></div>
-        <div class="btn-row"><button class="btn" onclick="stellarTransfer()">Send XLM</button></div>
-        <div class="result-box" id="transferResult"></div>
+      <div class="btn-row"><button class="btn purple" onclick="stellarMultisig()">Configure Multisig</button></div>
+      <div class="result-box" id="msigResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-exchange-01"></i> Cross-Asset Path Payment</div>
+      <p class="card-desc">Send one asset, recipient gets another. DEX finds best path automatically.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only.</div>
+      <div class="fg"><label>Source Secret (S...)</label><input type="text" id="pathSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>Destination (G...)</label><input type="text" id="pathDest" placeholder="GXYZ..."></div>
+      <div class="fr">
+        <div class="fg"><label>Dest Asset</label><input type="text" id="pathDestCode" value="XLM"></div>
+        <div class="fg"><label>Dest Issuer</label><input type="text" id="pathDestIssuer" placeholder="GISSUER..."></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-time-01"></i> Transaction History</div>
-        <p class="card-desc">Live payment history from Horizon testnet for any address.</p>
-        <div class="fg"><label>Public Key (G...)</label><input type="text" id="txHistAddr" placeholder="GABC...XYZ"></div>
-        <div class="btn-row"><button class="btn sec" onclick="stellarLoadTxHistory()">Load History</button></div>
-        <div style="overflow-x:auto">
-          <table><thead><tr><th>Time</th><th>Type</th><th>Amount</th><th>Asset</th><th>Tx</th></tr></thead>
-          <tbody id="txHistRows"></tbody></table>
-        </div>
+      <div class="fr">
+        <div class="fg"><label>Send Asset</label><select id="pathSendAsset"><option value="XLM">XLM (native)</option></select></div>
+        <div class="fg"><label>Dest Amount</label><input type="number" id="pathDestAmt" value="5"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-user-multiple-02"></i> Multisig Account Setup</div>
-        <p class="card-desc">Add a co-signer and configure signing thresholds on a real testnet account.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only. Permanently changes account settings on-chain.</div>
-        <div class="fg"><label>Account Secret Key (S...)</label><input type="text" id="msigSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>New Co-Signer Public Key (G...)</label><input type="text" id="msigNewSigner" placeholder="GXYZ..."></div>
-        <div class="fr">
-          <div class="fg"><label>Signer Weight</label><input type="number" id="msigWeight" value="1"></div>
-          <div class="fg"><label>Med Threshold</label><input type="number" id="msigThreshold" value="2"></div>
-        </div>
-        <div class="btn-row"><button class="btn purple" onclick="stellarMultisig()">Configure Multisig</button></div>
-        <div class="result-box" id="msigResult"></div>
+      <div class="btn-row"><button class="btn gold" onclick="stellarPathPayment()">Execute Path Payment</button></div>
+      <div class="result-box" id="pathResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TAB 3: ASSETS ======= -->
+<div class="tab-panel" id="panel-assets">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-coins-01"></i> Issue Custom Asset</div>
+      <p class="card-desc">Mint a new token on Stellar testnet.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Both issuer and distributor must be funded accounts.</div>
+      <div class="fg"><label>Issuer Secret (S...)</label><input type="text" id="issuerSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>Distributor Secret (S...)</label><input type="text" id="distSecret" placeholder="SXYZ..."></div>
+      <div class="fr">
+        <div class="fg"><label>Asset Code</label><input type="text" id="assetCode" placeholder="RESO" maxlength="12"></div>
+        <div class="fg"><label>Initial Supply</label><input type="number" id="assetSupply" value="1000000"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-exchange-01"></i> Cross-Asset Path Payment</div>
-        <p class="card-desc">Send one asset, recipient gets another. Stellar DEX finds best path automatically.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Testnet only.</div>
-        <div class="fg"><label>Source Secret Key (S...)</label><input type="text" id="pathSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>Destination Address (G...)</label><input type="text" id="pathDest" placeholder="GXYZ..."></div>
-        <div class="fr">
-          <div class="fg"><label>Send Asset</label><select id="pathSendAsset"><option value="XLM">XLM (native)</option></select></div>
-          <div class="fg"><label>Dest Asset Code</label><input type="text" id="pathDestCode" value="XLM"></div>
-        </div>
-        <div class="fr">
-          <div class="fg"><label>Dest Issuer (if not XLM)</label><input type="text" id="pathDestIssuer" placeholder="GISSUER..."></div>
-          <div class="fg"><label>Dest Amount</label><input type="number" id="pathDestAmt" value="5"></div>
-        </div>
-        <div class="btn-row"><button class="btn gold" onclick="stellarPathPayment()">Execute Path Payment</button></div>
-        <div class="result-box" id="pathResult"></div>
+      <div class="btn-row"><button class="btn gold" onclick="stellarIssueAsset()">Issue Asset</button></div>
+      <div class="result-box" id="issueResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-link-01"></i> Add Trustline</div>
+      <p class="card-desc">Allow an account to hold a custom asset.</p>
+      <div class="fg"><label>Account Secret (S...)</label><input type="text" id="trustSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>Asset Code</label><input type="text" id="trustAssetCode" placeholder="RESO"></div>
+      <div class="fg"><label>Asset Issuer (G...)</label><input type="text" id="trustIssuer" placeholder="GISSUER..."></div>
+      <div class="btn-row"><button class="btn" onclick="stellarTrustline()">Add Trustline</button></div>
+      <div class="result-box" id="trustResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-time-clock"></i> Create Claimable Balance</div>
+      <p class="card-desc">Lock real XLM on testnet with a time lock.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Real on-chain transaction.</div>
+      <div class="fg"><label>Source Secret (S...)</label><input type="text" id="claimSrcSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>Claimant (G...)</label><input type="text" id="claimClaimant" placeholder="GXYZ..."></div>
+      <div class="fr">
+        <div class="fg"><label>Amount (XLM)</label><input type="number" id="claimAmt" value="5"></div>
+        <div class="fg"><label>Timelock (sec)</label><input type="number" id="claimDelay" value="60"></div>
+      </div>
+      <div class="btn-row"><button class="btn purple" onclick="stellarCreateClaimable()">Lock Funds</button></div>
+      <div class="result-box" id="claimCreateResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-checkmark-circle-01"></i> Claim Balance</div>
+      <p class="card-desc">Claim an unlocked claimable balance.</p>
+      <div class="fg"><label>Claimant Secret (S...)</label><input type="text" id="claimSecret" placeholder="SABCD..."></div>
+      <div class="fg"><label>Balance ID</label><textarea id="claimBalanceId" placeholder="00000000..." rows="2"></textarea></div>
+      <div class="btn-row"><button class="btn green" onclick="stellarClaimBalance()">Claim Balance</button></div>
+      <div class="result-box" id="claimResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Live DEX Orderbook</div>
+      <p class="card-desc">Real-time bids/asks from Stellar testnet DEX.</p>
+      <div class="fr">
+        <div class="fg"><label>Selling</label><select id="obSell"><option value="XLM">XLM (native)</option></select></div>
+        <div class="fg"><label>Buying Code</label><input type="text" id="obBuyCode" value="USDC"></div>
+      </div>
+      <div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="obBuyIssuer" value="GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"></div>
+      <div class="btn-row"><button class="btn sec" onclick="stellarOrderbook()">Load Orderbook</button></div>
+      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Side</th><th>Price</th><th>Amount</th></tr></thead><tbody id="obRows"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-sale-tag-01"></i> Place DEX Offer</div>
+      <p class="card-desc">Post a real sell offer on the Stellar testnet DEX.</p>
+      <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Requires trustline for buying asset.</div>
+      <div class="fg"><label>Account Secret (S...)</label><input type="text" id="offerSecret" placeholder="SABCD..."></div>
+      <div class="fr">
+        <div class="fg"><label>Selling</label><select id="offerSell"><option value="XLM">XLM</option></select></div>
+        <div class="fg"><label>Buying Code</label><input type="text" id="offerBuyCode" placeholder="USDC"></div>
+      </div>
+      <div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="offerBuyIssuer" placeholder="GISSUER..."></div>
+      <div class="fr">
+        <div class="fg"><label>Amount</label><input type="number" id="offerAmt" value="100"></div>
+        <div class="fg"><label>Price</label><input type="number" id="offerPrice" value="1" step="0.0001"></div>
+      </div>
+      <div class="btn-row"><button class="btn" onclick="stellarOffer()">Post Offer</button></div>
+      <div class="result-box" id="offerResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TAB 4: ESCROW ======= -->
+<div class="tab-panel" id="panel-escrow">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-safe"></i> ZK-Gated Escrow Deposit</div>
+      <p class="card-desc">Lock funds. For real on-chain use the Assets &amp; DEX tab.</p>
+      <div class="fg"><label>Sender</label><select id="escrowSender"></select></div>
+      <div class="fr">
+        <div class="fg"><label>Recipient</label><select id="escrowRecipient"></select></div>
+        <div class="fg"><label>Timelock (sec)</label><input type="number" id="escrowDelay" value="30"></div>
+      </div>
+      <div class="fg"><label>Amount (USD)</label><input type="number" id="escrowAmount" value="2500"></div>
+      <div class="btn-row"><button class="btn purple" onclick="depositEscrow()">Deposit Escrow</button></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-lock-01"></i> Active Escrows</div>
+      <p class="card-desc">Simulated locked balances awaiting ZK claim or refund.</p>
+      <div class="list-wrap" id="escrowsList" style="max-height:280px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TAB 5: SANDBOX ======= -->
+<div class="tab-panel" id="panel-sandbox">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div>
+      <p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p>
+      <div class="fr">
+        <div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div>
+        <div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()">Encrypt &amp; Add</button></div>
+      </div>
+      <div class="fg"><label>Queue (Ciphertexts)</label><div class="code-out" id="paillierQueue">Empty.</div></div>
+      <div class="btn-row">
+        <button class="btn" onclick="paillierSum()">Homomorphic Sum &amp; Decrypt</button>
+        <button class="btn sec" onclick="paillierReset()">Reset</button>
+      </div>
+      <div id="paillierResult" style="margin-top:10px;font-size:12px;color:var(--amber)"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-clock-05"></i> Threshold Time-Lock Disclosure</div>
+      <p class="card-desc">3-of-5 trustee approvals + 10s time delay to reveal identity (Shamir TSS).</p>
+      <div class="fg"><label>Identity Commitment</label><input type="text" id="identityCommit" value="987654321012345"></div>
+      <div class="btn-row"><button class="btn purple" onclick="disclosureOpen()">1. Initiate (10s delay)</button></div>
+      <div id="disclosureStatus" style="font-size:11px;margin-top:8px;font-family:'Courier New',monospace;color:var(--text3)">Not opened.</div>
+      <label style="margin-top:12px;font-size:11px;color:var(--text2);display:block;font-weight:600;text-transform:uppercase;letter-spacing:.04em">2. Trustee Approvals (3/5 needed):</label>
+      <div class="trustee-grid">
+        <div class="trustee-btn" id="tb-1" onclick="disclosureApprove(1)">Trustee 1</div>
+        <div class="trustee-btn" id="tb-2" onclick="disclosureApprove(2)">Trustee 2</div>
+        <div class="trustee-btn" id="tb-3" onclick="disclosureApprove(3)">Trustee 3</div>
+        <div class="trustee-btn" id="tb-4" onclick="disclosureApprove(4)">Trustee 4</div>
+        <div class="trustee-btn" id="tb-5" onclick="disclosureApprove(5)">Trustee 5</div>
+      </div>
+      <div class="btn-row" style="margin-top:auto"><button class="btn" onclick="disclosureDecrypt()">3. Decrypt &amp; Reveal</button></div>
+      <div id="disclosureResult" style="margin-top:10px;font-size:12.5px;font-weight:600"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-cancel-01"></i> Credential Revocation</div>
+      <p class="card-desc">Instant KYC revocation via Merkle root update.</p>
+      <div class="merkle-box"><span class="merkle-label">Revocation Root</span><span class="merkle-val" id="revRoot">loading...</span></div>
+      <div class="fr">
+        <div class="fg"><label>Wallet to Revoke</label><select id="revokeSelect"></select></div>
+        <div class="fg"><label style="opacity:0">_</label><button class="btn red" onclick="revokeWallet()">Revoke KYC</button></div>
+      </div>
+      <div class="fg"><label>Revoked List</label><div class="code-out" id="revokedList" style="height:80px">None.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div>
+      <p class="card-desc">Nova-style IVC: fold transaction proofs into a constant-size accumulator.</p>
+      <div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--accent2)">loading...</span></div>
+      <div class="fr">
+        <div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div>
+        <div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()">Fold Step</button></div>
+      </div>
+      <div class="btn-row"><button class="btn sec" onclick="resetFolding()">Reset Accumulator</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TAB 6: zkML ======= -->
+<div class="tab-panel" id="panel-zkml">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-brain"></i> zkML Risk Score</div>
+      <p class="card-desc">ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address"></div>
+      <div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div>
+      <div class="btn-row">
+        <button class="btn purple" onclick="runZkmlScore()">Score Wallet</button>
+        <button class="btn sec" onclick="runZkmlBatch()">Batch Score All</button>
+      </div>
+      <div class="result-box" id="zkmlResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Batch Risk Dashboard</div>
+      <p class="card-desc">ML risk scores for all registered wallets.</p>
+      <div class="list-wrap" id="zkmlBatchList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Batch Score All to load</div></div>
+    </div>
+    <div class="card full">
+      <div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div>
+      <p class="card-desc" style="margin-bottom:0">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights.</p>
+      <div class="feat-tiles">
+        <div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div>
+        <div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div>
+        <div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div>
+        <div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div>
+        <div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val" style="color:var(--accent2)">SHA-256</div></div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ============ TAB 3: ASSETS & DEX ============ -->
-  <div class="tab-panel" id="panel-assets">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-coins-01"></i> Issue Custom Asset</div>
-        <p class="card-desc">Mint a new token on Stellar testnet. Issuer creates, distributor holds supply.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Both issuer and distributor must be funded testnet accounts.</div>
-        <div class="fg"><label>Issuer Secret Key (S...)</label><input type="text" id="issuerSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>Distributor Secret Key (S...)</label><input type="text" id="distSecret" placeholder="SXYZ..."></div>
-        <div class="fr">
-          <div class="fg"><label>Asset Code (3–12 chars)</label><input type="text" id="assetCode" placeholder="RESO" maxlength="12"></div>
-          <div class="fg"><label>Initial Supply</label><input type="number" id="assetSupply" value="1000000"></div>
+<!-- ======= TAB 7: SOULBOUND ======= -->
+<div class="tab-panel" id="panel-soulbound">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-medal-first-place"></i> Issue Soulbound Token</div>
+      <p class="card-desc">Non-transferable compliance credential (CST) on Stellar Testnet.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to"></div>
+      <div class="fr">
+        <div class="fg"><label>Jurisdiction</label>
+          <select id="cstJurisdiction"><option value="GLOBAL">Global</option><option value="EU">EU</option><option value="US">US</option><option value="UAE">UAE</option><option value="SG">Singapore</option></select>
         </div>
-        <div class="btn-row"><button class="btn gold" onclick="stellarIssueAsset()">Issue Asset</button></div>
-        <div class="result-box" id="issueResult"></div>
+        <div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-link-01"></i> Add Trustline</div>
-        <p class="card-desc">Allow an account to hold a custom asset. Required before receiving any non-XLM token.</p>
-        <div class="fg"><label>Account Secret Key (S...)</label><input type="text" id="trustSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>Asset Code</label><input type="text" id="trustAssetCode" placeholder="RESO"></div>
-        <div class="fg"><label>Asset Issuer (G...)</label><input type="text" id="trustIssuer" placeholder="GISSUER..."></div>
-        <div class="btn-row"><button class="btn" onclick="stellarTrustline()">Add Trustline</button></div>
-        <div class="result-box" id="trustResult"></div>
+      <div class="btn-row">
+        <button class="btn gold" onclick="issueSoulbound()">Issue CST</button>
+        <button class="btn sec" onclick="verifySoulbound()">Verify</button>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-time-clock"></i> Create Claimable Balance</div>
-        <p class="card-desc">Lock real XLM on testnet. Recipient can only claim after the time lock expires.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Real on-chain transaction on Stellar testnet.</div>
-        <div class="fg"><label>Source Secret Key (S...)</label><input type="text" id="claimSrcSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>Claimant Address (G...)</label><input type="text" id="claimClaimant" placeholder="GXYZ..."></div>
-        <div class="fr">
-          <div class="fg"><label>Amount (XLM)</label><input type="number" id="claimAmt" value="5"></div>
-          <div class="fg"><label>Timelock (seconds)</label><input type="number" id="claimDelay" value="60"></div>
-        </div>
-        <div class="btn-row"><button class="btn purple" onclick="stellarCreateClaimable()">Lock Funds On-Chain</button></div>
-        <div class="result-box" id="claimCreateResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-checkmark-circle-01"></i> Claim Claimable Balance</div>
-        <p class="card-desc">Claim a real unlocked claimable balance using the balance ID from creation.</p>
-        <div class="fg"><label>Claimant Secret Key (S...)</label><input type="text" id="claimSecret" placeholder="SABCD..."></div>
-        <div class="fg"><label>Balance ID (from creation step)</label><textarea id="claimBalanceId" placeholder="00000000..." rows="2"></textarea></div>
-        <div class="btn-row"><button class="btn green" onclick="stellarClaimBalance()">Claim Balance</button></div>
-        <div class="result-box" id="claimResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Live DEX Orderbook</div>
-        <p class="card-desc">Real-time bids/asks from Stellar testnet DEX via Horizon API.</p>
-        <div class="fr">
-          <div class="fg"><label>Selling Asset</label><select id="obSell"><option value="XLM">XLM (native)</option></select></div>
-          <div class="fg"><label>Buying Asset Code</label><input type="text" id="obBuyCode" value="USDC" placeholder="USDC"></div>
-        </div>
-        <div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="obBuyIssuer" value="GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"></div>
-        <div class="btn-row"><button class="btn sec" onclick="stellarOrderbook()">Load Orderbook</button></div>
-        <div style="overflow-x:auto;margin-top:8px">
-          <table><thead><tr><th>Side</th><th>Price</th><th>Amount</th></tr></thead><tbody id="obRows"></tbody></table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-sale-tag-01"></i> Place DEX Sell Offer</div>
-        <p class="card-desc">Post a real sell offer on the Stellar testnet DEX. Fills automatically if matched.</p>
-        <div class="secret-warn"><i class="hgi-stroke hgi-alert-02"></i> Requires a trustline for the buying asset. Testnet only.</div>
-        <div class="fg"><label>Account Secret Key (S...)</label><input type="text" id="offerSecret" placeholder="SABCD..."></div>
-        <div class="fr">
-          <div class="fg"><label>Selling Asset</label><select id="offerSell"><option value="XLM">XLM</option></select></div>
-          <div class="fg"><label>Buying Asset Code</label><input type="text" id="offerBuyCode" placeholder="USDC"></div>
-        </div>
-        <div class="fg"><label>Buying Issuer (G...)</label><input type="text" id="offerBuyIssuer" placeholder="GISSUER..."></div>
-        <div class="fr">
-          <div class="fg"><label>Amount to Sell</label><input type="number" id="offerAmt" value="100"></div>
-          <div class="fg"><label>Price (buying/selling)</label><input type="number" id="offerPrice" value="1" step="0.0001"></div>
-        </div>
-        <div class="btn-row"><button class="btn" onclick="stellarOffer()">Post Offer</button></div>
-        <div class="result-box" id="offerResult"></div>
-      </div>
+      <div class="result-box" id="cstResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div>
+      <p class="card-desc">Non-transferable credentials permanently bound to wallets.</p>
+      <div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh</button></div>
+      <div class="list-wrap" id="soulboundList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Refresh to load tokens</div></div>
     </div>
   </div>
+</div>
 
-  <!-- ============ TAB 4: ZK ESCROW ============ -->
-  <div class="tab-panel" id="panel-escrow">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-safe"></i> Simulated ZK-Gated Escrow</div>
-        <p class="card-desc">Lock funds (simulated). For real on-chain claimable balances use the Assets &amp; DEX tab.</p>
-        <div class="fg"><label>Sender</label><select id="escrowSender"></select></div>
-        <div class="fr">
-          <div class="fg"><label>Recipient</label><select id="escrowRecipient"></select></div>
-          <div class="fg"><label>Timelock (sec)</label><input type="number" id="escrowDelay" value="30"></div>
+<!-- ======= TAB 8: JURISDICTION ======= -->
+<div class="tab-panel" id="panel-jurisdiction">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-scale-01"></i> Jurisdiction Compliance Check</div>
+      <p class="card-desc">Auto-applies EU MiCA / US FinCEN / UAE VARA / SG MAS rules.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="jurWallet" placeholder="Wallet to check"></div>
+      <div class="fr">
+        <div class="fg"><label>Amount ($)</label><input type="number" id="jurAmount" value="1500"></div>
+        <div class="fg"><label>Jurisdiction</label>
+          <select id="jurCode"><option value="GLOBAL">Global</option><option value="EU">EU MiCA</option><option value="US">US FinCEN</option><option value="UAE">UAE VARA</option><option value="SG">SG MAS</option></select>
         </div>
-        <div class="fg"><label>Amount (USD)</label><input type="number" id="escrowAmount" value="2500"></div>
-        <div class="btn-row"><button class="btn purple" onclick="depositEscrow()">Deposit Escrow</button></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-lock-01"></i> Active Escrows</div>
-        <p class="card-desc">Simulated locked balances awaiting ZK claim or refund.</p>
-        <div class="list-wrap" id="escrowsList" style="max-height:280px"></div>
-      </div>
+      <div class="btn-row"><button class="btn" onclick="checkJurisdiction()">Check Compliance</button></div>
+      <div class="result-box" id="jurResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-table-01"></i> Jurisdiction Rule Comparison</div>
+      <p class="card-desc">Side-by-side limits across all supported regulatory frameworks.</p>
+      <div style="overflow-x:auto"><table><thead><tr><th>Jurisdiction</th><th>Max Tx</th><th>Daily Limit</th><th>Min KYC</th><th>Travel Rule</th></tr></thead>
+      <tbody>
+        <tr><td>Global</td><td>$10,000</td><td>$25,000</td><td>Tier 1</td><td>$1,000</td></tr>
+        <tr><td>US FinCEN</td><td>$3,000</td><td>$10,000</td><td>Tier 1</td><td>$3,000</td></tr>
+        <tr><td>UAE VARA</td><td>$5,000</td><td>$20,000</td><td>Tier 1</td><td>$5,000</td></tr>
+        <tr><td>SG MAS</td><td>$2,000</td><td>$8,000</td><td>Tier 2</td><td>$1,500</td></tr>
+        <tr><td>EU MiCA</td><td>$1,000</td><td>$5,000</td><td>Tier 2</td><td>$1,000</td></tr>
+      </tbody></table></div>
     </div>
   </div>
+</div>
 
-  <!-- ============ TAB 5: CRYPTO SANDBOX ============ -->
-  <div class="tab-panel" id="panel-sandbox">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-lock-password"></i> FHE Encrypted Limits (Paillier)</div>
-        <p class="card-desc">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p>
-        <div class="fr">
-          <div class="fg"><label>Amount to Encrypt</label><input type="number" id="paillierAmt" value="8000"></div>
-          <div class="fg"><label style="opacity:0">_</label><button class="btn sec" onclick="paillierEncrypt()">Encrypt &amp; Add</button></div>
-        </div>
-        <div class="fg"><label>Queue (Ciphertexts)</label><div class="code-out" id="paillierQueue">Empty.</div></div>
-        <div class="btn-row">
-          <button class="btn" onclick="paillierSum()">Homomorphic Sum &amp; Decrypt</button>
-          <button class="btn sec" onclick="paillierReset()">Reset</button>
-        </div>
-        <div id="paillierResult" style="margin-top:10px;font-size:12px;color:var(--amber)"></div>
+<!-- ======= TAB 9: RESERVES ======= -->
+<div class="tab-panel" id="panel-reserves">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-bank"></i> Create Reserve Snapshot</div>
+      <p class="card-desc">ZK-backed solvency proof. Proves solvency without revealing exact amounts.</p>
+      <div class="fr">
+        <div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div>
+        <div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-clock-05"></i> Threshold Time-Lock Disclosure</div>
-        <p class="card-desc">3-of-5 trustee approvals + 10s time delay to reveal identity (Shamir TSS).</p>
-        <div class="fg"><label>Identity Commitment</label><input type="text" id="identityCommit" value="987654321012345"></div>
-        <div class="btn-row"><button class="btn purple" onclick="disclosureOpen()">1. Initiate (10s Delay)</button></div>
-        <div id="disclosureStatus" style="font-size:11px;margin-top:8px;font-family:'Courier New',monospace;color:var(--text3)">Not opened.</div>
-        <label style="margin-top:12px;font-size:11px;color:var(--text2);display:block;font-weight:500">2. Trustee Approvals (3/5 needed):</label>
-        <div class="trustee-grid">
-          <div class="trustee-btn" id="tb-1" onclick="disclosureApprove(1)">Trustee 1</div>
-          <div class="trustee-btn" id="tb-2" onclick="disclosureApprove(2)">Trustee 2</div>
-          <div class="trustee-btn" id="tb-3" onclick="disclosureApprove(3)">Trustee 3</div>
-          <div class="trustee-btn" id="tb-4" onclick="disclosureApprove(4)">Trustee 4</div>
-          <div class="trustee-btn" id="tb-5" onclick="disclosureApprove(5)">Trustee 5</div>
-        </div>
-        <div class="btn-row" style="margin-top:auto"><button class="btn" onclick="disclosureDecrypt()">3. Decrypt &amp; Reveal</button></div>
-        <div id="disclosureResult" style="margin-top:10px;font-size:12.5px;font-weight:600"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-cancel-01"></i> Credential Revocation</div>
-        <p class="card-desc">Instant KYC revocation. Merkle root updates; proofs verified on simulate-transfer.</p>
-        <div class="merkle-box"><span class="merkle-label">Revocation Root</span><span class="merkle-val" id="revRoot">loading...</span></div>
-        <div class="fr">
-          <div class="fg"><label>Wallet to Revoke</label><select id="revokeSelect"></select></div>
-          <div class="fg"><label style="opacity:0">_</label><button class="btn red" onclick="revokeWallet()">Revoke KYC</button></div>
-        </div>
-        <div class="fg"><label>Revoked List</label><div class="code-out" id="revokedList" style="height:80px">None.</div></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-dna-01"></i> Recursive Proof Folding</div>
-        <p class="card-desc">Nova-style IVC: fold transaction proofs into a constant-size accumulator.</p>
-        <div class="merkle-box"><span class="merkle-label">Proof Accumulator</span><span class="merkle-val" id="foldingRoot" style="color:var(--violet)">loading...</span></div>
-        <div class="fr">
-          <div class="fg"><label>Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions+limits"></div>
-          <div class="fg"><label style="opacity:0">_</label><button class="btn purple" onclick="foldStep()">Fold Step</button></div>
-        </div>
-        <div class="btn-row"><button class="btn sec" onclick="resetFolding()">Reset Accumulator</button></div>
-      </div>
+      <div class="btn-row"><button class="btn green" onclick="createSnapshot()">Attest Snapshot</button></div>
+      <div class="result-box" id="reserveResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div>
+      <p class="card-desc">On-chain ZK-attested solvency snapshots.</p>
+      <div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div>
+      <div class="list-wrap" id="reserveHistoryList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Load to view snapshots</div></div>
     </div>
   </div>
+</div>
 
-  <!-- ============ TAB 6: zkML ============ -->
-  <div class="tab-panel" id="panel-zkml">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-brain"></i> zkML Risk Score</div>
-        <p class="card-desc">ML-based fraud risk scoring with ZK attestation on Stellar Testnet.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="zkmlWallet" placeholder="Paste wallet address"></div>
-        <div class="fg"><label>Transaction Amount ($)</label><input type="number" id="zkmlAmount" value="0"></div>
-        <div class="btn-row">
-          <button class="btn purple" onclick="runZkmlScore()">Score Wallet</button>
-          <button class="btn sec" onclick="runZkmlBatch()">Batch Score All</button>
+<!-- ======= TAB 10: ADVANCED ======= -->
+<div class="tab-panel" id="panel-advanced">
+  <div class="grid">
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-hourglass-01"></i> Deadman Switch</div>
+      <p class="card-desc">Auto-unlock funds if oracle goes silent.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="deadmanWallet" placeholder="Your wallet"></div>
+      <div class="fr">
+        <div class="fg"><label>Unlock Amount ($)</label><input type="number" id="deadmanAmount" value="5000"></div>
+        <div class="fg"><label>Heartbeat Interval (sec)</label><input type="number" id="deadmanInterval" value="300"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn red" onclick="registerDeadman()">Register</button>
+        <button class="btn sec" onclick="sendHeartbeat()">Heartbeat</button>
+        <button class="btn sec" onclick="checkDeadman()">Status</button>
+      </div>
+      <div class="result-box" id="deadmanResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-git-fork"></i> KYC Inheritance Tree</div>
+      <p class="card-desc">Link child wallets to inherit parent KYC.</p>
+      <div class="fg"><label>Parent Wallet</label><input type="text" id="kycParent" placeholder="Parent wallet address"></div>
+      <div class="fg"><label>Child Wallet</label><input type="text" id="kycChild" placeholder="Child wallet address"></div>
+      <div class="btn-row">
+        <button class="btn purple" onclick="linkKycTree()">Link Wallets</button>
+        <button class="btn sec" onclick="resolveKycInheritance()">Resolve KYC</button>
+      </div>
+      <div class="result-box" id="kycTreeResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-radar-01"></i> Regulatory Canary</div>
+      <p class="card-desc">ML-scan all wallets. Auto-freeze high-risk ones with 48h contest window.</p>
+      <div class="btn-row">
+        <button class="btn gold" onclick="runCanaryScan()">Scan &amp; Auto-Freeze</button>
+        <button class="btn sec" onclick="loadCanaryFreezes()">View Freezes</button>
+      </div>
+      <div class="result-box" id="canaryResult"></div>
+      <div class="list-wrap" style="margin-top:10px" id="canaryList"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-message-01"></i> Whistleblower Vault</div>
+      <p class="card-desc">ZK-identity-protected complaint submission.</p>
+      <div class="fg"><label>Complaint</label><textarea id="wbComplaint" placeholder="Describe the compliance violation"></textarea></div>
+      <div class="fr">
+        <div class="fg"><label>Subject Wallet (optional)</label><input type="text" id="wbSubject" placeholder="Accused wallet"></div>
+        <div class="fg"><label>Severity</label>
+          <select id="wbSeverity"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option></select>
         </div>
-        <div class="result-box" id="zkmlResult"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-chart-bar-line"></i> Batch Risk Dashboard</div>
-        <p class="card-desc">ML risk scores for all registered wallets.</p>
-        <div class="list-wrap" id="zkmlBatchList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Batch Score All to load</div></div>
-      </div>
-      <div class="card full info-card">
-        <div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> About zkML on Stellar</div>
-        <p class="card-desc">The first ML-based risk oracle on Stellar. A logistic regression model scores wallets based on transaction behavior, KYC tier, and sanctions status. The score is ZK-attested: the proof hash confirms the score was computed correctly without revealing model weights.</p>
-        <div class="feat-tiles">
-          <div class="feat-tile"><i class="hgi-stroke hgi-lightning-01"></i><div class="ti-lbl">Amount Weight</div><div class="ti-val" style="color:var(--accent)">0.35</div></div>
-          <div class="feat-tile"><i class="hgi-stroke hgi-chart-increase"></i><div class="ti-lbl">Volume Weight</div><div class="ti-val" style="color:var(--accent)">0.25</div></div>
-          <div class="feat-tile"><i class="hgi-stroke hgi-checkmark-circle-01"></i><div class="ti-lbl">KYC Weight</div><div class="ti-val" style="color:var(--green)">-0.30</div></div>
-          <div class="feat-tile"><i class="hgi-stroke hgi-cancel-circle"></i><div class="ti-lbl">Sanction Weight</div><div class="ti-val" style="color:var(--red)">0.90</div></div>
-          <div class="feat-tile"><i class="hgi-stroke hgi-fingerprint-01"></i><div class="ti-lbl">ZK-Attested</div><div class="ti-val" style="color:var(--violet)">SHA-256</div></div>
+      <div class="btn-row"><button class="btn purple" onclick="submitWhistleblower()">Submit Anonymously</button></div>
+      <div class="result-box" id="wbResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-clock-03"></i> Timed Compliance Proofs</div>
+      <p class="card-desc">Issue proofs that expire and must be periodically renewed.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="timedWallet" placeholder="Wallet address"></div>
+      <div class="fr">
+        <div class="fg"><label>Proof Type</label>
+          <select id="timedType"><option value="KYC_VERIFIED">KYC Verified</option><option value="AML_CLEARED">AML Cleared</option><option value="SANCTIONS_FREE">Sanctions Free</option></select>
         </div>
+        <div class="fg"><label>TTL (hours)</label><input type="number" id="timedTtl" value="24"></div>
       </div>
+      <div class="btn-row">
+        <button class="btn" onclick="issueTimedProof()">Issue Proof</button>
+        <button class="btn sec" onclick="verifyTimedProof()">Verify</button>
+      </div>
+      <div class="result-box" id="timedResult"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="hgi-stroke hgi-route-01"></i> Bridge Attestation</div>
+      <p class="card-desc">Cross-protocol compliance attestation to other Stellar anchors.</p>
+      <div class="fg"><label>Wallet Address</label><input type="text" id="bridgeWallet" placeholder="Wallet address"></div>
+      <div class="fg"><label>Target Anchor</label>
+        <select id="bridgeAnchor">
+          <option value="SDF">SDF &mdash; Stellar Development Foundation</option>
+          <option value="CIRCLE">CIRCLE &mdash; Circle USDC Anchor</option>
+          <option value="AIRTM">AIRTM &mdash; AirTM Anchor</option>
+          <option value="TEMPO">TEMPO &mdash; Tempo Anchor (EU)</option>
+          <option value="COWRIE">COWRIE &mdash; Cowrie Exchange</option>
+        </select>
+      </div>
+      <div class="btn-row"><button class="btn cyan" onclick="createBridgeAttestation()">Create Attestation</button></div>
+      <div class="result-box" id="bridgeResult"></div>
     </div>
   </div>
-
-  <!-- ============ TAB 7: SOULBOUND ============ -->
-  <div class="tab-panel" id="panel-soulbound">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-medal-first-place"></i> Issue Soulbound Token</div>
-        <p class="card-desc">Non-transferable compliance credential (CST) on Stellar Testnet.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="cstWallet" placeholder="Wallet to bind token to"></div>
-        <div class="fr">
-          <div class="fg"><label>Jurisdiction</label>
-            <select id="cstJurisdiction">
-              <option value="GLOBAL">Global</option>
-              <option value="EU">EU</option>
-              <option value="US">US</option>
-              <option value="UAE">UAE</option>
-              <option value="SG">Singapore</option>
-            </select>
-          </div>
-          <div class="fg"><label>Validity (Days)</label><input type="number" id="cstTtl" value="365"></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn gold" onclick="issueSoulbound()">Issue CST</button>
-          <button class="btn sec" onclick="verifySoulbound()">Verify</button>
-        </div>
-        <div class="result-box" id="cstResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-list-view"></i> Active Soulbound Tokens</div>
-        <p class="card-desc">Non-transferable credentials permanently bound to wallets.</p>
-        <div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadSoulboundList()"><i class="hgi-stroke hgi-refresh"></i> Refresh List</button></div>
-        <div class="list-wrap" id="soulboundList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Refresh to load tokens</div></div>
-      </div>
-      <div class="card full info-card">
-        <div class="card-title"><i class="hgi-stroke hgi-information-circle"></i> What is a Compliance Soulbound Token?</div>
-        <p class="card-desc">Unlike regular tokens, a CST cannot be transferred. It is permanently bound to the wallet that passed KYC. KYC attestations cannot be sold, borrowed, or faked — they live with the identity, not the money. This is the first implementation on Stellar.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ TAB 8: JURISDICTION ============ -->
-  <div class="tab-panel" id="panel-jurisdiction">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-scale-01"></i> Jurisdiction Compliance Check</div>
-        <p class="card-desc">Auto-applies EU MiCA / US FinCEN / UAE VARA / SG MAS rules.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="jurWallet" placeholder="Wallet to check"></div>
-        <div class="fr">
-          <div class="fg"><label>Amount ($)</label><input type="number" id="jurAmount" value="1500"></div>
-          <div class="fg"><label>Jurisdiction</label>
-            <select id="jurCode">
-              <option value="GLOBAL">Global</option>
-              <option value="EU">EU MiCA</option>
-              <option value="US">US FinCEN</option>
-              <option value="UAE">UAE VARA</option>
-              <option value="SG">SG MAS</option>
-            </select>
-          </div>
-        </div>
-        <div class="btn-row"><button class="btn" onclick="checkJurisdiction()">Check Compliance</button></div>
-        <div class="result-box" id="jurResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-table-01"></i> Jurisdiction Rule Comparison</div>
-        <p class="card-desc">Side-by-side limits across all supported regulatory frameworks.</p>
-        <div style="overflow-x:auto">
-          <table><thead><tr><th>Jurisdiction</th><th>Max Tx</th><th>Daily Limit</th><th>Min KYC</th><th>Travel Rule</th></tr></thead>
-          <tbody>
-            <tr><td>Global</td><td>$10,000</td><td>$25,000</td><td>Tier 1</td><td>$1,000</td></tr>
-            <tr><td>US FinCEN</td><td>$3,000</td><td>$10,000</td><td>Tier 1</td><td>$3,000</td></tr>
-            <tr><td>UAE VARA</td><td>$5,000</td><td>$20,000</td><td>Tier 1</td><td>$5,000</td></tr>
-            <tr><td>SG MAS</td><td>$2,000</td><td>$8,000</td><td>Tier 2</td><td>$1,500</td></tr>
-            <tr><td>EU MiCA</td><td>$1,000</td><td>$5,000</td><td>Tier 2</td><td>$1,000</td></tr>
-          </tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ TAB 9: RESERVES ============ -->
-  <div class="tab-panel" id="panel-reserves">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-bank"></i> Create Reserve Snapshot</div>
-        <p class="card-desc">ZK-backed solvency proof. Proves solvency without revealing exact amounts.</p>
-        <div class="fr">
-          <div class="fg"><label>Total Liabilities ($)</label><input type="number" id="resLiabilities" value="1000000"></div>
-          <div class="fg"><label>Total Reserves ($)</label><input type="number" id="resReserves" value="1200000"></div>
-        </div>
-        <div class="btn-row"><button class="btn green" onclick="createSnapshot()">Attest Snapshot</button></div>
-        <div class="result-box" id="reserveResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-time-history"></i> Reserve History</div>
-        <p class="card-desc">On-chain ZK-attested solvency snapshots.</p>
-        <div class="btn-row" style="padding-top:0;margin-bottom:10px"><button class="btn sec" onclick="loadReserveHistory()"><i class="hgi-stroke hgi-refresh"></i> Load History</button></div>
-        <div class="list-wrap" id="reserveHistoryList"><div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Click Load to view snapshots</div></div>
-      </div>
-      <div class="card full info-card" style="border-color:var(--green-border);background:var(--green-light)">
-        <div class="card-title"><i class="hgi-stroke hgi-shield-check"></i> How ZK Proof of Reserves Works</div>
-        <p class="card-desc">The system computes a reserve ratio (reserves ÷ liabilities) and stores only a ZK commitment on-chain. Anyone can verify solvency (ratio ≥ 1.0) from the commitment without ever learning the exact amounts. Prevents bank runs while proving trustworthiness — a first for Stellar stablecoin issuers.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============ TAB 10: ADVANCED ============ -->
-  <div class="tab-panel" id="panel-advanced">
-    <div class="grid">
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-hourglass-01"></i> Deadman Switch</div>
-        <p class="card-desc">Auto-unlock funds if oracle goes silent.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="deadmanWallet" placeholder="Your wallet"></div>
-        <div class="fr">
-          <div class="fg"><label>Unlock Amount ($)</label><input type="number" id="deadmanAmount" value="5000"></div>
-          <div class="fg"><label>Heartbeat Interval (sec)</label><input type="number" id="deadmanInterval" value="300"></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn red" onclick="registerDeadman()">Register</button>
-          <button class="btn sec" onclick="sendHeartbeat()">Heartbeat</button>
-          <button class="btn sec" onclick="checkDeadman()">Status</button>
-        </div>
-        <div class="result-box" id="deadmanResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-git-fork"></i> KYC Inheritance Tree</div>
-        <p class="card-desc">Link child wallets to inherit parent KYC.</p>
-        <div class="fg"><label>Parent Wallet (KYC'd)</label><input type="text" id="kycParent" placeholder="Parent wallet address"></div>
-        <div class="fg"><label>Child Wallet</label><input type="text" id="kycChild" placeholder="Child wallet address"></div>
-        <div class="btn-row">
-          <button class="btn purple" onclick="linkKycTree()">Link Wallets</button>
-          <button class="btn sec" onclick="resolveKycInheritance()">Resolve KYC</button>
-        </div>
-        <div class="result-box" id="kycTreeResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-radar-01"></i> Regulatory Canary</div>
-        <p class="card-desc">ML-scan all wallets. Auto-freeze high-risk ones with 48h contest window.</p>
-        <div class="btn-row">
-          <button class="btn gold" onclick="runCanaryScan()">Scan &amp; Auto-Freeze</button>
-          <button class="btn sec" onclick="loadCanaryFreezes()">View Freezes</button>
-        </div>
-        <div class="result-box" id="canaryResult"></div>
-        <div class="list-wrap" style="margin-top:10px" id="canaryList"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-message-01"></i> Whistleblower Vault</div>
-        <p class="card-desc">ZK-identity-protected complaint submission.</p>
-        <div class="fg"><label>Complaint</label><textarea id="wbComplaint" placeholder="Describe the compliance violation"></textarea></div>
-        <div class="fr">
-          <div class="fg"><label>Subject Wallet (optional)</label><input type="text" id="wbSubject" placeholder="Accused wallet"></div>
-          <div class="fg"><label>Severity</label>
-            <select id="wbSeverity">
-              <option value="LOW">Low</option>
-              <option value="MEDIUM" selected>Medium</option>
-              <option value="HIGH">High</option>
-              <option value="CRITICAL">Critical</option>
-            </select>
-          </div>
-        </div>
-        <div class="btn-row"><button class="btn purple" onclick="submitWhistleblower()">Submit Anonymously</button></div>
-        <div class="result-box" id="wbResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-clock-03"></i> Timed Compliance Proofs</div>
-        <p class="card-desc">Issue proofs that expire and must be periodically renewed.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="timedWallet" placeholder="Wallet address"></div>
-        <div class="fr">
-          <div class="fg"><label>Proof Type</label>
-            <select id="timedType">
-              <option value="KYC_VERIFIED">KYC Verified</option>
-              <option value="AML_CLEARED">AML Cleared</option>
-              <option value="SANCTIONS_FREE">Sanctions Free</option>
-            </select>
-          </div>
-          <div class="fg"><label>TTL (hours)</label><input type="number" id="timedTtl" value="24"></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn" onclick="issueTimedProof()">Issue Proof</button>
-          <button class="btn sec" onclick="verifyTimedProof()">Verify</button>
-        </div>
-        <div class="result-box" id="timedResult"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="hgi-stroke hgi-route-01"></i> Bridge Attestation</div>
-        <p class="card-desc">Cross-protocol compliance attestation to other Stellar anchors.</p>
-        <div class="fg"><label>Wallet Address</label><input type="text" id="bridgeWallet" placeholder="Wallet address"></div>
-        <div class="fg"><label>Target Anchor</label>
-          <select id="bridgeAnchor">
-            <option value="SDF">SDF — Stellar Development Foundation</option>
-            <option value="CIRCLE">CIRCLE — Circle USDC Anchor</option>
-            <option value="AIRTM">AIRTM — AirTM Anchor</option>
-            <option value="TEMPO">TEMPO — Tempo Anchor (EU)</option>
-            <option value="COWRIE">COWRIE — Cowrie Exchange</option>
-          </select>
-        </div>
-        <div class="btn-row"><button class="btn cyan" onclick="createBridgeAttestation()">Create Attestation</button></div>
-        <div class="result-box" id="bridgeResult"></div>
-      </div>
-    </div>
-  </div>
+</div>
 
 </div><!-- /.shell -->
 
-<!-- MODAL: Register Wallet -->
+<!-- MODAL -->
 <div id="walletModal">
-  <div class="card" style="width:400px;max-width:calc(100vw - 32px)">
+  <div class="card">
     <div class="card-title"><i class="hgi-stroke hgi-user-add-01"></i> Register Wallet</div>
     <p class="card-desc">Add a user to test compliance rules.</p>
     <div class="fg"><label>Name</label><input type="text" id="nwName" placeholder="Alice"></div>
@@ -1080,46 +1301,240 @@ tr:hover td{background:var(--bg)}
 </div>
 
 <script>
-const API = 'https://salmanch123-reso.hf.space';
-let isOffline = false;
-let paillierQueue = [];
-let disclosureActive = null;
-let disclosureTimer = null;
-let escrowPoller = null;
+// ====================================================
+// BACKGROUND CANVAS ANIMATION
+// ====================================================
+(function(){
+  const c = document.getElementById('bgCanvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [], lines = [];
 
-function showToast(msg, ok=true) {
+  function resize(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // particles
+  for(let i=0;i<60;i++){
+    particles.push({
+      x: Math.random()*1440,
+      y: Math.random()*900,
+      vx: (Math.random()-.5)*.3,
+      vy: (Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5,
+      alpha: Math.random()*.6+.2
+    });
+  }
+
+  // grid lines
+  function drawGrid(){
+    ctx.clearRect(0,0,W,H);
+    // dot grid
+    ctx.fillStyle='rgba(99,102,241,.25)';
+    for(let x=0;x<W;x+=52){
+      for(let y=0;y<H;y+=52){
+        ctx.beginPath();
+        ctx.arc(x,y,1,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+
+  let t=0;
+  function animate(){
+    t++;
+    ctx.clearRect(0,0,W,H);
+
+    // dot grid
+    for(let x=0;x<W;x+=52){
+      for(let y=0;y<H;y+=52){
+        const alpha = .08 + .05*Math.sin(t*.01 + x*.003 + y*.003);
+        ctx.fillStyle=`rgba(99,102,241,${alpha})`;
+        ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);ctx.fill();
+      }
+    }
+
+    // particles
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.fillStyle=`rgba(99,102,241,${p.alpha})`;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+    });
+
+    // connect nearby particles
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120){
+          ctx.strokeStyle=`rgba(99,102,241,${.12*(1-dist/120)})`;
+          ctx.lineWidth=.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ====================================================
+// HEADER PROOF COUNTER
+// ====================================================
+let _proofs=0,_verified=0,_blocked=0;
+function bumpCounter(ok){
+  _proofs++;
+  if(ok) _verified++; else _blocked++;
+  const pEl=document.getElementById('pcProofs');
+  const vEl=document.getElementById('pcVerified');
+  const bEl=document.getElementById('pcBlocked');
+  pEl.textContent=_proofs; vEl.textContent=_verified; bEl.textContent=_blocked;
+  [pEl,vEl,bEl].forEach(el=>{
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'),400);
+  });
+}
+
+// ====================================================
+// CIRCUIT NODES SETUP
+// ====================================================
+const STEPS=['rev','san','kyc','lim','proof'];
+const STEP_LABELS=[
+  'Revocation check — wallet not in revocation registry',
+  'Sanctions proof — address absent from Merkle tree',
+  'KYC circuit — tier \u2265 required level',
+  'Limits circuit — amount within daily and rolling caps',
+  'On-chain hook — BN254 pairing proof verification on Soroban'
+];
+
+(function buildCircuit(){
+  const container=document.getElementById('circuitNodes');
+  STEPS.forEach((id,i)=>{
+    const node=document.createElement('div');
+    node.className='cn';
+    node.id='cn-'+id;
+    container.appendChild(node);
+    if(i<STEPS.length-1){
+      const line=document.createElement('div');
+      line.style.cssText='flex:1;height:1px;background:rgba(99,102,241,.15)';
+      container.appendChild(line);
+    }
+  });
+})();
+
+function resetCircuit(){
+  STEPS.forEach(id=>{
+    document.getElementById('cn-'+id).className='cn';
+    document.getElementById('ps-'+id).className='pstep';
+    document.getElementById('ph-'+id).style.opacity='0';
+  });
+  document.getElementById('circuitScan').style.left='-4px';
+  document.getElementById('circuitWrap').classList.remove('running');
+  const badge=document.getElementById('phBadge');
+  badge.className='ph-badge';
+  document.getElementById('phBadgeTxt').textContent='Ready';
+}
+
+function rndHash(){return'0x'+Array.from({length:12},()=>Math.floor(Math.random()*16).toString(16)).join('');}
+
+async function animateCircuit(results){
+  // results: array of {ok:bool} per step
+  const wrap=document.getElementById('circuitWrap');
+  const scan=document.getElementById('circuitScan');
+  const badge=document.getElementById('phBadge');
+  wrap.classList.add('running');
+  badge.className='ph-badge running';
+  document.getElementById('phBadgeTxt').textContent='Generating Proof...';
+
+  const nodeEls=STEPS.map(id=>document.getElementById('cn-'+id));
+  const stepEls=STEPS.map(id=>document.getElementById('ps-'+id));
+  const nodeW=wrap.offsetWidth / (STEPS.length*2 - 1);
+
+  for(let i=0;i<STEPS.length;i++){
+    const pct = (i/(STEPS.length-1))*100;
+    scan.style.animation='none';
+    scan.style.left=pct+'%';
+    void scan.offsetWidth;
+
+    nodeEls[i].className='cn active';
+    stepEls[i].className='pstep active';
+    await delay(results[i].ok !== false ? 380 : 250);
+
+    const ok=results[i].ok !== false;
+    nodeEls[i].className=ok?'cn done':'cn fail';
+    stepEls[i].className=ok?'pstep done':'pstep fail';
+    document.getElementById('ph-'+STEPS[i]).textContent=(STEPS[i]==='proof'?'bn254':'sha256')+'::'+rndHash();
+
+    if(!ok){
+      wrap.classList.remove('running');
+      badge.className='ph-badge';
+      document.getElementById('phBadgeTxt').textContent='Proof Failed';
+      return false;
+    }
+  }
+  wrap.classList.remove('running');
+  badge.className='ph-badge done';
+  document.getElementById('phBadgeTxt').textContent='Proof Verified';
+  return true;
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// ====================================================
+// API LAYER
+// ====================================================
+const API='https://salmanch123-reso.hf.space';
+let isOffline=false;
+let paillierQueue=[];
+let disclosureActive=null;
+let disclosureTimer=null;
+let escrowPoller=null;
+
+function showToast(msg,ok=true){
   const t=document.getElementById('toast');
   document.getElementById('toastText').innerText=msg;
   const ico=document.getElementById('toastIcon');
   ico.className=ok?'toast-ok':'toast-err';
-  ico.innerHTML=ok?'<i class="hgi-stroke hgi-checkmark-circle-01"></i>':'<i class="hgi-stroke hgi-cancel-01"></i>';
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
+  ico.innerHTML=ok
+    ?'<i class="hgi-stroke hgi-checkmark-circle-01"></i>'
+    :'<i class="hgi-stroke hgi-cancel-01"></i>';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
 }
-function setOffline() {
+function setOffline(){
   isOffline=true;
   document.getElementById('offlineBar').style.display='block';
-  document.getElementById('statusLabel').innerText='Demo Mode';
+  document.getElementById('statusLabel').textContent='Demo Mode';
   document.querySelector('.status-dot').style.background='var(--amber)';
-  document.querySelector('.status-badge').style.background='var(--amber-light)';
-  document.querySelector('.status-badge').style.borderColor='var(--amber-border)';
+  document.querySelector('.status-dot').style.boxShadow='0 0 8px rgba(245,158,11,.4)';
+  document.querySelector('.status-badge').style.borderColor='rgba(245,158,11,.3)';
+  document.querySelector('.status-badge').style.background='rgba(245,158,11,.08)';
   document.querySelector('.status-badge').style.color='var(--amber)';
 }
-function showResult(id, html, type='info') {
+function showResult(id,html,type='info'){
   const el=document.getElementById(id);
-  el.innerHTML=html; el.className='result-box '+type; el.style.display='block';
+  el.innerHTML=html;el.className='result-box '+type;el.style.display='block';
 }
-function switchTab(id, el) {
+
+function switchTab(id,el){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   clearInterval(escrowPoller);
-  if(el) el.classList.add('active');
+  if(el)el.classList.add('active');
   document.getElementById('panel-'+id).classList.add('active');
   if(id==='escrow'){loadEscrows();escrowPoller=setInterval(loadEscrows,3000);}
   if(id==='sandbox'){loadRevocation();loadFolding();}
 }
 
-// ─ DEMO MODE ─
-function loadDemoMode() {
+function loadDemoMode(){
   setOffline();
   const demos=[
     {address:'GCLEANUSERADDRESSTHATISFINE00099',name:'Alice (Tier 2)',kyc_tier:2,is_sanctioned:false},
@@ -1131,32 +1546,32 @@ function loadDemoMode() {
   document.getElementById('auditRows').innerHTML=
     `<tr><td>${new Date().toLocaleString()}</td><td>Sanctions screen</td><td><span class="badge b-blocked">Blocked</span></td><td class="mono">0xdemo1...</td><td class="mono">0xdemo...</td></tr>
      <tr><td>${new Date().toLocaleString()}</td><td>All checks passed</td><td><span class="badge b-ok">Verified</span></td><td class="mono">0xdemo2...</td><td class="mono">0xdemo...</td></tr>`;
-  document.getElementById('revRoot').innerText='0xDEMO...OFFLINE';
-  document.getElementById('foldingRoot').innerText='0xDEMO...OFFLINE';
+  document.getElementById('revRoot').textContent='0xDEMO...OFFLINE';
+  document.getElementById('foldingRoot').textContent='0xDEMO...OFFLINE';
 }
 
-function renderWallets(data) {
-  document.getElementById('merkleRoot').innerText='0x'+data.sanctions_merkle_root.slice(0,16)+'...';
-  const wl=document.getElementById('walletList'); wl.innerHTML='';
+function renderWallets(data){
+  document.getElementById('merkleRoot').textContent='0x'+data.sanctions_merkle_root.slice(0,16)+'...';
+  const wl=document.getElementById('walletList');wl.innerHTML='';
   const sels=['simSender','revokeSelect','escrowSender','escrowRecipient'];
   const saved=sels.map(id=>document.getElementById(id).value);
   sels.forEach(id=>document.getElementById(id).innerHTML='');
   data.wallets.forEach(w=>{
-    const item=document.createElement('div'); item.className='list-item';
+    const item=document.createElement('div');item.className='list-item';
     item.innerHTML=`<div class="item-meta"><span class="item-name">${w.name||'Anon'}</span><span class="item-sub">${w.address.slice(0,10)}...${w.address.slice(-8)}</span></div><div style="display:flex;gap:4px;flex-shrink:0">${w.is_sanctioned?'<span class="badge b-sanctioned">Sanctioned</span>':''}<span class="badge b-tier">Tier ${w.kyc_tier}</span></div>`;
     wl.appendChild(item);
     sels.forEach(id=>{
-      const o=document.createElement('option'); o.value=w.address;
-      o.innerText=`${w.name||w.address.slice(0,8)} (${w.address.slice(0,8)}...)`;
+      const o=document.createElement('option');o.value=w.address;
+      o.textContent=`${w.name||w.address.slice(0,8)} (${w.address.slice(0,8)}...)`;
       document.getElementById(id).appendChild(o);
     });
   });
   sels.forEach((id,i)=>{if(saved[i]&&[...document.getElementById(id).options].some(o=>o.value===saved[i]))document.getElementById(id).value=saved[i];});
 }
 
-async function loadRules() {
+async function loadRules(){
   try{
-    const r=await fetch(`${API}/api/rules`); if(!r.ok) throw new Error();
+    const r=await fetch(`${API}/api/rules`);if(!r.ok)throw new Error();
     const d=await r.json();
     document.getElementById('maxAmount').value=d.max_amount;
     document.getElementById('dailyLimit').value=d.daily_limit;
@@ -1164,7 +1579,7 @@ async function loadRules() {
     document.getElementById('sanctionsCheck').value=d.sanctions_enabled.toString();
   }catch(e){loadDemoMode();}
 }
-async function saveRules() {
+async function saveRules(){
   if(isOffline){showToast('Demo mode — backend offline.',false);return;}
   try{
     const r=await fetch(`${API}/api/rules`,{method:'POST',headers:{'Content-Type':'application/json'},
@@ -1172,18 +1587,17 @@ async function saveRules() {
         daily_limit:+document.getElementById('dailyLimit').value,
         min_kyc_tier:+document.getElementById('kycTier').value,
         sanctions_enabled:document.getElementById('sanctionsCheck').value==='true'})});
-    if(r.ok) showToast('Rules published to Stellar Hook!');
+    if(r.ok)showToast('Rules published to Stellar Hook!');
   }catch(e){showToast('Error.',false);}
 }
-
-async function loadWallets() {
-  if(isOffline) return;
+async function loadWallets(){
+  if(isOffline)return;
   try{
-    const r=await fetch(`${API}/api/wallets`); if(!r.ok) throw new Error();
+    const r=await fetch(`${API}/api/wallets`);if(!r.ok)throw new Error();
     renderWallets(await r.json());
   }catch(e){}
 }
-async function submitWallet() {
+async function submitWallet(){
   if(isOffline){showToast('Demo mode.',false);closeWalletModal();return;}
   const addr=document.getElementById('nwAddr').value.trim();
   if(!addr){alert('Address required');return;}
@@ -1198,12 +1612,12 @@ async function submitWallet() {
 function openWalletModal(){document.getElementById('walletModal').style.display='flex';}
 function closeWalletModal(){document.getElementById('walletModal').style.display='none';}
 
-async function loadAuditLogs() {
-  if(isOffline) return;
+async function loadAuditLogs(){
+  if(isOffline)return;
   try{
-    const r=await fetch(`${API}/api/audit-logs`); if(!r.ok) throw new Error();
+    const r=await fetch(`${API}/api/audit-logs`);if(!r.ok)throw new Error();
     const logs=await r.json();
-    const tbody=document.getElementById('auditRows'); tbody.innerHTML='';
+    const tbody=document.getElementById('auditRows');tbody.innerHTML='';
     logs.forEach(l=>{
       const tr=document.createElement('tr');
       const badge=l.status==='ok'?'<span class="badge b-ok">Verified</span>':'<span class="badge b-blocked">Blocked</span>';
@@ -1213,61 +1627,89 @@ async function loadAuditLogs() {
   }catch(e){}
 }
 
-async function runSimulation() {
+async function runSimulation(){
   const sender=document.getElementById('simSender').value;
   const amount=+document.getElementById('simAmount').value;
   if(!sender){showToast('Register a wallet first.',false);return;}
-  const pipe=document.getElementById('pipeline'); const res=document.getElementById('simResult');
-  pipe.style.display='block'; res.style.display='none';
-  ['rev','san','kyc','lim','proof'].forEach(id=>{const e=document.getElementById('si-'+id);e.className='step-icon';e.innerText='–';});
-  const delay=ms=>new Promise(r=>setTimeout(r,ms));
+
+  resetCircuit();
+  document.getElementById('simResult').style.display='none';
+
   if(isOffline){
-    for(const id of ['rev','san','kyc','lim','proof']){
-      document.getElementById('si-'+id).className='step-icon pend'; await delay(400);
-      document.getElementById('si-'+id).className='step-icon ok'; document.getElementById('si-'+id).innerText='✓';
-    }
-    res.style.display='block'; res.className='sim-result ok';
-    res.innerHTML='<strong>Demo Mode: All ZK Checks Passed</strong><br>Connect backend for real on-chain verification.';
+    const fakeResults=STEPS.map(()=>({ok:true}));
+    const ok=await animateCircuit(fakeResults);
+    bumpCounter(true);
+    showProofResult(true,'Demo Mode: All ZK Checks Passed','Connect backend for real on-chain verification.',rndHash());
     return;
   }
+
   try{
-    document.getElementById('si-rev').className='step-icon pend'; await delay(500);
+    // start animation while waiting
+    let stepIdx=0;
     const r=await fetch(`${API}/api/simulate-transfer`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({sender,amount})});
-    const d=await r.json(); const ok=d.compliant;
-    const step=(id,fail_cond)=>{
-      if(!ok&&fail_cond){document.getElementById('si-'+id).className='step-icon fail';document.getElementById('si-'+id).innerText='✕';return true;}
-      document.getElementById('si-'+id).className='step-icon ok';document.getElementById('si-'+id).innerText='✓';return false;
-    };
-    if(step('rev',d.event&&d.event.rule_checked==='Credential revocation check')){showFinalResult(d);return;}
-    document.getElementById('si-san').className='step-icon pend'; await delay(500);
-    if(step('san',d.reason&&d.reason.includes('sanctions'))){showFinalResult(d);return;}
-    document.getElementById('si-kyc').className='step-icon pend'; await delay(500);
-    if(step('kyc',d.reason&&d.reason.includes('KYC'))){showFinalResult(d);return;}
-    document.getElementById('si-lim').className='step-icon pend'; await delay(500);
-    if(step('lim',d.reason&&d.reason.includes('exceed'))){showFinalResult(d);return;}
-    document.getElementById('si-proof').className='step-icon pend'; await delay(500);
-    step('proof',false); showFinalResult(d);
-  }catch(e){showToast('Simulation error.',false);}
-}
-function showFinalResult(d){
-  const r=document.getElementById('simResult'); r.style.display='block';
-  if(d.compliant){r.className='sim-result ok';r.innerHTML=`<strong>Compliant</strong><br>Proof: ${d.event.proof_ref.slice(0,18)}...<br>Root: ${d.event.merkle_root}<br>${d.reason}`;}
-  else{r.className='sim-result fail';r.innerHTML=`<strong>Blocked</strong><br>Rule: ${d.event.rule_checked}<br>${d.reason}`;}
-  loadWallets();loadAuditLogs();
+    const d=await r.json();
+    const ok=d.compliant;
+
+    // map result to step failures
+    const stepResults=STEPS.map((s,i)=>{
+      if(ok)return{ok:true};
+      const rule=d.event&&d.event.rule_checked||'';
+      const reason=d.reason||'';
+      if(s==='rev'&&rule.includes('revocation'))return{ok:false};
+      if(s==='san'&&reason.includes('sanctions'))return{ok:false};
+      if(s==='kyc'&&reason.includes('KYC'))return{ok:false};
+      if(s==='lim'&&reason.includes('exceed'))return{ok:false};
+      return{ok:true};
+    });
+
+    await animateCircuit(stepResults);
+    bumpCounter(ok);
+    if(ok){
+      showProofResult(true,'Transaction Verified',`Rule: ${d.event&&d.event.rule_checked||'All checks passed'}`,d.event&&d.event.proof_ref||rndHash());
+    }else{
+      showProofResult(false,'Transaction Blocked',`Rule: ${d.event&&d.event.rule_checked||''}<br>${d.reason}`,d.event&&d.event.proof_ref||rndHash());
+    }
+    loadWallets();loadAuditLogs();
+  }catch(e){
+    showToast('Simulation error.',false);
+    resetCircuit();
+  }
 }
 
+function showProofResult(ok,title,body,hash){
+  const el=document.getElementById('simResult');
+  el.style.display='block';
+  el.className='proof-result '+(ok?'ok':'fail');
+  document.getElementById('prTitle').innerHTML=(ok
+    ?'<i class="hgi-stroke hgi-checkmark-circle-01"></i> '
+    :'<i class="hgi-stroke hgi-cancel-01"></i> ')+title;
+  document.getElementById('prBody').innerHTML=body;
+  // typewriter hash
+  const hashEl=document.getElementById('prHash');
+  hashEl.textContent='';
+  hashEl.classList.add('cursor');
+  const fullHash='groth16::'+hash;
+  let i=0;
+  const typeInterval=setInterval(()=>{
+    hashEl.textContent+=fullHash[i]||'';
+    i++;
+    if(i>=fullHash.length){clearInterval(typeInterval);hashEl.classList.remove('cursor');}
+  },30);
+}
+
+// Escrow
 async function loadEscrows(){
   if(isOffline){document.getElementById('escrowsList').innerHTML="<div style='padding:12px;font-size:12px;color:var(--text3)'>Backend offline.</div>";return;}
   try{
-    const r=await fetch(`${API}/api/escrow`); if(!r.ok) throw new Error();
-    const data=await r.json(); const out=document.getElementById('escrowsList'); out.innerHTML='';
+    const r=await fetch(`${API}/api/escrow`);if(!r.ok)throw new Error();
+    const data=await r.json();const out=document.getElementById('escrowsList');out.innerHTML='';
     if(!data.escrows.length){out.innerHTML="<div style='padding:12px;font-size:12px;color:var(--text3)'>No active escrows.</div>";return;}
     const now=Math.floor(Date.now()/1000);
     data.escrows.forEach(e=>{
-      const item=document.createElement('div'); item.className='list-item';
-      const td=e.unlock_time-now; const locked=td>0;
-      item.innerHTML=`<div class="item-meta"><span class="item-name">${e.amount} USD &rarr; ${e.recipient.slice(0,8)}...</span><span class="item-sub">From ${e.sender.slice(0,8)}...</span></div><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">${locked?`<span class="badge b-tier">Locked ${td}s</span>`:'<span class="badge b-ok">Claimable</span>'}<button class="btn purple" style="font-size:10px;padding:3px 8px;flex:none" onclick="claimEscrow('${e.recipient}')">Claim</button><button class="btn red" style="font-size:10px;padding:3px 8px;flex:none;${locked?'opacity:.4;cursor:not-allowed':''}" onclick="refundEscrow('${e.recipient}')" ${locked?'disabled':''}>Refund</button></div>`;
+      const item=document.createElement('div');item.className='list-item';
+      const td=e.unlock_time-now;const locked=td>0;
+      item.innerHTML=`<div class="item-meta"><span class="item-name">${e.amount} USD &rarr; ${e.recipient.slice(0,8)}...</span><span class="item-sub">From ${e.sender.slice(0,8)}...</span></div><div style="display:flex;gap:4px;align-items:center;flex-shrink:0">${locked?`<span class="badge b-tier">Locked ${td}s</span>`:'<span class="badge b-ok">Claimable</span>'}<button class="btn purple" style="font-size:10px;padding:3px 8px;flex:none" onclick="claimEscrow('${e.recipient}')">Claim</button><button class="btn red" style="font-size:10px;padding:3px 8px;flex:none" onclick="refundEscrow('${e.recipient}')" ${locked?'disabled':''}>Refund</button></div>`;
       out.appendChild(item);
     });
   }catch(e){}
@@ -1286,7 +1728,7 @@ async function depositEscrow(){
 }
 async function claimEscrow(recipient){
   if(isOffline){showToast('Demo mode.',false);return;}
-  const proof=prompt('ZK Proof:','11223344'); if(!proof) return;
+  const proof=prompt('ZK Proof:','11223344');if(!proof)return;
   try{
     const r=await fetch(`${API}/api/escrow/claim`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recipient,proof})});
     if(r.ok){showToast('Escrow claimed!');loadEscrows();}else{const e=await r.json();alert(e.detail);}
@@ -1300,22 +1742,18 @@ async function refundEscrow(recipient){
   }catch(e){showToast('Error.',false);}
 }
 
-async function apiPost(path, body, resultId) {
+async function apiPost(path,body,resultId){
   document.getElementById(resultId).style.display='none';
   try{
     const r=await fetch(`${API}${path}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.detail||JSON.stringify(d));
-    return d;
+    const d=await r.json();if(!r.ok)throw new Error(d.detail||JSON.stringify(d));return d;
   }catch(e){showResult(resultId,`<strong>Error:</strong> ${e.message}`,'fail');return null;}
 }
-async function apiGet(path, resultId) {
+async function apiGet(path,resultId){
   document.getElementById(resultId).style.display='none';
   try{
     const r=await fetch(`${API}${path}`);
-    const d=await r.json();
-    if(!r.ok) throw new Error(d.detail||JSON.stringify(d));
-    return d;
+    const d=await r.json();if(!r.ok)throw new Error(d.detail||JSON.stringify(d));return d;
   }catch(e){showResult(resultId,`<strong>Error:</strong> ${e.message}`,'fail');return null;}
 }
 
@@ -1323,8 +1761,8 @@ async function stellarCreateAccount(){
   const label=document.getElementById('newAccLabel').value.trim();
   showResult('createAccResult','Calling Friendbot… (~5s)','info');
   const d=await apiPost('/api/stellar/create-account',{label},'createAccResult');
-  if(!d) return;
-  showResult('createAccResult',`<strong>Account Created &amp; Funded</strong><br><b>Public Key:</b> <span class="mono">${d.public_key}</span><br><b>Secret Key:</b> <span class="mono" style="color:var(--red)">${d.secret_key}</span><br><b>Balance:</b> ${d.starting_balance}<br><a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert &rarr;</a><br><span style="color:var(--red)">Save your secret key now &mdash; it is not stored anywhere.</span>`,'ok');
+  if(!d)return;
+  showResult('createAccResult',`<strong>Account Created &amp; Funded</strong><br><b>Public Key:</b> <span class="mono">${d.public_key}</span><br><b>Secret Key:</b> <span class="mono" style="color:var(--red)">${d.secret_key}</span><br><b>Balance:</b> ${d.starting_balance}<br><a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert &rarr;</a><br><span style="color:var(--red)">Save your secret key now.</span>`,'ok');
   showToast('Account created and funded!');
 }
 async function stellarInspect(){
@@ -1332,9 +1770,9 @@ async function stellarInspect(){
   if(!addr){showToast('Enter a public key.',false);return;}
   showResult('inspectResult','Loading from Horizon…','info');
   const d=await apiGet(`/api/stellar/account/${addr}`,'inspectResult');
-  if(!d) return;
+  if(!d)return;
   const bals=d.balances.map(b=>`<span class="badge b-gold">${b.balance} ${b.asset_type==='native'?'XLM':b.asset_code}</span>`).join(' ');
-  showResult('inspectResult',`<b>Sequence:</b> ${d.sequence}<br><b>Balances:</b> ${bals}<br><b>Thresholds:</b> low:${d.thresholds.low_threshold} med:${d.thresholds.med_threshold} high:${d.thresholds.high_threshold}<br><a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert &rarr;</a>`,'info');
+  showResult('inspectResult',`<b>Sequence:</b> ${d.sequence}<br><b>Balances:</b> ${bals}<br><a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert &rarr;</a>`,'info');
 }
 async function stellarTransfer(){
   const secret=document.getElementById('transferSecret').value.trim();
@@ -1344,8 +1782,8 @@ async function stellarTransfer(){
   if(!secret||!dest){showToast('Secret key and destination required.',false);return;}
   showResult('transferResult','Submitting…','info');
   const d=await apiPost('/api/stellar/transfer',{source_secret:secret,destination:dest,amount,memo:memo||'Reso'},'transferResult');
-  if(!d) return;
-  showResult('transferResult',`<strong>Transfer Confirmed</strong><br><b>Hash:</b> <span class="mono">${d.hash.slice(0,20)}...</span><br><b>Ledger:</b> ${d.ledger} &nbsp; <b>Amount:</b> ${d.amount}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Transaction &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('transferResult',`<strong>Transfer Confirmed</strong><br><b>Hash:</b> <span class="mono">${d.hash.slice(0,20)}...</span><br><b>Ledger:</b> ${d.ledger}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Transaction &rarr;</a>`,'ok');
   showToast('XLM sent on testnet!');
   loadAuditLogs();
 }
@@ -1353,8 +1791,8 @@ async function stellarLoadTxHistory(){
   const addr=document.getElementById('txHistAddr').value.trim();
   if(!addr){showToast('Enter a public key.',false);return;}
   const d=await apiGet(`/api/stellar/transactions/${addr}`,'inspectResult');
-  if(!d) return;
-  const tbody=document.getElementById('txHistRows'); tbody.innerHTML='';
+  if(!d)return;
+  const tbody=document.getElementById('txHistRows');tbody.innerHTML='';
   if(!d.payments.length){tbody.innerHTML='<tr><td colspan="5" style="color:var(--text3)">No payments found.</td></tr>';return;}
   d.payments.forEach(p=>{
     const tr=document.createElement('tr');
@@ -1371,8 +1809,8 @@ async function stellarMultisig(){
   if(!secret||!newSigner){showToast('All fields required.',false);return;}
   showResult('msigResult','Configuring on-chain…','info');
   const d=await apiPost('/api/stellar/multisig/setup',{account_secret:secret,new_signer_public:newSigner,weight,med_threshold:med,low_threshold:1,high_threshold:med},'msigResult');
-  if(!d) return;
-  showResult('msigResult',`<strong>Multisig Configured</strong><br><b>New Signer:</b> <span class="mono">${d.new_signer.slice(0,16)}...</span><br><b>Weight:</b> ${d.weight} &nbsp; <b>Med Threshold:</b> ${d.thresholds.med}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('msigResult',`<strong>Multisig Configured</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('Multisig configured!');
 }
 async function stellarPathPayment(){
@@ -1384,8 +1822,8 @@ async function stellarPathPayment(){
   if(!secret||!dest){showToast('Secret and destination required.',false);return;}
   showResult('pathResult','Finding path…','info');
   const d=await apiPost('/api/stellar/path-payment',{source_secret:secret,destination:dest,dest_asset_code:destCode||'XLM',dest_asset_issuer:destIssuer,dest_amount:destAmt,send_asset_code:'XLM'},'pathResult');
-  if(!d) return;
-  showResult('pathResult',`<strong>Path Payment Sent</strong><br><b>Hash:</b> <span class="mono">${d.hash.slice(0,20)}...</span><br><b>Source:</b> ${d.source_amount} XLM &nbsp; <b>Dest:</b> ${d.dest_amount} ${d.dest_asset}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('pathResult',`<strong>Path Payment Sent</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('Path payment executed!');
 }
 async function stellarIssueAsset(){
@@ -1396,8 +1834,8 @@ async function stellarIssueAsset(){
   if(!issuerSecret||!distSecret||!code){showToast('All fields required.',false);return;}
   showResult('issueResult','Issuing asset (~10s)…','info');
   const d=await apiPost('/api/stellar/issue-asset',{issuer_secret:issuerSecret,distributor_secret:distSecret,asset_code:code,amount},'issueResult');
-  if(!d) return;
-  showResult('issueResult',`<strong>Asset Issued</strong><br><b>Code:</b> ${d.asset_code} &nbsp; <b>Amount:</b> ${d.amount_issued}<br><a class="tx-link" href="${d.explorer_asset}" target="_blank">View on Stellar.Expert &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('issueResult',`<strong>Asset Issued</strong><br><b>Code:</b> ${d.asset_code}<br><a class="tx-link" href="${d.explorer_asset}" target="_blank">View on Stellar.Expert &rarr;</a>`,'ok');
   showToast('Asset issued!');
 }
 async function stellarTrustline(){
@@ -1407,22 +1845,21 @@ async function stellarTrustline(){
   if(!secret||!code||!issuer){showToast('All fields required.',false);return;}
   showResult('trustResult','Adding trustline…','info');
   const d=await apiPost('/api/stellar/trustline',{account_secret:secret,asset_code:code,issuer},'trustResult');
-  if(!d) return;
-  showResult('trustResult',`<strong>Trustline Added</strong><br><b>Asset:</b> ${d.asset}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('trustResult',`<strong>Trustline Added</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('Trustline added!');
 }
 async function stellarCreateClaimable(){
   const secret=document.getElementById('claimSrcSecret').value.trim();
   const claimant=document.getElementById('claimClaimant').value.trim();
   const amount=document.getElementById('claimAmt').value;
-  const delay=+document.getElementById('claimDelay').value;
+  const d2=+document.getElementById('claimDelay').value;
   if(!secret||!claimant){showToast('All fields required.',false);return;}
-  showResult('claimCreateResult','Creating claimable balance…','info');
-  const d=await apiPost('/api/stellar/claimable-balance/create',{source_secret:secret,claimant,amount,unlock_delay_sec:delay},'claimCreateResult');
-  if(!d) return;
-  showResult('claimCreateResult',`<strong>Claimable Balance Created</strong><br><b>Amount:</b> ${d.amount}<br><b>Balance ID:</b> <span class="mono" style="word-break:break-all;font-size:10px">${d.balance_id||'See explorer'}</span><br><b>Unlocks at:</b> ${new Date(d.unlock_at*1000).toLocaleTimeString()}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a><br><span style="color:var(--amber)">Copy the Balance ID above to claim later.</span>`,'ok');
+  showResult('claimCreateResult','Creating…','info');
+  const d=await apiPost('/api/stellar/claimable-balance/create',{source_secret:secret,claimant,amount,unlock_delay_sec:d2},'claimCreateResult');
+  if(!d)return;
+  showResult('claimCreateResult',`<strong>Claimable Balance Created</strong><br><b>Balance ID:</b> <span class="mono" style="font-size:10px">${d.balance_id||'See explorer'}</span><br><b>Unlocks:</b> ${new Date(d.unlock_at*1000).toLocaleTimeString()}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('Funds locked on testnet!');
-  loadAuditLogs();
 }
 async function stellarClaimBalance(){
   const secret=document.getElementById('claimSecret').value.trim();
@@ -1430,7 +1867,7 @@ async function stellarClaimBalance(){
   if(!secret||!balanceId){showToast('All fields required.',false);return;}
   showResult('claimResult','Claiming…','info');
   const d=await apiPost('/api/stellar/claimable-balance/claim',{claimant_secret:secret,balance_id:balanceId},'claimResult');
-  if(!d) return;
+  if(!d)return;
   showResult('claimResult',`<strong>Balance Claimed</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('Balance claimed!');
 }
@@ -1439,8 +1876,8 @@ async function stellarOrderbook(){
   const buyCode=document.getElementById('obBuyCode').value.trim().toUpperCase();
   const buyIssuer=document.getElementById('obBuyIssuer').value.trim();
   const d=await apiGet(`/api/stellar/orderbook?selling=${sell}&buying=${buyCode}&buying_issuer=${buyIssuer}`,'inspectResult');
-  if(!d) return;
-  const tbody=document.getElementById('obRows'); tbody.innerHTML='';
+  if(!d)return;
+  const tbody=document.getElementById('obRows');tbody.innerHTML='';
   if(!d.bids.length&&!d.asks.length){tbody.innerHTML='<tr><td colspan="3" style="color:var(--text3)">No orders found.</td></tr>';return;}
   d.bids.forEach(b=>{const tr=document.createElement('tr');tr.innerHTML=`<td><span class="badge b-ok">Bid</span></td><td>${b.price}</td><td>${b.amount}</td>`;tbody.appendChild(tr);});
   d.asks.forEach(a=>{const tr=document.createElement('tr');tr.innerHTML=`<td><span class="badge b-blocked">Ask</span></td><td>${a.price}</td><td>${a.amount}</td>`;tbody.appendChild(tr);});
@@ -1454,8 +1891,8 @@ async function stellarOffer(){
   if(!secret||!buyCode||!buyIssuer){showToast('All fields required.',false);return;}
   showResult('offerResult','Posting offer…','info');
   const d=await apiPost('/api/stellar/manage-offer',{account_secret:secret,selling_code:'XLM',selling_issuer:'',buying_code:buyCode,buying_issuer:buyIssuer,amount:amt,price},'offerResult');
-  if(!d) return;
-  showResult('offerResult',`<strong>Offer Posted</strong><br><b>Selling:</b> ${d.selling} &nbsp; <b>Buying:</b> ${d.buying}<br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
+  if(!d)return;
+  showResult('offerResult',`<strong>Offer Posted</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Tx &rarr;</a>`,'ok');
   showToast('DEX offer placed!');
 }
 
@@ -1472,14 +1909,14 @@ async function paillierSum(){
 }
 async function paillierReset(){
   paillierQueue=[];loadPaillierQueue();document.getElementById('paillierResult').innerHTML='';
-  if(isOffline) return;
+  if(isOffline)return;
   try{await fetch(`${API}/api/crypto/paillier/keygen`,{method:'POST'});showToast('New keypair generated.');}catch(e){}
 }
 async function disclosureOpen(){
   if(isOffline){showToast('Demo mode.',false);return;}
   const identity=+document.getElementById('identityCommit').value;
   for(let i=1;i<=5;i++)document.getElementById('tb-'+i).className='trustee-btn';
-  try{const r=await fetch(`${API}/api/crypto/disclosure/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identity_commitment:identity,threshold:3,n:5,delay_sec:10})});disclosureActive=await r.json();let t=10;clearInterval(disclosureTimer);document.getElementById('disclosureStatus').innerText=`Time lock active: ${t}s remaining.`;disclosureTimer=setInterval(()=>{t--;if(t<=0){clearInterval(disclosureTimer);document.getElementById('disclosureStatus').innerText='Time lock expired. Collect 3 approvals then decrypt.';}else document.getElementById('disclosureStatus').innerText=`Time lock active: ${t}s remaining.`;},1000);document.getElementById('disclosureResult').innerHTML='';showToast('Disclosure request opened.');}catch(e){showToast('Error.',false);}
+  try{const r=await fetch(`${API}/api/crypto/disclosure/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({identity_commitment:identity,threshold:3,n:5,delay_sec:10})});disclosureActive=await r.json();let t=10;clearInterval(disclosureTimer);document.getElementById('disclosureStatus').textContent=`Time lock: ${t}s remaining.`;disclosureTimer=setInterval(()=>{t--;if(t<=0){clearInterval(disclosureTimer);document.getElementById('disclosureStatus').textContent='Lock expired. Collect 3 approvals then decrypt.';}else document.getElementById('disclosureStatus').textContent=`Time lock: ${t}s remaining.`;},1000);document.getElementById('disclosureResult').innerHTML='';showToast('Disclosure request opened.');}catch(e){showToast('Error.',false);}
 }
 async function disclosureApprove(id){
   if(isOffline){showToast('Demo mode.',false);return;}
@@ -1492,17 +1929,17 @@ async function disclosureDecrypt(){
   try{const r=await fetch(`${API}/api/crypto/disclosure/decrypt`,{method:'POST'});const d=await r.json();const el=document.getElementById('disclosureResult');if(d.success){el.style.color='var(--green)';el.innerHTML=`Revealed: ${d.decrypted_identity}`;}else{el.style.color='var(--red)';el.innerHTML=d.reason;}}catch(e){showToast('Error.',false);}
 }
 async function loadRevocation(){
-  if(isOffline) return;
-  try{const r=await fetch(`${API}/api/crypto/revocation`);const d=await r.json();document.getElementById('revRoot').innerText='0x'+d.revocation_root.slice(0,16)+'...';document.getElementById('revokedList').innerHTML=d.revoked_wallets.length?d.revoked_wallets.map(w=>`<div>${w.slice(0,20)}...</div>`).join(''):'None.';}catch(e){}
+  if(isOffline)return;
+  try{const r=await fetch(`${API}/api/crypto/revocation`);const d=await r.json();document.getElementById('revRoot').textContent='0x'+d.revocation_root.slice(0,16)+'...';document.getElementById('revokedList').innerHTML=d.revoked_wallets.length?d.revoked_wallets.map(w=>`<div>${w.slice(0,20)}...</div>`).join(''):'None.';}catch(e){}
 }
 async function revokeWallet(){
   if(isOffline){showToast('Demo mode.',false);return;}
-  const w=document.getElementById('revokeSelect').value;if(!w) return;
+  const w=document.getElementById('revokeSelect').value;if(!w)return;
   try{await fetch(`${API}/api/crypto/revocation/revoke`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet:w})});showToast(`Revoked ${w.slice(0,8)}...`);loadRevocation();}catch(e){showToast('Error.',false);}
 }
 async function loadFolding(){
-  if(isOffline) return;
-  try{const r=await fetch(`${API}/api/crypto/folding`);const d=await r.json();document.getElementById('foldingRoot').innerText='0x'+d.accumulator.slice(0,20)+'...';}catch(e){}
+  if(isOffline)return;
+  try{const r=await fetch(`${API}/api/crypto/folding`);const d=await r.json();document.getElementById('foldingRoot').textContent='0x'+d.accumulator.slice(0,20)+'...';}catch(e){}
 }
 async function foldStep(){
   if(isOffline){showToast('Demo mode.',false);return;}
@@ -1554,52 +1991,11 @@ async function loadReserveHistory(){
 async function registerDeadman(){
   const wallet=document.getElementById('deadmanWallet').value.trim();const amount=parseFloat(document.getElementById('deadmanAmount').value)||0;const interval=parseInt(document.getElementById('deadmanInterval').value)||300;
   if(!wallet){showToast('Enter wallet address',false);return;}
-  try{const r=await fetch(`${API}/api/deadman/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,unlock_amount:amount,heartbeat_interval:interval,beneficiary:wallet})});const d=await r.json();showResult('deadmanResult',`<strong>Deadman Switch Registered</strong><br>Wallet: ${wallet.slice(0,20)}&hellip;<br>Unlock Amount: $${amount}<br>Heartbeat Required Every: ${interval}s<br>${d.note}`);showToast('Deadman switch registered!');}catch(e){showResult('deadmanResult','Backend offline','fail');}
+  try{const r=await fetch(`${API}/api/deadman/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,unlock_amount:amount,heartbeat_interval:interval,beneficiary:wallet})});const d=await r.json();showResult('deadmanResult',`<strong>Deadman Switch Registered</strong><br>${d.note}`);showToast('Deadman switch registered!');}catch(e){showResult('deadmanResult','Backend offline','fail');}
 }
-async function sendHeartbeat(){
-  const wallet=document.getElementById('deadmanWallet').value.trim();if(!wallet){showToast('Enter wallet',false);return;}
-  try{await fetch(`${API}/api/deadman/heartbeat/${wallet}`,{method:'POST'});showToast('Heartbeat sent!');}catch(e){showToast('Error',false);}
-}
-async function checkDeadman(){
-  const wallet=document.getElementById('deadmanWallet').value.trim();if(!wallet){showToast('Enter wallet',false);return;}
-  try{const r=await fetch(`${API}/api/deadman/status/${wallet}`);const d=await r.json();showResult('deadmanResult',`Status: <strong style="color:${d.triggered?'var(--red)':'var(--green)'}">${d.triggered?'Triggered':'Active'}</strong><br>Silent for: ${d.silent_for_seconds}s / ${d.threshold_seconds}s threshold<br>Unlock Amount: $${d.unlock_amount}`);}catch(e){showResult('deadmanResult','Not registered or offline','fail');}
-}
-async function linkKycTree(){
-  const parent=document.getElementById('kycParent').value.trim();const child=document.getElementById('kycChild').value.trim();if(!parent||!child){showToast('Enter both wallets',false);return;}
-  try{const r=await fetch(`${API}/api/kyc-tree/link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent_wallet:parent,child_wallet:child})});const d=await r.json();showResult('kycTreeResult',`<strong>Linked</strong><br>Child: ${child.slice(0,20)}&hellip;<br>Parent: ${parent.slice(0,20)}&hellip;<br>Inherited KYC Tier: ${d.inherited_kyc_tier}<br>Tree Depth: ${d.inheritance_depth}`,'ok');showToast('KYC inheritance linked!');}catch(e){showResult('kycTreeResult','Backend offline','fail');}
-}
-async function resolveKycInheritance(){
-  const wallet=document.getElementById('kycChild').value.trim()||document.getElementById('kycParent').value.trim();if(!wallet){showToast('Enter wallet',false);return;}
-  try{const r=await fetch(`${API}/api/kyc-tree/resolve/${wallet}`);const d=await r.json();showResult('kycTreeResult',`KYC Tier: <strong>${d.kyc_tier}</strong><br>Source: ${d.source}${d.inherited?' (inherited from '+d.parent_wallet.slice(0,16)+'&hellip;)':''}`,d.kyc_tier>0?'ok':'fail');}catch(e){showResult('kycTreeResult','Error','fail');}
-}
-async function runCanaryScan(){
-  try{const r=await fetch(`${API}/api/canary/scan`);const d=await r.json();showResult('canaryResult',`Scanned ${d.scanned} wallets. Auto-frozen: <strong>${d.auto_frozen.length}</strong>${d.auto_frozen.length?'<br>'+d.auto_frozen.map(f=>`&bull; ${f.wallet.slice(0,20)}&hellip; (${(f.risk_score*100).toFixed(0)}% risk)`).join('<br>'):''}`,d.auto_frozen.length===0?'ok':'fail');showToast(`Scan complete. ${d.auto_frozen.length} frozen.`,d.auto_frozen.length===0);loadCanaryFreezes();}catch(e){showResult('canaryResult','Backend offline','fail');}
-}
-async function loadCanaryFreezes(){
-  try{const r=await fetch(`${API}/api/canary/freezes`);const d=await r.json();document.getElementById('canaryList').innerHTML=d.freezes.length===0?'<div style="padding:10px;font-size:12px;color:var(--text3)">No active freezes</div>':d.freezes.map(f=>`<div class="list-item"><div class="item-meta"><div class="item-name">${f.wallet_address.slice(0,20)}&hellip;</div><div class="item-sub">${f.reason}</div></div><span class="badge b-blocked" style="flex-shrink:0">${(f.risk_score*100).toFixed(0)}% risk</span></div>`).join('');}catch(e){}
-}
-async function submitWhistleblower(){
-  const complaint=document.getElementById('wbComplaint').value.trim();if(!complaint){showToast('Enter complaint text',false);return;}
-  try{const r=await fetch(`${API}/api/whistleblower/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({complaint,subject_wallet:document.getElementById('wbSubject').value,severity:document.getElementById('wbSeverity').value})});const d=await r.json();showResult('wbResult',`<strong>Report Submitted Anonymously</strong><br>Report ID: <span style="font-family:'Courier New',monospace;font-size:10px">${d.report_id.slice(0,32)}&hellip;</span><br>Identity: Cryptographically hidden`,'ok');showToast('Report submitted anonymously!');document.getElementById('wbComplaint').value='';}catch(e){showResult('wbResult','Backend offline','fail');}
-}
-async function issueTimedProof(){
-  const wallet=document.getElementById('timedWallet').value.trim();const type=document.getElementById('timedType').value;const ttl=parseInt(document.getElementById('timedTtl').value)||24;if(!wallet){showToast('Enter wallet',false);return;}
-  try{const r=await fetch(`${API}/api/timed-proof/issue`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,proof_type:type,ttl_hours:ttl})});const d=await r.json();showResult('timedResult',`<strong>Proof Issued</strong><br>Type: ${d.proof_type}<br>Valid for: ${ttl}h (until ${new Date(d.valid_until*1000).toLocaleString()})<br>Commitment: <span style="font-family:'Courier New',monospace;font-size:10px">${d.zk_commitment.slice(0,24)}&hellip;</span>`,'ok');showToast('Timed proof issued!');}catch(e){showResult('timedResult','Backend offline','fail');}
-}
-async function verifyTimedProof(){
-  const wallet=document.getElementById('timedWallet').value.trim();const type=document.getElementById('timedType').value;if(!wallet){showToast('Enter wallet',false);return;}
-  try{const r=await fetch(`${API}/api/timed-proof/verify/${wallet}?proof_type=${type}`);const d=await r.json();showResult('timedResult',d.valid?`<strong>Valid Proof</strong><br>Type: ${d.proof_type}<br>Expires in: ${d.expires_in_minutes} minutes`:`<strong>${d.reason}</strong>${d.action?'<br>'+d.action:''}`,d.valid?'ok':'fail');}catch(e){showResult('timedResult','Backend offline','fail');}
-}
-async function createBridgeAttestation(){
-  const wallet=document.getElementById('bridgeWallet').value.trim();const anchor=document.getElementById('bridgeAnchor').value;if(!wallet){showToast('Enter wallet',false);return;}
-  try{const r=await fetch(`${API}/api/bridge/attest`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_address:wallet,target_anchor:anchor})});const d=await r.json();showResult('bridgeResult',`<strong>Bridge Attestation Created</strong><br>Anchor: ${d.anchor_name}<br>KYC Tier: ${d.kyc_tier}<br>Valid for: 1 hour<br>Signature: <span style="font-family:'Courier New',monospace;font-size:10px">${d.bridge_signature.slice(0,24)}&hellip;</span>`,'ok');showToast('Bridge attestation created!');}catch(e){showResult('bridgeResult','KYC required or offline','fail');}
-}
-
-window.onload = function(){
-  loadRules();
-  loadWallets();
-  loadAuditLogs();
-};
-</script>
-</body>
-</html>
+async function sendHeartbeat(){const wallet=document.getElementById('deadmanWallet').value.trim();if(!wallet){showToast('Enter wallet',false);return;}try{await fetch(`${API}/api/deadman/heartbeat/${wallet}`,{method:'POST'});showToast('Heartbeat sent!');}catch(e){showToast('Error',false);}}
+async function checkDeadman(){const wallet=document.getElementById('deadmanWallet').value.trim();if(!wallet){showToast('Enter wallet',false);return;}try{const r=await fetch(`${API}/api/deadman/status/${wallet}`);const d=await r.json();showResult('deadmanResult',`Status: <strong style="color:${d.triggered?'var(--red)':'var(--green)'}">${d.triggered?'Triggered':'Active'}</strong><br>Silent for: ${d.silent_for_seconds}s / ${d.threshold_seconds}s<br>Unlock: $${d.unlock_amount}`);}catch(e){showResult('deadmanResult','Not registered or offline','fail');}}
+async function linkKycTree(){const parent=document.getElementById('kycParent').value.trim();const child=document.getElementById('kycChild').value.trim();if(!parent||!child){showToast('Enter both wallets',false);return;}try{const r=await fetch(`${API}/api/kyc-tree/link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent_wallet:parent,child_wallet:child})});const d=await r.json();showResult('kycTreeResult',`<strong>Linked</strong><br>Inherited KYC Tier: ${d.inherited_kyc_tier}<br>Tree Depth: ${d.inheritance_depth}`,'ok');showToast('KYC inheritance linked!');}catch(e){showResult('kycTreeResult','Backend offline','fail');}}
+async function resolveKycInheritance(){const wallet=document.getElementById('kycChild').value.trim()||document.getElementById('kycParent').value.trim();if(!wallet){showToast('Enter wallet',false);return;}try{const r=await fetch(`${API}/api/kyc-tree/resolve/${wallet}`);const d=await r.json();showResult('kycTreeResult',`KYC Tier: <strong>${d.kyc_tier}</strong><br>Source: ${d.source}${d.inherited?' (inherited)':''}`,d.kyc_tier>0?'ok':'fail');}catch(e){showResult('kycTreeResult','Error','fail');}}
+async function runCanaryScan(){try{const r=await fetch(`${API}/api/canary/scan`);const d=await r.json();showResult('canaryResult',`Scanned ${d.scanned} wallets. Auto-frozen: <strong>${d.auto_frozen.length}</strong>${d.auto_frozen.length?'<br>'+d.auto_frozen.map(f=>`&bull; ${f.wallet.slice(0,20)}&hellip; (${(f.risk_score*100).toFixed(0)}% risk)`).join('<br>'):''}`,d.auto_frozen.length===0?'ok':'fail');showToast(`Scan complete. ${d.auto_frozen.length} frozen.`,d.auto_frozen.length===0);loadCanaryFreezes();}catch(e){showResult('canaryResult','Backend offline','fail');}}
+async
