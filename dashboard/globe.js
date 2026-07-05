@@ -86,32 +86,6 @@ function initGlobe(THREE) {
     const atmosMat = new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.12, side: THREE.BackSide });
     globeGroup.add(new THREE.Mesh(atmosGeo, atmosMat));
 
-    // fresnel rim glow for extra 3D depth
-    const fresnelMat = new THREE.ShaderMaterial({
-      uniforms: { glowColor: { value: new THREE.Color(0x6366f1) } },
-      vertexShader: [
-        'varying float intensity;',
-        'void main() {',
-        '  vec3 vN = normalize( normalMatrix * normal );',
-        '  vec3 vNel = normalize( normalMatrix * vec3(0.0, 0.0, 1.0) );',
-        '  intensity = pow( 0.62 - dot(vN, vNel), 2.8 );',
-        '  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-        '}',
-      ].join('\n'),
-      fragmentShader: [
-        'uniform vec3 glowColor;',
-        'varying float intensity;',
-        'void main() {',
-        '  gl_FragColor = vec4( glowColor, 1.0 ) * intensity;',
-        '}',
-      ].join('\n'),
-      side: THREE.BackSide,
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-    });
-    const fresnelMesh = new THREE.Mesh(new THREE.SphereGeometry(1.2, segs, segs), fresnelMat);
-    globeGroup.add(fresnelMesh);
-
     const cities = [
       ['New York', 40.71, -74.0],
       ['London', 51.5, -0.12],
