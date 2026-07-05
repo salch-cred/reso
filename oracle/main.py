@@ -27,7 +27,7 @@ state_lock = threading.Lock()
 
 # --- Stellar CLI & On-Chain Integration Helpers ---
 
-STELLAR_CLI = r"C:\Program Files (x86)\Stellar CLI\stellar.exe"
+STELLAR_CLI = os.environ.get("STELLAR_CLI_PATH", r"C:\Program Files (x86)\Stellar CLI\stellar.exe")
 CONTRACT_ID = "CBGVXHOM4EV3G4JXCEA4VO76WWL55SBQHUQSVVJOOV6PQLIP2M4N65PC"
 
 def run_stellar_command(args: List[str]) -> Tuple[int, str, str]:
@@ -247,10 +247,159 @@ state = {
     "disclosure_request": None,
     "revocation_registry": {"revoked": set(), "root": hashlib.sha256(b"__EMPTY__").hexdigest()},
     "folding_accumulator": hashlib.sha256(b"GENESIS").hexdigest(),
-    
-    # Gated Escrow State
     "escrows": {}
 }
+
+# --- Supabase Database Integration Layer ---
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+db = None
+
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        from supabase import create_client
+        db = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("Connected to Supabase successfully!")
+    except Exception as e:
+        print("Failed to initialize Supabase client:", e)
+
+def get_db_rules() -> Rules:
+    if db:
+        try:
+            res = db.table("rules").select("*").eq("id", 1).execute()
+            if res.data:
+                r = res.data[0]
+                return Rules(
+                    max_amount=float(r["max_amount"]),
+                    daily_limit=float(r["daily_limit"]),
+                    min_kyc_tier=int(r["min_kyc_tier"]),
+                    sanctions_enabled=bool(r["sanctions_enabled"])
+                )
+        except Exception as e:
+            print("Supabase rules fetch error:", e)
+    return state["rules"]
+
+def save_db_rules(rules: Rules):
+    if db:
+        try:
+            db.table("rules").upsert({
+                "id": 1,
+                "max_amount": rules.max_amount,
+                "daily_limit": rules.daily_limit,
+                "min_kyc_tier": rules.min_kyc_tier,
+                "sanctions_enabled": rules.sanctions_enabled
+            }).execute()
+            return
+        except Exception as e:
+            print("Supabase rules update error:", e)
+    state["rules"] = rules
+
+def get_db_wallets() -> List[Dict[str, Any]]:
+    if db:
+        try:
+            res = db.table("wallets").select("*").execute()
+            if res.data:
+                # Format to structure expected by frontend
+                return [{
+                    "address": r["address"],
+                    "kyc_tier": r["kyc_tier"],
+                    "is_sanctioned": r["is_sanctioned"],
+                    "name": r["name"],
+                    "daily_volume": float(r["daily_volume"])
+                } for r in res.data]
+        except Exception as e:
+            print("Supabase wallets fetch error:", e)
+            
+    wallets_list = []
+    for w in state["wallets"].values():
+        w_dict = w.dict()
+        w_dict["daily_volume"] = state["daily_volumes"].get(w.address, 0.0)
+        wallets_list.append(w_dict)
+    return wallets_list
+
+def save_db_wallet(wallet: Wallet):
+    if db:
+        try:
+            db.table("wallets").upsert({
+                "address": wallet.address,
+                "kyc_tier": wallet.kyc_tier,
+                "is_sanctioned": wallet.is_sanctioned,
+                "name": wallet.name
+            }).execute()
+            return
+        except Exception as e:
+            print("Supabase wallet save error:", e)
+    state["wallets"][wallet.address] = wallet
+
+def update_db_daily_volume(address: str, amount: float):
+    if db:
+        try:
+            res = db.table("wallets").select("daily_volume").eq("address", address).execute()
+            curr = 0.0
+            if res.data:
+                curr = float(res.data[0].get("daily_volume", 0.0) or 0.0)
+            db.table("wallets").update({"daily_volume": curr + amount}).eq("address", address).execute()
+            return
+        except Exception as e:
+            print("Supabase daily volume update error:", e)
+            
+    state["daily_volumes"][address] = state["daily_volumes"].get(address, 0.0) + amount
+
+def get_db_escrows() -> List[Dict[str, Any]]:
+    if db:
+        try:
+            res = db.table("escrows").select("*").execute()
+            if res.data:
+                return res.data
+        except Exception as e:
+            print("Supabase escrows fetch error:", e)
+    return list(state["escrows"].values())
+
+def save_db_escrow(recipient: str, escrow: Dict[str, Any]):
+    if db:
+        try:
+            db.table("escrows").upsert({
+                "recipient": recipient,
+                "sender": escrow["sender"],
+                "amount": escrow["amount"],
+                "unlock_time": escrow["unlock_time"],
+                "onchain_tx": escrow["onchain_tx"]
+            }).execute()
+            return
+        except Exception as e:
+            print("Supabase escrow save error:", e)
+    state["escrows"][recipient] = escrow
+
+def delete_db_escrow(recipient: str):
+    if db:
+        try:
+            db.table("escrows").delete().eq("recipient", recipient).execute()
+            return
+        except Exception as e:
+            print("Supabase escrow delete error:", e)
+    state["escrows"].pop(recipient, None)
+
+def get_db_audit_logs() -> List[Dict[str, Any]]:
+    if db:
+        try:
+            res = db.table("audit_logs").select("*").order("id", desc=True).execute()
+            if res.data:
+                return res.data
+        except Exception as e:
+            print("Supabase audit logs fetch error:", e)
+    return state["audit_logs"]
+
+def insert_db_audit_log(log: Dict[str, Any]):
+    if db:
+        try:
+            db.table("audit_logs").insert(log).execute()
+            return
+        except Exception as e:
+            print("Supabase audit log insert error:", e)
+    state["audit_logs"].insert(0, log)
+
+# --- Hash Utils ---
 
 def sha256_hex(data: str) -> str:
     return hashlib.sha256(data.encode('utf-8')).hexdigest()
@@ -292,14 +441,15 @@ class MerkleTree:
         return proof
 
 def get_active_sanctions_tree() -> MerkleTree:
-    sanctioned = [w.address for w in state["wallets"].values() if w.is_sanctioned]
+    w_list = get_db_wallets()
+    sanctioned = [w["address"] for w in w_list if w["is_sanctioned"]]
     leaves = [address_hash(addr) for addr in sanctioned]
     return MerkleTree(leaves)
 
-# Seed audit logs
-init_tree = get_active_sanctions_tree()
-state["audit_logs"] = [
-    {
+# Seed audit logs if empty
+if not get_db_audit_logs():
+    init_tree = get_active_sanctions_tree()
+    insert_db_audit_log({
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "sender": "GABC1SANCTIONEDEXAMPLEADDRESS0001",
         "amount": 250.0,
@@ -308,20 +458,17 @@ state["audit_logs"] = [
         "reason": "Address is listed on the active sanctions list (proven via non-membership check failure)",
         "proof_ref": "0x9f2a24c8b618bc360b0e5d41c888ee11ec9f2a24c8b618bc360b0e5d41c888ee11",
         "merkle_root": f"0x{init_tree.root[:16]}..."
-    }
-]
+    })
 
 # --- API Endpoints ---
 
 @app.get("/api/rules", response_model=Rules)
 def get_rules():
-    with state_lock:
-        return state["rules"]
+    return get_db_rules()
 
 @app.post("/api/rules", response_model=Rules)
 def update_rules(rules: Rules):
-    with state_lock:
-        state["rules"] = rules
+    save_db_rules(rules)
     
     temp_json = os.path.abspath(os.path.join(os.path.dirname(__file__), "rule_update.json"))
     with open(temp_json, "w") as f:
@@ -345,15 +492,11 @@ def update_rules(rules: Rules):
 
 @app.get("/api/wallets")
 def get_wallets():
-    with state_lock:
-        tree = get_active_sanctions_tree()
-        wallets_list = []
-        for w in state["wallets"].values():
-            w_dict = w.dict()
-            w_dict["hash"] = address_hash(w.address)
-            w_dict["daily_volume"] = state["daily_volumes"].get(w.address, 0.0)
-            wallets_list.append(w_dict)
-        return {"wallets": wallets_list, "sanctions_merkle_root": tree.root}
+    tree = get_active_sanctions_tree()
+    wallets_list = get_db_wallets()
+    for w in wallets_list:
+        w["hash"] = address_hash(w["address"])
+    return {"wallets": wallets_list, "sanctions_merkle_root": tree.root}
 
 @app.post("/api/wallets")
 def add_or_update_wallet(wallet: Wallet, load_test: bool = False):
@@ -361,11 +504,8 @@ def add_or_update_wallet(wallet: Wallet, load_test: bool = False):
     if not addr:
         raise HTTPException(status_code=400, detail="Wallet address cannot be empty")
     
-    with state_lock:
-        state["wallets"][addr] = wallet
-        if addr not in state["daily_volumes"]:
-            state["daily_volumes"][addr] = 0.0
-        tree = get_active_sanctions_tree()
+    save_db_wallet(wallet)
+    tree = get_active_sanctions_tree()
     
     if not load_test and not addr.startswith("GLOAD"):
         code, stdout, stderr = run_stellar_command([
@@ -383,36 +523,44 @@ def add_or_update_wallet(wallet: Wallet, load_test: bool = False):
 
 @app.get("/api/audit-logs")
 def get_audit_logs():
-    with state_lock:
-        return state["audit_logs"]
+    return get_db_audit_logs()
 
 @app.post("/api/simulate-transfer")
 def simulate_transfer(req: TransferRequest, load_test: bool = False):
     sender = req.sender.strip()
     amount = req.amount
     
-    with state_lock:
-        wallet = state["wallets"].get(sender) or Wallet(address=sender, kyc_tier=0, is_sanctioned=False, name="Unknown Wallet")
-        rules = state["rules"]
-        tree = get_active_sanctions_tree()
-        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-        proof_ref = "0x" + hashlib.sha256(f"{sender}{amount}{time.time()}".encode()).hexdigest()
+    wallets_list = get_db_wallets()
+    matched = [w for w in wallets_list if w["address"] == sender]
+    
+    if matched:
+        w = matched[0]
+        wallet = Wallet(address=w["address"], kyc_tier=w["kyc_tier"], is_sanctioned=w["is_sanctioned"], name=w["name"])
+    else:
+        wallet = Wallet(address=sender, kyc_tier=0, is_sanctioned=False, name="Unknown Wallet")
         
-        if sender in state["revocation_registry"]["revoked"]:
-            event = {
-                "timestamp": timestamp,
-                "sender": sender,
-                "amount": amount,
-                "rule_checked": "Credential revocation check",
-                "status": "blocked",
-                "reason": "KYC Credential has been revoked (revocation accumulator proof verification failed)",
-                "proof_ref": proof_ref,
-                "merkle_root": f"0x{state['revocation_registry']['root'][:16]}..."
-            }
-            state["audit_logs"].insert(0, event)
-            return {"compliant": False, "reason": event["reason"], "event": event}
+    rules = get_db_rules()
+    tree = get_active_sanctions_tree()
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    proof_ref = "0x" + hashlib.sha256(f"{sender}{amount}{time.time()}".encode()).hexdigest()
+    
+    with state_lock:
+        is_revoked = sender in state["revocation_registry"]["revoked"]
+        
+    if is_revoked:
+        event = {
+            "timestamp": timestamp,
+            "sender": sender,
+            "amount": amount,
+            "rule_checked": "Credential revocation check",
+            "status": "blocked",
+            "reason": "KYC Credential has been revoked (revocation accumulator proof verification failed)",
+            "proof_ref": proof_ref,
+            "merkle_root": f"0x{state['revocation_registry']['root'][:16]}..."
+        }
+        insert_db_audit_log(event)
+        return {"compliant": False, "reason": event["reason"], "event": event}
 
-    # Bypassing for load tests to avoid CPU starvation
     if load_test or sender.startswith("GLOAD"):
         is_sanctioned = wallet.is_sanctioned
         if rules.sanctions_enabled and is_sanctioned:
@@ -422,8 +570,7 @@ def simulate_transfer(req: TransferRequest, load_test: bool = False):
                 "rule_checked": "On-chain verification check", "status": "blocked",
                 "reason": reason, "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
             }
-            with state_lock:
-                state["audit_logs"].insert(0, event)
+            insert_db_audit_log(event)
             return {"compliant": False, "reason": reason, "event": event}
             
         if wallet.kyc_tier < rules.min_kyc_tier:
@@ -433,21 +580,19 @@ def simulate_transfer(req: TransferRequest, load_test: bool = False):
                 "rule_checked": "On-chain verification check", "status": "blocked",
                 "reason": reason, "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
             }
-            with state_lock:
-                state["audit_logs"].insert(0, event)
+            insert_db_audit_log(event)
             return {"compliant": False, "reason": reason, "event": event}
 
         # Success path
+        update_db_daily_volume(sender, amount)
+        event = {
+            "timestamp": timestamp, "sender": sender, "amount": amount,
+            "rule_checked": "All checks passed on-chain", "status": "ok",
+            "reason": "Transaction verified: Zero-Knowledge Proof generated and verified on-chain against rules.",
+            "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
+        }
+        insert_db_audit_log(event)
         with state_lock:
-            current_daily = state["daily_volumes"].get(sender, 0.0)
-            state["daily_volumes"][sender] = current_daily + amount
-            event = {
-                "timestamp": timestamp, "sender": sender, "amount": amount,
-                "rule_checked": "All checks passed on-chain", "status": "ok",
-                "reason": "Transaction verified: Zero-Knowledge Proof generated and verified on-chain against rules.",
-                "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
-            }
-            state["audit_logs"].insert(0, event)
             state["folding_accumulator"] = sha256_hex(state["folding_accumulator"] + f"tx:{sender}:{amount}")
         return {"compliant": True, "reason": event["reason"], "event": event}
 
@@ -470,20 +615,18 @@ def simulate_transfer(req: TransferRequest, load_test: bool = False):
             "rule_checked": "On-chain verification check", "status": "blocked",
             "reason": onchain_msg, "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
         }
-        with state_lock:
-            state["audit_logs"].insert(0, event)
+        insert_db_audit_log(event)
         return {"compliant": False, "reason": event["reason"], "event": event}
 
+    update_db_daily_volume(sender, amount)
+    event = {
+        "timestamp": timestamp, "sender": sender, "amount": amount,
+        "rule_checked": "All checks passed on-chain", "status": "ok",
+        "reason": "Transaction verified: Zero-Knowledge Proof generated and verified on-chain against rules.",
+        "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
+    }
+    insert_db_audit_log(event)
     with state_lock:
-        current_daily = state["daily_volumes"].get(sender, 0.0)
-        state["daily_volumes"][sender] = current_daily + amount
-        event = {
-            "timestamp": timestamp, "sender": sender, "amount": amount,
-            "rule_checked": "All checks passed on-chain", "status": "ok",
-            "reason": "Transaction verified: Zero-Knowledge Proof generated and verified on-chain against rules.",
-            "proof_ref": proof_ref, "merkle_root": f"0x{tree.root[:16]}..."
-        }
-        state["audit_logs"].insert(0, event)
         state["folding_accumulator"] = sha256_hex(state["folding_accumulator"] + f"tx:{sender}:{amount}")
         
     return {"compliant": True, "reason": event["reason"], "event": event}
@@ -513,26 +656,27 @@ def api_deposit_escrow(req: EscrowDepositRequest):
     if code != 0:
         raise HTTPException(status_code=500, detail=f"On-chain deposit_escrow failed: {stderr or stdout}")
         
-    with state_lock:
-        state["escrows"][recipient] = {
-            "sender": sender,
-            "recipient": recipient,
-            "amount": amount,
-            "unlock_time": int(time.time()) + req.unlock_delay_sec,
-            "onchain_tx": stdout.strip().split("\n")[-1] or "Successful"
-        }
-        state["audit_logs"].insert(0, {
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "sender": sender,
-            "amount": amount,
-            "rule_checked": "ZK Escrow Deposit",
-            "status": "ok",
-            "reason": f"Escrow deposited successfully for {recipient}. Time lock set.",
-            "proof_ref": "0x" + hashlib.sha256(f"escrow{sender}{recipient}".encode()).hexdigest()[:16],
-            "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
-        })
+    escrow = {
+        "sender": sender,
+        "recipient": recipient,
+        "amount": amount,
+        "unlock_time": int(time.time()) + req.unlock_delay_sec,
+        "onchain_tx": stdout.strip().split("\n")[-1] or "Successful"
+    }
+    save_db_escrow(recipient, escrow)
     
-    return {"status": "deposited", "escrow": state["escrows"][recipient]}
+    insert_db_audit_log({
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "sender": sender,
+        "amount": amount,
+        "rule_checked": "ZK Escrow Deposit",
+        "status": "ok",
+        "reason": f"Escrow deposited successfully for {recipient}. Time lock set.",
+        "proof_ref": "0x" + hashlib.sha256(f"escrow{sender}{recipient}".encode()).hexdigest()[:16],
+        "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
+    })
+    
+    return {"status": "deposited", "escrow": escrow}
 
 @app.post("/api/escrow/claim")
 def api_claim_escrow(req: EscrowClaimRequest):
@@ -553,19 +697,22 @@ def api_claim_escrow(req: EscrowClaimRequest):
     if code != 0:
         raise HTTPException(status_code=500, detail=f"On-chain claim_escrow failed: {stderr or stdout}")
         
-    with state_lock:
-        escrow = state["escrows"].pop(recipient, None)
-        amt = escrow["amount"] if escrow else 0.0
-        state["audit_logs"].insert(0, {
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "sender": recipient,
-            "amount": amt,
-            "rule_checked": "ZK Escrow Claimed",
-            "status": "ok",
-            "reason": "Escrow claimed successfully. On-chain ZK compliance proof verified.",
-            "proof_ref": "0x" + hashlib.sha256(f"claim{recipient}".encode()).hexdigest()[:16],
-            "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
-        })
+    escrows = get_db_escrows()
+    matched = [e for e in escrows if e["recipient"] == recipient]
+    amt = matched[0]["amount"] if matched else 0.0
+    
+    delete_db_escrow(recipient)
+    
+    insert_db_audit_log({
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "sender": recipient,
+        "amount": amt,
+        "rule_checked": "ZK Escrow Claimed",
+        "status": "ok",
+        "reason": "Escrow claimed successfully. On-chain ZK compliance proof verified.",
+        "proof_ref": "0x" + hashlib.sha256(f"claim{recipient}".encode()).hexdigest()[:16],
+        "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
+    })
     
     return {"status": "claimed", "amount": amt}
 
@@ -586,26 +733,29 @@ def api_refund_escrow(req: EscrowRefundRequest):
     if code != 0:
         raise HTTPException(status_code=500, detail=f"On-chain refund_escrow failed: {stderr or stdout}")
         
-    with state_lock:
-        escrow = state["escrows"].pop(recipient, None)
-        amt = escrow["amount"] if escrow else 0.0
-        state["audit_logs"].insert(0, {
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "sender": escrow["sender"] if escrow else "Sender",
-            "amount": amt,
-            "rule_checked": "ZK Escrow Refunded",
-            "status": "ok",
-            "reason": "Escrow refunded. Timelock expired and funds reclaimed by sender.",
-            "proof_ref": "0x" + hashlib.sha256(f"refund{recipient}".encode()).hexdigest()[:16],
-            "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
-        })
+    escrows = get_db_escrows()
+    matched = [e for e in escrows if e["recipient"] == recipient]
+    amt = matched[0]["amount"] if matched else 0.0
+    sender = matched[0]["sender"] if matched else "Sender"
+    
+    delete_db_escrow(recipient)
+    
+    insert_db_audit_log({
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "sender": sender,
+        "amount": amt,
+        "rule_checked": "ZK Escrow Refunded",
+        "status": "ok",
+        "reason": "Escrow refunded. Timelock expired and funds reclaimed by sender.",
+        "proof_ref": "0x" + hashlib.sha256(f"refund{recipient}".encode()).hexdigest()[:16],
+        "merkle_root": f"0x{get_active_sanctions_tree().root[:16]}..."
+    })
     
     return {"status": "refunded", "amount": amt}
 
 @app.get("/api/escrow")
 def get_escrows():
-    with state_lock:
-        return {"escrows": list(state["escrows"].values())}
+    return {"escrows": get_db_escrows()}
 
 # --- Advanced Cryptography Sandbox Endpoints ---
 

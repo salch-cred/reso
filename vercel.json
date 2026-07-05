@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://YOUR-HF-SPACE-NAME.hf.space/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/dashboard/$1"
+    }
+  ]
+}
