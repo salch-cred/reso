@@ -55,7 +55,7 @@ function initGlobe(THREE) {
       starPos[i * 3 + 2] = r * Math.cos(phi);
     }
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xc7d2fe, size: 0.022, transparent: true, opacity: 0.75 });
+    const starMat = new THREE.PointsMaterial({ color: 0xbae6fd, size: 0.022, transparent: true, opacity: 0.75 });
     const stars = new THREE.Points(starGeo, starMat);
     scene.add(stars);
 
@@ -83,7 +83,7 @@ function initGlobe(THREE) {
     });
 
     const atmosGeo = new THREE.SphereGeometry(1.03, segs, segs);
-    const atmosMat = new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0.12, side: THREE.BackSide });
+    const atmosMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.12, side: THREE.BackSide });
     globeGroup.add(new THREE.Mesh(atmosGeo, atmosMat));
 
     const cities = [
@@ -110,7 +110,7 @@ function initGlobe(THREE) {
     const markerGeo = new THREE.SphereGeometry(0.016, 10, 10);
     const cityMeshes = cities.map(([name, lat, lng]) => {
       const pos = latLngToVec3(lat, lng, 1.015);
-      const mat = new THREE.MeshBasicMaterial({ color: 0x818cf8 });
+      const mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
       const m = new THREE.Mesh(markerGeo, mat);
       m.position.copy(pos);
       globeGroup.add(m);
@@ -124,7 +124,7 @@ function initGlobe(THREE) {
       const curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
       const points = curve.getPoints(isSmall ? 40 : 64);
       const geo = new THREE.BufferGeometry().setFromPoints(points);
-      const mat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0 });
+      const mat = new THREE.LineBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0 });
       const line = new THREE.Line(geo, mat);
       globeGroup.add(line);
       return { line, mat, points, progress: 0, active: false };
@@ -163,7 +163,7 @@ function initGlobe(THREE) {
       if (!feedList) return;
       const el = document.createElement('div');
       el.className = 'gf-item';
-      el.innerHTML = '<i class="hgi-stroke hgi-checkmark-circle-01"></i><span><b>' + type + '</b> &middot; ' + fromName + ' &rarr; ' + toName + '</span>';
+      el.innerHTML = '<i class="fa-solid fa-circle-check"></i><span><b>' + type + '</b> &middot; ' + fromName + ' &rarr; ' + toName + '</span>';
       feedList.prepend(el);
       while (feedList.children.length > 6) feedList.removeChild(feedList.lastChild);
       proofCount++;
