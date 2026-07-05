@@ -11,11 +11,9 @@
     --card-bg: rgba(17, 24, 43, 0.7);
     --border-color: rgba(38, 55, 94, 0.4);
     --border-hover: rgba(56, 189, 248, 0.4);
-    
     --text-primary: #F3F4F6;
     --text-secondary: #9CA3AF;
     --text-muted: #6B7280;
-    
     --gold: #FFC72C;
     --gold-glow: rgba(255, 199, 44, 0.15);
     --green: #10B981;
@@ -26,538 +24,131 @@
     --blue-glow: rgba(59, 130, 246, 0.15);
     --purple: #A855F7;
     --purple-glow: rgba(168, 85, 247, 0.15);
-    
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  
   body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', sans-serif;
     min-height: 100vh;
-    background-image: 
+    background-image:
       radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(255, 199, 44, 0.05) 0px, transparent 50%);
     overflow-x: hidden;
   }
-  
-  .app {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
-  
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 16px;
-  }
-  
-  .logo-area {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--gold), var(--blue));
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    color: var(--bg-dark);
-    font-size: 20px;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-  }
-  
-  .logo-title h1 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(to right, #FFF, #D1D5DB);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  .logo-title p {
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-  
-  .system-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    padding: 6px 14px;
-    border-radius: 99px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--green);
-  }
-  
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
-    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  }
-
-  /* Tab Navigation */
-  .nav-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 32px;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .nav-tab {
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: var(--transition);
-  }
-  
-  .nav-tab:hover {
-    color: var(--text-primary);
-  }
-  
-  .nav-tab.active {
-    color: var(--blue);
-    border-bottom-color: var(--blue);
-  }
-  
-  .tab-panel {
+  /* --- Offline Banner --- */
+  .api-offline-banner {
     display: none;
-  }
-  
-  .tab-panel.active {
-    display: block;
-  }
-
-  /* Grid Layout */
-  .grid-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 24px;
-  }
-  
-  .full-width {
-    grid-column: span 2;
-  }
-  
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 24px;
-    backdrop-filter: blur(12px);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .card:hover {
-    border-color: var(--border-hover);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  }
-  
-  .card h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .card .subtitle {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 20px;
-  }
-  
-  /* Form Elements */
-  .form-group {
-    margin-bottom: 16px;
-  }
-  
-  .form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-  }
-  
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  
-  input[type="text"], input[type="number"], select {
-    width: 100%;
-    background: rgba(31, 41, 55, 0.5);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 14px;
-    color: white;
-    font-family: inherit;
-    transition: var(--transition);
-  }
-  
-  input:focus, select:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 2px var(--blue-glow);
-  }
-  
-  /* Buttons */
-  .btn-group {
-    display: flex;
-    gap: 12px;
-    margin-top: auto;
-    padding-top: 12px;
-  }
-  
-  .btn {
-    flex: 1;
-    background: var(--blue);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 11px 18px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  
-  .btn:hover {
-    background: #2563EB;
-    box-shadow: 0 4px 12px var(--blue-glow);
-  }
-  
-  .btn.secondary {
-    background: rgba(31, 41, 55, 0.8);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-  }
-  
-  .btn.secondary:hover {
-    background: rgba(55, 65, 81, 0.8);
-    border-color: var(--text-secondary);
-  }
-  
-  .btn.purple {
-    background: var(--purple);
-  }
-  
-  .btn.purple:hover {
-    background: #9333EA;
-    box-shadow: 0 4px 12px var(--purple-glow);
-  }
-  
-  /* Banners */
-  .merkle-banner {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(255, 199, 44, 0.05));
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .merkle-title {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-secondary);
-    font-weight: 600;
-  }
-  
-  .merkle-value {
-    font-family: monospace;
-    font-size: 13px;
-    color: var(--gold);
-    background: rgba(0,0,0,0.3);
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 199, 44, 0.2);
-  }
-  
-  /* Lists / Tables */
-  .custom-list {
-    max-height: 240px;
-    overflow-y: auto;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: rgba(0,0,0,0.2);
-  }
-  
-  .list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 13px;
-  }
-  
-  .list-item:last-child {
-    border-bottom: none;
-  }
-  
-  .item-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  
-  .item-name {
-    font-weight: 600;
-  }
-  
-  .item-sub {
-    font-size: 11px;
-    color: var(--text-secondary);
-    font-family: monospace;
-  }
-  
-  /* Badges */
-  .badge {
-    padding: 2px 8px;
-    border-radius: 99px;
-    font-size: 11px;
-    font-weight: 600;
-  }
-  
-  .badge.tier { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
-  .badge.sanctioned { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-  .badge.ok { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
-  .badge.blocked { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-  
-  /* Simulation / Pipeline View */
-  .pipeline-container {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 16px;
-    display: none;
-  }
-  
-  .pipeline-step {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-  
-  .pipeline-step:last-child {
-    margin-bottom: 0;
-  }
-  
-  .step-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--text-muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    transition: var(--transition);
-  }
-  
-  .step-icon.pending {
-    border-color: var(--blue);
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-  }
-  
-  .step-icon.success {
-    background-color: var(--green);
-    border-color: var(--green);
-    color: var(--bg-dark);
-  }
-  
-  .step-icon.failure {
-    background-color: var(--red);
-    border-color: var(--red);
-    color: var(--bg-dark);
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  .simulation-result {
-    margin-top: 16px;
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    display: none;
-  }
-  
-  .simulation-result.success {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    color: #34D399;
-  }
-  
-  .simulation-result.failure {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #F87171;
-  }
-  
-  /* Audit Logs Table */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-    font-size: 13px;
-  }
-  
-  th {
-    text-align: left;
-    color: var(--text-secondary);
-    font-weight: 600;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  td {
-    padding: 12px;
-    border-bottom: 1px solid rgba(38, 55, 94, 0.2);
-  }
-  
-  tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .hash-cell {
-    font-family: monospace;
-    color: var(--text-secondary);
-  }
-  
-  /* Toast Notification */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: #1E293B;
-    border: 1px solid var(--border-color);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    transform: translateY(150%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-  }
-  
-  .toast.show {
-    transform: translateY(0);
-  }
-  
-  .toast-icon {
-    color: var(--green);
-  }
-  
-  /* Interactive Cryptography Sandbox Styling */
-  .sandbox-output {
-    font-family: monospace;
-    font-size: 12px;
-    background: rgba(0,0,0,0.4);
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    margin-top: 12px;
-    max-height: 180px;
-    overflow-y: auto;
-    color: #60A5FA;
-  }
-  
-  .trustee-approval-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin: 12px 0;
-  }
-  
-  .trustee-btn {
-    padding: 8px 4px;
-    background: rgba(31, 41, 55, 0.5);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
+    background: rgba(239, 68, 68, 0.08);
+    border-bottom: 2px solid rgba(239, 68, 68, 0.35);
+    padding: 10px 24px;
     text-align: center;
-    color: var(--text-secondary);
-    transition: var(--transition);
+    font-size: 13px;
+    color: #F87171;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    backdrop-filter: blur(8px);
   }
-  
-  .trustee-btn.approved {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: var(--green);
-    color: #34D399;
-  }
+  .api-offline-banner a { color: #60A5FA; text-decoration: underline; }
+  /* --- Layout --- */
+  .app { max-width: 1300px; margin: 0 auto; padding: 40px 24px; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+  .logo-area { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gold), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--bg-dark); font-size: 20px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  .logo-title h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; background: linear-gradient(to right, #FFF, #D1D5DB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .logo-title p { font-size: 12px; color: var(--text-secondary); }
+  .system-status { display: flex; align-items: center; gap: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 6px 14px; border-radius: 99px; font-size: 13px; font-weight: 600; color: var(--green); }
+  .status-dot { width: 8px; height: 8px; background-color: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16,185,129,0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+  .nav-tabs { display: flex; gap: 8px; margin-bottom: 32px; border-bottom: 1px solid var(--border-color); }
+  .nav-tab { padding: 12px 20px; font-size: 14px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; transition: var(--transition); }
+  .nav-tab:hover { color: var(--text-primary); }
+  .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .full-width { grid-column: span 2; }
+  .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; backdrop-filter: blur(12px); transition: var(--transition); display: flex; flex-direction: column; }
+  .card:hover { border-color: var(--border-hover); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .card h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card .subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  input[type="text"], input[type="number"], select { width: 100%; background: rgba(31,41,55,0.5); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: white; font-family: inherit; transition: var(--transition); }
+  input:focus, select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-glow); }
+  .btn-group { display: flex; gap: 12px; margin-top: auto; padding-top: 12px; }
+  .btn { flex: 1; background: var(--blue); color: white; border: none; border-radius: 8px; padding: 11px 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:hover { background: #2563EB; box-shadow: 0 4px 12px var(--blue-glow); }
+  .btn.secondary { background: rgba(31,41,55,0.8); border: 1px solid var(--border-color); color: var(--text-primary); }
+  .btn.secondary:hover { background: rgba(55,65,81,0.8); border-color: var(--text-secondary); }
+  .btn.purple { background: var(--purple); }
+  .btn.purple:hover { background: #9333EA; box-shadow: 0 4px 12px var(--purple-glow); }
+  .merkle-banner { background: linear-gradient(90deg, rgba(59,130,246,0.1), rgba(255,199,44,0.05)); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .merkle-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 600; }
+  .merkle-value { font-family: monospace; font-size: 13px; color: var(--gold); background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,199,44,0.2); }
+  .custom-list { max-height: 240px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; background: rgba(0,0,0,0.2); }
+  .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+  .list-item:last-child { border-bottom: none; }
+  .item-meta { display: flex; flex-direction: column; gap: 2px; }
+  .item-name { font-weight: 600; }
+  .item-sub { font-size: 11px; color: var(--text-secondary); font-family: monospace; }
+  .badge { padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge.tier { background: rgba(59,130,246,0.15); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); }
+  .badge.sanctioned { background: rgba(239,68,68,0.15); color: #F87171; border: 1px solid rgba(239,68,68,0.3); }
+  .badge.ok { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge.blocked { background: rgba(239,68,68,0.15); color: #F87171; border: 1px solid rgba(239,68,68,0.3); }
+  .pipeline-container { background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-top: 16px; display: none; }
+  .pipeline-step { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
+  .pipeline-step:last-child { margin-bottom: 0; }
+  .step-icon { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 10px; transition: var(--transition); }
+  .step-icon.pending { border-color: var(--blue); border-top-color: transparent; animation: spin 1s linear infinite; }
+  .step-icon.success { background-color: var(--green); border-color: var(--green); color: var(--bg-dark); }
+  .step-icon.failure { background-color: var(--red); border-color: var(--red); color: var(--bg-dark); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .simulation-result { margin-top: 16px; padding: 14px; border-radius: 8px; font-size: 13px; display: none; }
+  .simulation-result.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #34D399; }
+  .simulation-result.failure { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #F87171; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+  th { text-align: left; color: var(--text-secondary); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border-color); }
+  td { padding: 12px; border-bottom: 1px solid rgba(38,55,94,0.2); }
+  tr:last-child td { border-bottom: none; }
+  .hash-cell { font-family: monospace; color: var(--text-secondary); }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; border: 1px solid var(--border-color); color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 100; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .toast.show { transform: translateY(0); }
+  .toast-icon { color: var(--green); }
+  .sandbox-output { font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 12px; max-height: 180px; overflow-y: auto; color: #60A5FA; }
+  .trustee-approval-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin: 12px 0; }
+  .trustee-btn { padding: 8px 4px; background: rgba(31,41,55,0.5); border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; color: var(--text-secondary); transition: var(--transition); }
+  .trustee-btn.approved { background: rgba(16,185,129,0.15); border-color: var(--green); color: #34D399; }
 </style>
 </head>
 <body>
+
+<!-- API Offline Banner -->
+<div class="api-offline-banner" id="api-offline-banner">
+  ⚠️ <strong>Backend Offline</strong> — API server unreachable. Running in demo mode with sample data.
+  &nbsp;&nbsp;<a href="https://huggingface.co/spaces/salmanch123/reso" target="_blank">Check HF Space status →</a>
+  &nbsp;&nbsp;<a href="/" style="color:#9CA3AF;">Back to Landing Page</a>
+</div>
+
 <div class="app">
   <header>
     <div class="logo-area">
       <div class="logo-icon">R</div>
       <div class="logo-title">
-        <h1>Reso Compliance console</h1>
-        <p>ZK-Compliance Engine Simulation</p>
+        <h1>Reso Compliance Console</h1>
+        <p>ZK-Compliance Engine — Stellar Protocol 25</p>
       </div>
     </div>
     <div class="system-status">
       <div class="status-dot"></div>
-      <div>Oracle Sync Live (Stellar Protocol 25)</div>
+      <div id="statusLabel">Oracle Sync Live</div>
     </div>
   </header>
-  
-  <!-- Tabs Navigation -->
+
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('core')">Rules &amp; Compliance Console</div>
     <div class="nav-tab" onclick="switchTab('escrow')">ZK-Gated Escrow (Claimable Balances)</div>
@@ -567,186 +158,81 @@
   <!-- PANEL 1: CORE CONSOLE -->
   <div class="tab-panel active" id="panel-core">
     <div class="grid-layout">
-      <!-- Card 1: Rule Builder -->
       <div class="card">
         <h2>⚙️ Rule Configuration</h2>
         <p class="subtitle">Set parameters compiled into ZK compliance verification circuits.</p>
-        
         <div class="form-row">
-          <div class="form-group">
-            <label for="maxAmount">Max Transaction Limit</label>
-            <input type="number" id="maxAmount" value="10000" />
-          </div>
-          <div class="form-group">
-            <label for="dailyLimit">Daily Rolling Limit</label>
-            <input type="number" id="dailyLimit" value="25000" />
-          </div>
+          <div class="form-group"><label for="maxAmount">Max Transaction Limit</label><input type="number" id="maxAmount" value="10000" /></div>
+          <div class="form-group"><label for="dailyLimit">Daily Rolling Limit</label><input type="number" id="dailyLimit" value="25000" /></div>
         </div>
-        
         <div class="form-row">
-          <div class="form-group">
-            <label for="kycTier">Required KYC Tier</label>
-            <select id="kycTier">
-              <option value="0">Tier 0 — None</option>
-              <option value="1" selected>Tier 1 — Basic</option>
-              <option value="2">Tier 2 — Enhanced</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="sanctionsCheck">Sanctions Screening</label>
-            <select id="sanctionsCheck">
-              <option value="true" selected>Enabled</option>
-              <option value="false">Disabled</option>
-            </select>
-          </div>
+          <div class="form-group"><label for="kycTier">Required KYC Tier</label><select id="kycTier"><option value="0">Tier 0 — None</option><option value="1" selected>Tier 1 — Basic</option><option value="2">Tier 2 — Enhanced</option></select></div>
+          <div class="form-group"><label for="sanctionsCheck">Sanctions Screening</label><select id="sanctionsCheck"><option value="true" selected>Enabled</option><option value="false">Disabled</option></select></div>
         </div>
-        
-        <div class="btn-group">
-          <button class="btn" onclick="saveRules()">Publish Rules to Hook</button>
-        </div>
+        <div class="btn-group"><button class="btn" onclick="saveRules()">Publish Rules to Hook</button></div>
       </div>
 
-      <!-- Card 2: Wallet Registry -->
       <div class="card">
         <h2>🔑 Wallet &amp; Attestation Registry</h2>
         <p class="subtitle">Simulate customer KYC and status in active sanctions directory.</p>
-        
         <div class="merkle-banner">
           <div class="merkle-title">Sanctions Merkle Root</div>
           <div class="merkle-value" id="merkleRoot">0x00000...0000</div>
         </div>
-        
-        <div class="custom-list" id="walletList">
-          <!-- Loaded dynamically -->
-        </div>
-        
-        <div class="btn-group">
-          <button class="btn secondary" onclick="openAddWalletModal()">+ Register New Wallet</button>
-        </div>
+        <div class="custom-list" id="walletList"></div>
+        <div class="btn-group"><button class="btn secondary" onclick="openAddWalletModal()">+ Register New Wallet</button></div>
       </div>
 
-      <!-- Card 3: Transaction Simulator (Full Width) -->
       <div class="card full-width">
         <h2>⚡ ZK-Proof Transaction Simulator</h2>
-        <p class="subtitle">Submit a transfer. The simulator will compile a ZK-proof and verify it locally against the rules.</p>
-        
+        <p class="subtitle">Submit a transfer. The simulator compiles a ZK-proof and verifies it against the compliance rules.</p>
         <div class="form-row">
-          <div class="form-group">
-            <label for="simSender">Sender Wallet</label>
-            <select id="simSender">
-              <!-- Loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="simAmount">Transfer Amount (USD)</label>
-            <input type="number" id="simAmount" value="500" />
-          </div>
+          <div class="form-group"><label for="simSender">Sender Wallet</label><select id="simSender"></select></div>
+          <div class="form-group"><label for="simAmount">Transfer Amount (USD)</label><input type="number" id="simAmount" value="500" /></div>
         </div>
-        
         <button class="btn" onclick="runSimulation()">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Generate ZK-Proof &amp; Verify
         </button>
-        
         <div class="pipeline-container" id="pipelineContainer">
-          <div class="pipeline-step" id="step-revocation">
-            <div class="step-icon" id="icon-revocation">-</div>
-            <div>ZK Revocation Check: Proving wallet has not been added to revocation registry</div>
-          </div>
-          <div class="pipeline-step" id="step-sanctions">
-            <div class="step-icon" id="icon-sanctions">-</div>
-            <div>ZK Sanctions Check: Proving address is absent from Merkle tree root</div>
-          </div>
-          <div class="pipeline-step" id="step-kyc">
-            <div class="step-icon" id="icon-kyc">-</div>
-            <div>ZK KYC Check: Verifying user KYC tier >= required rule level</div>
-          </div>
-          <div class="pipeline-step" id="step-limit">
-            <div class="step-icon" id="icon-limit">-</div>
-            <div>ZK Limits Check: Asserting transaction amount is within daily and rolling caps</div>
-          </div>
-          <div class="pipeline-step" id="step-proof">
-            <div class="step-icon" id="icon-proof">-</div>
-            <div>On-Chain Soroban Hook Validation: Verifying generated BN254 pairing proofs</div>
-          </div>
+          <div class="pipeline-step"><div class="step-icon" id="icon-revocation">-</div><div>ZK Revocation Check: Proving wallet not in revocation registry</div></div>
+          <div class="pipeline-step"><div class="step-icon" id="icon-sanctions">-</div><div>ZK Sanctions Check: Proving address absent from Merkle tree root</div></div>
+          <div class="pipeline-step"><div class="step-icon" id="icon-kyc">-</div><div>ZK KYC Check: Verifying user KYC tier ≥ required rule level</div></div>
+          <div class="pipeline-step"><div class="step-icon" id="icon-limit">-</div><div>ZK Limits Check: Asserting amount within daily and rolling caps</div></div>
+          <div class="pipeline-step"><div class="step-icon" id="icon-proof">-</div><div>On-Chain Soroban Hook: Verifying BN254 pairing proofs</div></div>
         </div>
-        
-        <div class="simulation-result" id="simulationResult">
-          <!-- Results output -->
-        </div>
+        <div class="simulation-result" id="simulationResult"></div>
       </div>
 
-      <!-- Card 4: Regulator Audit View (Full Width) -->
       <div class="card full-width">
         <h2>📊 Regulator Audit Ledger</h2>
-        <p class="subtitle">Aggregated verification checks. Compliant with privacy regulations: no addresses or names are written on-chain.</p>
-        
-        <div style="overflow-x: auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Rule Tested</th>
-                <th>Status</th>
-                <th>Sanctions Root</th>
-                <th>Proof Hash</th>
-              </tr>
-            </thead>
-            <tbody id="auditRows">
-              <!-- Loaded dynamically -->
-            </tbody>
-          </table>
+        <p class="subtitle">Aggregated verification checks. No addresses or names are written on-chain.</p>
+        <div style="overflow-x:auto;">
+          <table><thead><tr><th>Timestamp</th><th>Rule Tested</th><th>Status</th><th>Sanctions Root</th><th>Proof Hash</th></tr></thead>
+          <tbody id="auditRows"></tbody></table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PANEL 2: ZK-GATED COMPLIANT ESCROW -->
+  <!-- PANEL 2: ZK-GATED ESCROW -->
   <div class="tab-panel" id="panel-escrow">
     <div class="grid-layout">
-      <!-- Card 1: Deposit Gated Escrow -->
       <div class="card">
         <h2>💰 Deposit to ZK-Gated Escrow</h2>
-        <p class="subtitle">Lock funds on-chain for a recipient address. They can only claim them using a valid ZK-proof.</p>
-        
-        <div class="form-group">
-          <label for="escrowSender">Sender Address</label>
-          <select id="escrowSender">
-            <!-- Loaded dynamically -->
-          </select>
-        </div>
-        
+        <p class="subtitle">Lock funds on-chain. Recipient can only claim with a valid ZK-proof.</p>
+        <div class="form-group"><label>Sender Address</label><select id="escrowSender"></select></div>
         <div class="form-row">
-          <div class="form-group">
-            <label for="escrowRecipient">Recipient Address</label>
-            <select id="escrowRecipient">
-              <!-- Loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="escrowDelay">Timelock Delay (seconds)</label>
-            <input type="number" id="escrowDelay" value="30" />
-          </div>
+          <div class="form-group"><label>Recipient Address</label><select id="escrowRecipient"></select></div>
+          <div class="form-group"><label>Timelock Delay (seconds)</label><input type="number" id="escrowDelay" value="30" /></div>
         </div>
-        
-        <div class="form-group">
-          <label for="escrowAmount">Escrow Amount (USD)</label>
-          <input type="number" id="escrowAmount" value="2500" />
-        </div>
-        
-        <div class="btn-group">
-          <button class="btn purple" onclick="depositEscrow()">Deposit Escrow on Testnet</button>
-        </div>
+        <div class="form-group"><label>Escrow Amount (USD)</label><input type="number" id="escrowAmount" value="2500" /></div>
+        <div class="btn-group"><button class="btn purple" onclick="depositEscrow()">Deposit Escrow on Testnet</button></div>
       </div>
-      
-      <!-- Card 2: Active Gated Escrows -->
       <div class="card">
         <h2>🔒 Active Gated Escrows</h2>
-        <p class="subtitle">Currently locked balances on Stellar Testnet awaiting ZK claim or refund.</p>
-        
-        <div class="custom-list" id="escrowsList" style="max-height: 290px;">
-          <!-- Loaded dynamically -->
-        </div>
+        <p class="subtitle">Locked balances on Stellar Testnet awaiting ZK claim or refund.</p>
+        <div class="custom-list" id="escrowsList" style="max-height:290px;"></div>
       </div>
     </div>
   </div>
@@ -754,52 +240,28 @@
   <!-- PANEL 3: ADVANCED CRYPTO SANDBOX -->
   <div class="tab-panel" id="panel-sandbox">
     <div class="grid-layout">
-      <!-- Feature 1: Homomorphic Spending Limits (Paillier) -->
       <div class="card">
         <h2>🔒 FHE-Encrypted Limits (Paillier)</h2>
-        <p class="subtitle">Sum encrypted transaction amounts without decrypting them (additive homomorphic encryption).</p>
-        
+        <p class="subtitle">Sum encrypted amounts without decrypting (additive homomorphic encryption).</p>
         <div class="form-row">
-          <div class="form-group">
-            <label>Transaction Amount to Encrypt</label>
-            <input type="number" id="paillierAmount" value="8000" />
-          </div>
-          <div class="form-group">
-            <label style="opacity:0;">Actions</label>
-            <button class="btn secondary" onclick="paillierEncryptAmount()">Encrypt &amp; Add</button>
-          </div>
+          <div class="form-group"><label>Transaction Amount to Encrypt</label><input type="number" id="paillierAmount" value="8000" /></div>
+          <div class="form-group"><label style="opacity:0;">Actions</label><button class="btn secondary" onclick="paillierEncryptAmount()">Encrypt &amp; Add</button></div>
         </div>
-        
-        <div class="form-group">
-          <label>Encrypted Pending Sum Queue (Ciphertexts)</label>
-          <div class="sandbox-output" id="paillierQueue" style="height:110px;">Queue is empty. Encrypt some transactions above.</div>
-        </div>
-        
+        <div class="form-group"><label>Encrypted Queue (Ciphertexts)</label><div class="sandbox-output" id="paillierQueue" style="height:110px;">Queue empty. Encrypt transactions above.</div></div>
         <div class="btn-group">
           <button class="btn" onclick="paillierSumAndDecrypt()">Homomorphic Sum &amp; Decrypt</button>
-          <button class="btn secondary" onclick="paillierReset()">Reset Keypair &amp; Queue</button>
+          <button class="btn secondary" onclick="paillierReset()">Reset Keypair</button>
         </div>
-        
-        <div id="paillierResult" style="margin-top:12px; font-size:13px; color:var(--gold);"></div>
+        <div id="paillierResult" style="margin-top:12px;font-size:13px;color:var(--gold);"></div>
       </div>
-      
-      <!-- Feature 2: Threshold & Timelocked Disclosure -->
+
       <div class="card">
         <h2>⏱️ Time-Locked &amp; Threshold Disclosure</h2>
-        <p class="subtitle">Request disclosure of a user's real identity commitment. Requires 3 of 5 approvals AND a 10s time delay.</p>
-        
-        <div class="form-group">
-          <label>Secret Identity Commitment (Plaintext)</label>
-          <input type="text" id="identityCommitment" value="987654321012345" />
-        </div>
-        
-        <div class="btn-group">
-          <button class="btn purple" onclick="openDisclosureRequest()">1. Initiate Request (10s Delay)</button>
-        </div>
-        
-        <div id="disclosureStatus" style="font-size:12px; margin-top:8px; font-family:monospace; color:var(--text-secondary);">Request not opened.</div>
-        
-        <label style="margin-top:12px; font-size:13px; color:var(--text-secondary);">2. Collect Trustee Approvals (3 Required):</label>
+        <p class="subtitle">Requires 3-of-5 trustee approvals AND a 10s time delay to reveal identity.</p>
+        <div class="form-group"><label>Secret Identity Commitment</label><input type="text" id="identityCommitment" value="987654321012345" /></div>
+        <div class="btn-group"><button class="btn purple" onclick="openDisclosureRequest()">1. Initiate Request (10s Delay)</button></div>
+        <div id="disclosureStatus" style="font-size:12px;margin-top:8px;font-family:monospace;color:var(--text-secondary);">Request not opened.</div>
+        <label style="margin-top:12px;font-size:13px;color:var(--text-secondary);">2. Collect Trustee Approvals (3 Required):</label>
         <div class="trustee-approval-grid">
           <div class="trustee-btn" id="trustee-1" onclick="approveDisclosure(1)">Trustee 1</div>
           <div class="trustee-btn" id="trustee-2" onclick="approveDisclosure(2)">Trustee 2</div>
@@ -807,102 +269,45 @@
           <div class="trustee-btn" id="trustee-4" onclick="approveDisclosure(4)">Trustee 4</div>
           <div class="trustee-btn" id="trustee-5" onclick="approveDisclosure(5)">Trustee 5</div>
         </div>
-        
-        <div class="btn-group" style="margin-top:auto;">
-          <button class="btn" onclick="attemptDisclosureDecryption()">3. Decrypt &amp; Reveal Identity</button>
-        </div>
-        
-        <div id="disclosureResult" style="margin-top:12px; font-size:13px; font-weight:600;"></div>
+        <div class="btn-group" style="margin-top:auto;"><button class="btn" onclick="attemptDisclosureDecryption()">3. Decrypt &amp; Reveal Identity</button></div>
+        <div id="disclosureResult" style="margin-top:12px;font-size:13px;font-weight:600;"></div>
       </div>
 
-      <!-- Feature 3: Real-Time Credential Revocation -->
       <div class="card">
         <h2>🚫 Real-Time Credential Revocation</h2>
-        <p class="subtitle">Revoke customer KYC credentials instantly. The Merkle revocation root updates immediately.</p>
-        
-        <div class="merkle-banner">
-          <div class="merkle-title">Revocation Merkle Root</div>
-          <div class="merkle-value" id="revocationRoot">0x00000...0000</div>
-        </div>
-        
+        <p class="subtitle">Revoke KYC credentials instantly. Merkle revocation root updates immediately.</p>
+        <div class="merkle-banner"><div class="merkle-title">Revocation Merkle Root</div><div class="merkle-value" id="revocationRoot">0x00000...0000</div></div>
         <div class="form-row">
-          <div class="form-group">
-            <label>Select Wallet to Revoke</label>
-            <select id="revokeWalletSelect">
-              <!-- Loaded dynamically -->
-            </select>
-          </div>
-          <div class="form-group">
-            <label style="opacity:0;">Actions</label>
-            <button class="btn purple" onclick="revokeWallet()">Revoke KYC</button>
-          </div>
+          <div class="form-group"><label>Select Wallet to Revoke</label><select id="revokeWalletSelect"></select></div>
+          <div class="form-group"><label style="opacity:0;">Actions</label><button class="btn purple" onclick="revokeWallet()">Revoke KYC</button></div>
         </div>
-        
-        <div class="form-group">
-          <label>Revoked Wallets List</label>
-          <div class="sandbox-output" id="revokedList" style="height:90px;">No wallets revoked yet.</div>
-        </div>
+        <div class="form-group"><label>Revoked Wallets</label><div class="sandbox-output" id="revokedList" style="height:90px;">No wallets revoked yet.</div></div>
       </div>
 
-      <!-- Feature 4: IVC Recursive Proof Folding -->
       <div class="card">
         <h2>🧬 Recursive Proof Folding Simulator</h2>
-        <p class="subtitle">Fold an arbitrary sequence of transaction proofs into a single constant-size state hash (Nova-style folding).</p>
-        
-        <div class="merkle-banner">
-          <div class="merkle-title">Running Proof Accumulator</div>
-          <div class="merkle-value" id="foldingRoot" style="color:var(--purple);">0x00000...0000</div>
-        </div>
-        
+        <p class="subtitle">Fold proofs into a single constant-size state hash (Nova-style IVC).</p>
+        <div class="merkle-banner"><div class="merkle-title">Proof Accumulator</div><div class="merkle-value" id="foldingRoot" style="color:var(--purple);">0x00000...0000</div></div>
         <div class="form-row">
-          <div class="form-group">
-            <label>New Step Witness Data</label>
-            <input type="text" id="foldingWitness" value="tx:alice:1500:sanctions_checked+limits_passed" />
-          </div>
-          <div class="form-group">
-            <label style="opacity:0;">Actions</label>
-            <button class="btn purple" onclick="foldProofStep()">Fold Step</button>
-          </div>
+          <div class="form-group"><label>New Step Witness Data</label><input type="text" id="foldingWitness" value="tx:alice:1500:sanctions_checked+limits_passed" /></div>
+          <div class="form-group"><label style="opacity:0;">Actions</label><button class="btn purple" onclick="foldProofStep()">Fold Step</button></div>
         </div>
-        
-        <div class="btn-group">
-          <button class="btn secondary" onclick="resetFolding()">Reset Accumulator</button>
-        </div>
+        <div class="btn-group"><button class="btn secondary" onclick="resetFolding()">Reset Accumulator</button></div>
       </div>
-      
     </div>
   </div>
 </div>
 
-<!-- Modal for Register Wallet -->
-<div id="walletModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
-  <div class="card" style="width:400px; background:#0F172A; border:1px solid #1E293B;">
+<!-- Modal: Register Wallet -->
+<div id="walletModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
+  <div class="card" style="width:400px;background:#0F172A;border:1px solid #1E293B;">
     <h2>Register Wallet</h2>
-    <p class="subtitle">Add a simulated user to test rules.</p>
-    <div class="form-group">
-      <label>Wallet Name</label>
-      <input type="text" id="newWalletName" placeholder="e.g. David" />
-    </div>
-    <div class="form-group">
-      <label>Stellar Public Address</label>
-      <input type="text" id="newWalletAddress" placeholder="e.g. GDAV..." />
-    </div>
+    <p class="subtitle">Add a simulated user to test compliance rules.</p>
+    <div class="form-group"><label>Wallet Name</label><input type="text" id="newWalletName" placeholder="e.g. David" /></div>
+    <div class="form-group"><label>Stellar Public Address</label><input type="text" id="newWalletAddress" placeholder="e.g. GDAV..." /></div>
     <div class="form-row">
-      <div class="form-group">
-        <label>KYC Level</label>
-        <select id="newWalletKyc">
-          <option value="0">Tier 0 (No KYC)</option>
-          <option value="1">Tier 1 (Basic)</option>
-          <option value="2">Tier 2 (Enhanced)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Sanctioned PEP</label>
-        <select id="newWalletSanctions">
-          <option value="false">Clear</option>
-          <option value="true">Sanctioned</option>
-        </select>
-      </div>
+      <div class="form-group"><label>KYC Level</label><select id="newWalletKyc"><option value="0">Tier 0 (No KYC)</option><option value="1">Tier 1 (Basic)</option><option value="2">Tier 2 (Enhanced)</option></select></div>
+      <div class="form-group"><label>Sanctioned PEP</label><select id="newWalletSanctions"><option value="false">Clear</option><option value="true">Sanctioned</option></select></div>
     </div>
     <div class="btn-group">
       <button class="btn secondary" onclick="closeAddWalletModal()">Cancel</button>
@@ -913,7 +318,7 @@
 
 <div class="toast" id="toast">
   <svg class="toast-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
-  <span id="toastText">Rules published to Stellar Hook successfully.</span>
+  <span id="toastText">Action completed.</span>
 </div>
 
 <script>
@@ -922,703 +327,333 @@
   let currentDelayTimer = null;
   let activeDisclosureRequest = null;
   let escrowsTimer = null;
-  
-  // Show message toast
-  function showToast(message) {
-    const toast = document.getElementById("toast");
-    document.getElementById("toastText").innerText = message;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 2500);
+  let isOfflineMode = false;
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    document.getElementById("toastText").innerText = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
   }
-  
-  // Switch Panels Tab
+
+  function showOfflineBanner() {
+    isOfflineMode = true;
+    document.getElementById("api-offline-banner").style.display = "block";
+    document.getElementById("statusLabel").innerText = "Demo Mode (Offline)";
+  }
+
+  // ---- DEMO MODE: populate UI with static sample data ----
+  function loadDemoMode() {
+    showOfflineBanner();
+    document.getElementById("maxAmount").value = 10000;
+    document.getElementById("dailyLimit").value = 25000;
+    document.getElementById("kycTier").value = "1";
+    document.getElementById("sanctionsCheck").value = "true";
+
+    const demos = [
+      { address: "GCLEANUSERADDRESSTHATISFINE00099", name: "Alice (Tier 2)", kyc_tier: 2, is_sanctioned: false },
+      { address: "GBASICKYCUSERADDRESS00000000001",  name: "Bob (Tier 1)",   kyc_tier: 1, is_sanctioned: false },
+      { address: "GNOKYCUSERADDRESS000000000000002", name: "Charlie (No KYC)",kyc_tier: 0, is_sanctioned: false },
+      { address: "GABC1SANCTIONEDEXAMPLEADDRESS0001",name: "Sanctioned Entity",kyc_tier:1, is_sanctioned: true },
+    ];
+
+    const wl = document.getElementById("walletList"); wl.innerHTML = "";
+    ["simSender","revokeWalletSelect","escrowSender","escrowRecipient"].forEach(id => document.getElementById(id).innerHTML = "");
+
+    demos.forEach(w => {
+      const item = document.createElement("div"); item.className = "list-item";
+      item.innerHTML = `<div class="item-meta"><span class="item-name">${w.name}</span><span class="item-sub">${w.address.slice(0,8)}...${w.address.slice(-8)}</span></div><div style="display:flex;gap:8px;"><span class="badge tier">Tier ${w.kyc_tier}</span>${w.is_sanctioned?'<span class="badge sanctioned">Sanctioned</span>':''}</div>`;
+      wl.appendChild(item);
+      ["simSender","revokeWalletSelect","escrowSender","escrowRecipient"].forEach(id => {
+        const o = document.createElement("option"); o.value = w.address; o.innerText = `${w.name} (${w.address.slice(0,8)}...)`;
+        document.getElementById(id).appendChild(o);
+      });
+    });
+
+    document.getElementById("merkleRoot").innerText = "0xDEMO...OFFLINE";
+    document.getElementById("revocationRoot").innerText = "0xDEMO...OFFLINE";
+    document.getElementById("foldingRoot").innerText = "0xDEMO...OFFLINE";
+
+    const now = new Date().toLocaleString();
+    document.getElementById("auditRows").innerHTML =
+      `<tr><td>${now}</td><td>Sanctions screen</td><td><span class="badge blocked">Blocked</span></td><td class="hash-cell">0xdemo1...</td><td class="hash-cell">0xdemo...</td></tr>` +
+      `<tr><td>${now}</td><td>All checks passed</td><td><span class="badge ok">Verified</span></td><td class="hash-cell">0xdemo2...</td><td class="hash-cell">0xdemo...</td></tr>`;
+  }
+
+  // ---- TAB SWITCHING ----
   function switchTab(tabId) {
     document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    
     clearInterval(escrowsTimer);
-    
-    if (tabId === 'core') {
-      document.querySelector(".nav-tab:nth-child(1)").classList.add("active");
-      document.getElementById("panel-core").classList.add("active");
-    } else if (tabId === 'escrow') {
-      document.querySelector(".nav-tab:nth-child(2)").classList.add("active");
-      document.getElementById("panel-escrow").classList.add("active");
-      loadEscrows();
-      escrowsTimer = setInterval(loadEscrows, 3000);
-    } else {
-      document.querySelector(".nav-tab:nth-child(3)").classList.add("active");
-      document.getElementById("panel-sandbox").classList.add("active");
-      loadPaillierState();
-      loadRevocationState();
-      loadFoldingState();
-    }
+    const idx = {core:0, escrow:1, sandbox:2}[tabId];
+    document.querySelectorAll(".nav-tab")[idx].classList.add("active");
+    document.getElementById(`panel-${tabId}`).classList.add("active");
+    if (tabId === 'escrow') { loadEscrows(); escrowsTimer = setInterval(loadEscrows, 3000); }
+    if (tabId === 'sandbox') { loadPaillierState(); loadRevocationState(); loadFoldingState(); }
   }
 
-  // Load Rule Builder Values
+  // ---- RULES ----
   async function loadRules() {
     try {
       const res = await fetch(`${API_BASE}/api/rules`);
-      const data = await res.json();
-      document.getElementById("maxAmount").value = data.max_amount;
-      document.getElementById("dailyLimit").value = data.daily_limit;
-      document.getElementById("kycTier").value = data.min_kyc_tier;
-      document.getElementById("sanctionsCheck").value = data.sanctions_enabled.toString();
+      if (!res.ok) throw new Error("not ok");
+      const d = await res.json();
+      document.getElementById("maxAmount").value = d.max_amount;
+      document.getElementById("dailyLimit").value = d.daily_limit;
+      document.getElementById("kycTier").value = d.min_kyc_tier;
+      document.getElementById("sanctionsCheck").value = d.sanctions_enabled.toString();
     } catch (e) {
-      console.error("Error loading rules:", e);
+      console.warn("API offline, loading demo mode");
+      loadDemoMode();
     }
   }
 
-  // Save Rules
   async function saveRules() {
-    const rules = {
-      max_amount: parseFloat(document.getElementById("maxAmount").value),
-      daily_limit: parseFloat(document.getElementById("dailyLimit").value),
-      min_kyc_tier: parseInt(document.getElementById("kycTier").value),
-      sanctions_enabled: document.getElementById("sanctionsCheck").value === "true"
-    };
-
+    if (isOfflineMode) { showToast("Demo mode — backend offline."); return; }
+    const rules = { max_amount: parseFloat(document.getElementById("maxAmount").value), daily_limit: parseFloat(document.getElementById("dailyLimit").value), min_kyc_tier: parseInt(document.getElementById("kycTier").value), sanctions_enabled: document.getElementById("sanctionsCheck").value === "true" };
     try {
-      const res = await fetch(`${API_BASE}/api/rules`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rules)
-      });
-      if (res.ok) {
-        showToast("Rules updated and compiled to hook circuits!");
-      }
-    } catch (e) {
-      showToast("Error updating rules.");
-    }
+      const res = await fetch(`${API_BASE}/api/rules`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(rules) });
+      if (res.ok) showToast("Rules updated and compiled!");
+    } catch (e) { showToast("Error updating rules."); }
   }
 
-  // Load Wallets
+  // ---- WALLETS ----
   async function loadWallets() {
+    if (isOfflineMode) return;
     try {
       const res = await fetch(`${API_BASE}/api/wallets`);
+      if (!res.ok) throw new Error();
       const data = await res.json();
-      
-      // Update Merkle Root UI
-      const rootStr = data.sanctions_merkle_root;
-      document.getElementById("merkleRoot").innerText = "0x" + rootStr.substring(0, 16) + "...";
-      document.getElementById("merkleRoot").title = rootStr;
-      
-      // Update Wallet List
-      const walletList = document.getElementById("walletList");
-      walletList.innerHTML = "";
-      
-      const simSender = document.getElementById("simSender");
-      const revokeSelect = document.getElementById("revokeWalletSelect");
-      const escrowSender = document.getElementById("escrowSender");
-      const escrowRecipient = document.getElementById("escrowRecipient");
-      
-      const currentSenderVal = simSender.value;
-      const currentRevVal = revokeSelect.value;
-      const currentEscrowSenderVal = escrowSender.value;
-      const currentEscrowRecipientVal = escrowRecipient.value;
-      
-      simSender.innerHTML = "";
-      revokeSelect.innerHTML = "";
-      escrowSender.innerHTML = "";
-      escrowRecipient.innerHTML = "";
-      
+      document.getElementById("merkleRoot").innerText = "0x" + data.sanctions_merkle_root.slice(0,16) + "...";
+      const wl = document.getElementById("walletList"); wl.innerHTML = "";
+      const ids = ["simSender","revokeWalletSelect","escrowSender","escrowRecipient"];
+      const saved = ids.map(id => document.getElementById(id).value);
+      ids.forEach(id => document.getElementById(id).innerHTML = "");
       data.wallets.forEach(w => {
-        const item = document.createElement("div");
-        item.className = "list-item";
-        
-        const kycBadge = `<span class="badge tier">Tier ${w.kyc_tier}</span>`;
-        const sanctionsBadge = w.is_sanctioned ? `<span class="badge sanctioned">Sanctioned</span>` : "";
-        
-        item.innerHTML = `
-          <div class="item-meta">
-            <span class="item-name">${w.name || 'Anonymous Wallet'}</span>
-            <span class="item-sub">${w.address.substring(0,8)}...${w.address.substring(w.address.length-8)}</span>
-          </div>
-          <div style="display:flex; gap:8px; align-items:center;">
-            ${kycBadge}
-            ${sanctionsBadge}
-          </div>
-        `;
-        walletList.appendChild(item);
-        
-        // Populate dropdowns
-        const opt = document.createElement("option");
-        opt.value = w.address;
-        opt.innerText = `${w.name || w.address.substring(0,8)} (${w.address.substring(0,8)}...)`;
-        simSender.appendChild(opt);
-        
-        const opt2 = document.createElement("option");
-        opt2.value = w.address;
-        opt2.innerText = `${w.name || w.address.substring(0,8)}`;
-        revokeSelect.appendChild(opt2);
-
-        const opt3 = document.createElement("option");
-        opt3.value = w.address;
-        opt3.innerText = `${w.name || w.address.substring(0,8)}`;
-        escrowSender.appendChild(opt3);
-
-        const opt4 = document.createElement("option");
-        opt4.value = w.address;
-        opt4.innerText = `${w.name || w.address.substring(0,8)}`;
-        escrowRecipient.appendChild(opt4);
+        const item = document.createElement("div"); item.className = "list-item";
+        item.innerHTML = `<div class="item-meta"><span class="item-name">${w.name||'Anonymous'}</span><span class="item-sub">${w.address.slice(0,8)}...${w.address.slice(-8)}</span></div><div style="display:flex;gap:8px;"><span class="badge tier">Tier ${w.kyc_tier}</span>${w.is_sanctioned?'<span class="badge sanctioned">Sanctioned</span>':''}</div>`;
+        wl.appendChild(item);
+        ids.forEach(id => { const o = document.createElement("option"); o.value=w.address; o.innerText=`${w.name||w.address.slice(0,8)} (${w.address.slice(0,8)}...)`; document.getElementById(id).appendChild(o); });
       });
-      
-      if (currentSenderVal && [...simSender.options].some(o => o.value === currentSenderVal)) {
-        simSender.value = currentSenderVal;
-      }
-      if (currentRevVal && [...revokeSelect.options].some(o => o.value === currentRevVal)) {
-        revokeSelect.value = currentRevVal;
-      }
-      if (currentEscrowSenderVal && [...escrowSender.options].some(o => o.value === currentEscrowSenderVal)) {
-        escrowSender.value = currentEscrowSenderVal;
-      }
-      if (currentEscrowRecipientVal && [...escrowRecipient.options].some(o => o.value === currentEscrowRecipientVal)) {
-        escrowRecipient.value = currentEscrowRecipientVal;
-      }
-    } catch (e) {
-      console.error("Error loading wallets:", e);
-    }
+      ids.forEach((id,i) => { if(saved[i] && [...document.getElementById(id).options].some(o=>o.value===saved[i])) document.getElementById(id).value=saved[i]; });
+    } catch(e) { console.error(e); }
   }
 
-  // Add Wallet Modal Control
-  function openAddWalletModal() {
-    document.getElementById("walletModal").style.display = "flex";
-  }
-  function closeAddWalletModal() {
-    document.getElementById("walletModal").style.display = "none";
-  }
+  function openAddWalletModal() { document.getElementById("walletModal").style.display = "flex"; }
+  function closeAddWalletModal() { document.getElementById("walletModal").style.display = "none"; }
 
   async function submitNewWallet() {
-    const name = document.getElementById("newWalletName").value.trim();
+    if (isOfflineMode) { showToast("Demo mode — backend offline."); closeAddWalletModal(); return; }
     const address = document.getElementById("newWalletAddress").value.trim();
-    const kyc_tier = parseInt(document.getElementById("newWalletKyc").value);
-    const is_sanctioned = document.getElementById("newWalletSanctions").value === "true";
-    
-    if (!address) {
-      alert("Please provide a wallet address.");
-      return;
-    }
-    
-    const wallet = { address, name: name || "User " + address.substring(0, 4), kyc_tier, is_sanctioned };
-    
+    if (!address) { alert("Please provide a wallet address."); return; }
+    const wallet = { address, name: document.getElementById("newWalletName").value.trim() || "User "+address.slice(0,4), kyc_tier: parseInt(document.getElementById("newWalletKyc").value), is_sanctioned: document.getElementById("newWalletSanctions").value === "true" };
     try {
-      const res = await fetch(`${API_BASE}/api/wallets`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(wallet)
-      });
-      if (res.ok) {
-        showToast("Wallet registered and indexed in sanctions database.");
-        closeAddWalletModal();
-        loadWallets();
-      }
-    } catch (e) {
-      showToast("Error registering wallet.");
-    }
+      const res = await fetch(`${API_BASE}/api/wallets`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(wallet) });
+      if (res.ok) { showToast("Wallet registered!"); closeAddWalletModal(); loadWallets(); }
+    } catch(e) { showToast("Error registering wallet."); }
   }
 
-  // Load Audit Logs
+  // ---- AUDIT LOGS ----
   async function loadAuditLogs() {
+    if (isOfflineMode) return;
     try {
       const res = await fetch(`${API_BASE}/api/audit-logs`);
+      if (!res.ok) throw new Error();
       const logs = await res.json();
-      const tbody = document.getElementById("auditRows");
-      tbody.innerHTML = "";
-      
+      const tbody = document.getElementById("auditRows"); tbody.innerHTML = "";
       logs.forEach(log => {
         const tr = document.createElement("tr");
-        const statusBadge = log.status === "ok" 
-          ? `<span class="badge ok">Verified</span>` 
-          : `<span class="badge blocked">Blocked</span>`;
-          
-        tr.innerHTML = `
-          <td>${log.timestamp}</td>
-          <td>${log.rule_checked}</td>
-          <td>${statusBadge}</td>
-          <td class="hash-cell">${log.merkle_root}</td>
-          <td class="hash-cell" title="${log.proof_ref}">${log.proof_ref.substring(0, 10)}...</td>
-        `;
+        const badge = log.status==="ok" ? `<span class="badge ok">Verified</span>` : `<span class="badge blocked">Blocked</span>`;
+        tr.innerHTML = `<td>${log.timestamp}</td><td>${log.rule_checked}</td><td>${badge}</td><td class="hash-cell">${log.merkle_root}</td><td class="hash-cell" title="${log.proof_ref}">${log.proof_ref.slice(0,10)}...</td>`;
         tbody.appendChild(tr);
       });
-    } catch (e) {
-      console.error("Error loading audit logs:", e);
-    }
+    } catch(e) { console.error(e); }
   }
 
-  // Run ZK Simulation Pipeline
+  // ---- SIMULATION ----
   async function runSimulation() {
     const sender = document.getElementById("simSender").value;
     const amount = parseFloat(document.getElementById("simAmount").value);
-    
-    if (!sender) {
-      showToast("Please register a wallet first.");
-      return;
-    }
-    
+    if (!sender) { showToast("Please register a wallet first."); return; }
     const pipeline = document.getElementById("pipelineContainer");
     const resultDiv = document.getElementById("simulationResult");
-    pipeline.style.display = "block";
-    resultDiv.style.display = "none";
-    
-    const icons = ["revocation", "sanctions", "kyc", "limit", "proof"];
-    icons.forEach(id => {
-      const el = document.getElementById(`icon-${id}`);
-      el.className = "step-icon";
-      el.innerText = "-";
-    });
-    
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
-    
-    try {
-      // Step 1: Revocation Check
-      document.getElementById("icon-revocation").className = "step-icon pending";
-      await delay(600);
-      
-      const res = await fetch(`${API_BASE}/api/simulate-transfer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender, amount })
-      });
-      const data = await res.json();
-      const isOk = data.compliant;
-      
-      if (!isOk && data.event.rule_checked === "Credential revocation check") {
-        document.getElementById("icon-revocation").className = "step-icon failure";
-        document.getElementById("icon-revocation").innerText = "✕";
-        showFinalResult(data);
-        return;
-      }
-      document.getElementById("icon-revocation").className = "step-icon success";
-      document.getElementById("icon-revocation").innerText = "✓";
+    pipeline.style.display = "block"; resultDiv.style.display = "none";
+    ["revocation","sanctions","kyc","limit","proof"].forEach(id => { const el=document.getElementById(`icon-${id}`); el.className="step-icon"; el.innerText="-"; });
+    const delay = ms => new Promise(r => setTimeout(r, ms));
 
-      // Step 2: Sanctions Check
-      document.getElementById("icon-sanctions").className = "step-icon pending";
-      await delay(600);
-      
-      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("sanctions")) {
-        document.getElementById("icon-sanctions").className = "step-icon failure";
-        document.getElementById("icon-sanctions").innerText = "✕";
-        showFinalResult(data);
-        return;
+    if (isOfflineMode) {
+      for (const id of ["revocation","sanctions","kyc","limit","proof"]) {
+        document.getElementById(`icon-${id}`).className = "step-icon pending"; await delay(450);
+        document.getElementById(`icon-${id}`).className = "step-icon success"; document.getElementById(`icon-${id}`).innerText = "✓";
       }
-      document.getElementById("icon-sanctions").className = "step-icon success";
-      document.getElementById("icon-sanctions").innerText = "✓";
-      
-      // Step 3: KYC Check
-      document.getElementById("icon-kyc").className = "step-icon pending";
-      await delay(600);
-      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("KYC")) {
-        document.getElementById("icon-kyc").className = "step-icon failure";
-        document.getElementById("icon-kyc").innerText = "✕";
-        showFinalResult(data);
-        return;
-      }
-      document.getElementById("icon-kyc").className = "step-icon success";
-      document.getElementById("icon-kyc").innerText = "✓";
-      
-      // Step 4: Limit Check
-      document.getElementById("icon-limit").className = "step-icon pending";
-      await delay(600);
-      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("AmountExceedsRule")) {
-        document.getElementById("icon-limit").className = "step-icon failure";
-        document.getElementById("icon-limit").innerText = "✕";
-        showFinalResult(data);
-        return;
-      }
-      document.getElementById("icon-limit").className = "step-icon success";
-      document.getElementById("icon-limit").innerText = "✓";
-      
-      // Step 5: On-chain verifier check
-      document.getElementById("icon-proof").className = "step-icon pending";
-      await delay(600);
-      document.getElementById("icon-proof").className = "step-icon success";
-      document.getElementById("icon-proof").innerText = "✓";
-      
-      showFinalResult(data);
-    } catch (e) {
-      console.error(e);
-      showToast("Simulation failure.");
+      resultDiv.style.display="block"; resultDiv.className="simulation-result success";
+      resultDiv.innerHTML = `<strong>Demo Mode: All ZK Checks Passed</strong><br>Connect the backend (HF Space) for real on-chain verification.`;
+      return;
     }
+
+    try {
+      document.getElementById("icon-revocation").className = "step-icon pending"; await delay(600);
+      const res = await fetch(`${API_BASE}/api/simulate-transfer`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({sender,amount}) });
+      const data = await res.json(); const isOk = data.compliant;
+      const check = (id, cond) => { if(!isOk && cond) { document.getElementById(`icon-${id}`).className="step-icon failure"; document.getElementById(`icon-${id}`).innerText="✕"; showFinalResult(data); return true; } document.getElementById(`icon-${id}`).className="step-icon success"; document.getElementById(`icon-${id}`).innerText="✓"; return false; };
+      if (check("revocation", data.event&&data.event.rule_checked==="Credential revocation check")) return;
+      document.getElementById("icon-sanctions").className="step-icon pending"; await delay(600);
+      if (check("sanctions", data.reason&&data.reason.includes("sanctions"))) return;
+      document.getElementById("icon-kyc").className="step-icon pending"; await delay(600);
+      if (check("kyc", data.reason&&data.reason.includes("KYC"))) return;
+      document.getElementById("icon-limit").className="step-icon pending"; await delay(600);
+      if (check("limit", data.reason&&data.reason.includes("AmountExceeds"))) return;
+      document.getElementById("icon-proof").className="step-icon pending"; await delay(600);
+      document.getElementById("icon-proof").className="step-icon success"; document.getElementById("icon-proof").innerText="✓";
+      showFinalResult(data);
+    } catch(e) { showToast("Simulation failure — check backend connection."); }
   }
 
   function showFinalResult(data) {
-    const resultDiv = document.getElementById("simulationResult");
-    resultDiv.style.display = "block";
-    
-    if (data.compliant) {
-      resultDiv.className = "simulation-result success";
-      resultDiv.innerHTML = `
-        <strong>Verification Succeeded: Compliant</strong><br>
-        Proof reference: ${data.event.proof_ref}<br>
-        Root: ${data.event.merkle_root}<br>
-        Message: ${data.reason}
-      `;
-    } else {
-      resultDiv.className = "simulation-result failure";
-      resultDiv.innerHTML = `
-        <strong>Verification Failed: Blocked</strong><br>
-        Rule triggered: ${data.event.rule_checked}<br>
-        Message: ${data.reason}
-      `;
-    }
-    
-    loadWallets();
-    loadAuditLogs();
+    const r = document.getElementById("simulationResult"); r.style.display="block";
+    if (data.compliant) { r.className="simulation-result success"; r.innerHTML=`<strong>Verification Succeeded: Compliant</strong><br>Proof: ${data.event.proof_ref}<br>Root: ${data.event.merkle_root}<br>${data.reason}`; }
+    else { r.className="simulation-result failure"; r.innerHTML=`<strong>Verification Failed: Blocked</strong><br>Rule: ${data.event.rule_checked}<br>${data.reason}`; }
+    loadWallets(); loadAuditLogs();
   }
 
-  // ========================================================
-  // ON-CHAIN GATED ESCROW INTERACTIVE SCRIPTS
-  // ========================================================
-
+  // ---- ESCROW ----
   async function loadEscrows() {
+    if (isOfflineMode) { document.getElementById("escrowsList").innerHTML = "<div style='padding:12px;color:var(--text-secondary);font-size:13px;'>⚠️ Backend offline — escrow unavailable in demo mode.</div>"; return; }
     try {
-      const res = await fetch(`${API_BASE}/api/escrow`);
-      const data = await res.json();
-      
-      const out = document.getElementById("escrowsList");
-      out.innerHTML = "";
-      
-      if (data.escrows.length === 0) {
-        out.innerHTML = "No active escrows currently locked on Testnet.";
-        return;
-      }
-      
-      const now = Math.floor(Date.now() / 1000);
-      
-      data.escrows.forEach(escrow => {
-        const item = document.createElement("div");
-        item.className = "list-item";
-        
-        const timeDiff = escrow.unlock_time - now;
-        const isLocked = timeDiff > 0;
-        
-        const statusBadge = isLocked 
-          ? `<span class="badge ok" style="background:rgba(59,130,246,0.1); color:#3B82F6;">Locked (${timeDiff}s)</span>`
-          : `<span class="badge ok">Claimable</span>`;
-          
-        const actionBtn = isLocked
-          ? `<button class="btn secondary" style="font-size:11px; padding:4px 8px; flex:none; opacity:0.5; cursor:not-allowed;" disabled>Refund Locked</button>`
-          : `<button class="btn secondary" style="font-size:11px; padding:4px 8px; flex:none; color:var(--red); border-color:var(--red);" onclick="refundEscrow('${escrow.recipient}')">Refund</button>`;
-          
-        item.innerHTML = `
-          <div class="item-meta">
-            <span class="item-name">${escrow.amount} USD locked for ${escrow.recipient.substring(0,8)}...</span>
-            <span class="item-sub">Deposited by: ${escrow.sender.substring(0,8)}...</span>
-          </div>
-          <div style="display:flex; gap:8px; align-items:center;">
-            ${statusBadge}
-            <button class="btn purple" style="font-size:11px; padding:4px 8px; flex:none;" onclick="claimEscrow('${escrow.recipient}')">ZK Claim</button>
-            ${actionBtn}
-          </div>
-        `;
+      const res = await fetch(`${API_BASE}/api/escrow`); if(!res.ok) throw new Error();
+      const data = await res.json(); const out = document.getElementById("escrowsList"); out.innerHTML="";
+      if (!data.escrows.length) { out.innerHTML="<div style='padding:12px;color:var(--text-secondary);font-size:13px;'>No active escrows.</div>"; return; }
+      const now = Math.floor(Date.now()/1000);
+      data.escrows.forEach(e => {
+        const item=document.createElement("div"); item.className="list-item";
+        const td=e.unlock_time-now; const locked=td>0;
+        item.innerHTML=`<div class="item-meta"><span class="item-name">${e.amount} USD → ${e.recipient.slice(0,8)}...</span><span class="item-sub">From: ${e.sender.slice(0,8)}...</span></div><div style="display:flex;gap:8px;align-items:center;"><span class="badge ok" style="${locked?'background:rgba(59,130,246,0.1);color:#3B82F6;':''}">${locked?`Locked (${td}s)`:'Claimable'}</span><button class="btn purple" style="font-size:11px;padding:4px 8px;flex:none;" onclick="claimEscrow('${e.recipient}')">ZK Claim</button><button class="btn secondary" style="font-size:11px;padding:4px 8px;flex:none;${locked?'opacity:0.5;cursor:not-allowed;':'color:var(--red);border-color:var(--red);'}" onclick="refundEscrow('${e.recipient}')" ${locked?'disabled':''}>Refund</button></div>`;
         out.appendChild(item);
       });
-    } catch (e) {
-      console.error(e);
-    }
+    } catch(e) { console.error(e); }
   }
 
   async function depositEscrow() {
-    const sender = document.getElementById("escrowSender").value;
-    const recipient = document.getElementById("escrowRecipient").value;
-    const amount = parseFloat(document.getElementById("escrowAmount").value);
-    const delay = parseInt(document.getElementById("escrowDelay").value);
-    
-    if (sender === recipient) {
-      alert("Sender and recipient cannot be the same address.");
-      return;
-    }
-    
+    if (isOfflineMode) { showToast("Demo mode — backend offline."); return; }
+    const sender=document.getElementById("escrowSender").value, recipient=document.getElementById("escrowRecipient").value;
+    if (sender===recipient) { alert("Sender and recipient cannot be the same."); return; }
     try {
-      const res = await fetch(`${API_BASE}/api/escrow/deposit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender, recipient, amount, unlock_delay_sec: delay })
-      });
-      if (res.ok) {
-        showToast("Escrow deposited successfully on Stellar Testnet!");
-        loadEscrows();
-      } else {
-        const err = await res.json();
-        alert("Deposit failed: " + err.detail);
-      }
-    } catch (e) {
-      showToast("Deposit failed.");
-    }
+      const res=await fetch(`${API_BASE}/api/escrow/deposit`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sender,recipient,amount:parseFloat(document.getElementById("escrowAmount").value),unlock_delay_sec:parseInt(document.getElementById("escrowDelay").value)})});
+      if(res.ok){showToast("Escrow deposited on Stellar Testnet!");loadEscrows();}else{const e=await res.json();alert("Failed: "+e.detail);}
+    } catch(e){showToast("Deposit failed.");}
   }
 
   async function claimEscrow(recipient) {
-    const proof = prompt("Provide your hex Zero-Knowledge proof to claim:", "11223344");
-    if (!proof) return;
-    
-    try {
-      const res = await fetch(`${API_BASE}/api/escrow/claim`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipient, proof })
-      });
-      if (res.ok) {
-        showToast("Escrow claimed successfully from Stellar Testnet!");
-        loadEscrows();
-        loadAuditLogs();
-      } else {
-        const err = await res.json();
-        alert("Claim failed: " + err.detail);
-      }
-    } catch (e) {
-      showToast("Claim failed.");
-    }
+    if (isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    const proof=prompt("Provide ZK proof:","11223344"); if(!proof)return;
+    try{
+      const res=await fetch(`${API_BASE}/api/escrow/claim`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({recipient,proof})});
+      if(res.ok){showToast("Escrow claimed!");loadEscrows();loadAuditLogs();}else{const e=await res.json();alert("Claim failed: "+e.detail);}
+    }catch(e){showToast("Claim failed.");}
   }
 
-  async function refundEscrow(recipient) {
-    try {
-      const res = await fetch(`${API_BASE}/api/escrow/refund`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipient })
-      });
-      if (res.ok) {
-        showToast("Escrow refunded. Funds reclaimed on Stellar Testnet!");
-        loadEscrows();
-        loadAuditLogs();
-      } else {
-        const err = await res.json();
-        alert("Refund failed: " + err.detail);
-      }
-    } catch (e) {
-      showToast("Refund failed.");
-    }
+  async function refundEscrow(recipient){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    try{
+      const res=await fetch(`${API_BASE}/api/escrow/refund`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({recipient})});
+      if(res.ok){showToast("Escrow refunded!");loadEscrows();}else{const e=await res.json();alert("Refund failed: "+e.detail);}
+    }catch(e){showToast("Refund failed.");}
   }
 
-  // ========================================================
-  // ADVANCED SANDBOX INTERACTIVE SCRIPTS
-  // ========================================================
+  // ---- PAILLIER ----
+  function loadPaillierState(){const o=document.getElementById("paillierQueue");o.innerHTML=paillierQueue.length===0?"Queue empty. Encrypt transactions above.":paillierQueue.map((c,i)=>`[Tx #${i+1}] ${c.slice(0,32)}...`).join("<br>");}
 
-  async function loadPaillierState() {
-    const out = document.getElementById("paillierQueue");
-    if (paillierQueue.length === 0) {
-      out.innerHTML = "Queue is empty. Enter an amount and click 'Encrypt & Add'.";
-      return;
-    }
-    out.innerHTML = paillierQueue.map((c, i) => `[Tx #${i+1}] Ciphertext: ${c.substring(0, 32)}...`).join("<br>");
+  async function paillierEncryptAmount(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    const amt=parseInt(document.getElementById("paillierAmount").value);
+    try{
+      const res=await fetch(`${API_BASE}/api/crypto/paillier/encrypt`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:amt})});
+      const d=await res.json();paillierQueue.push(d.ciphertext);loadPaillierState();showToast(`Encrypted ${amt} USD.`);
+    }catch(e){showToast("Encryption failed.");}
   }
 
-  async function paillierEncryptAmount() {
-    const amt = parseInt(document.getElementById("paillierAmount").value);
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/paillier/encrypt`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: amt })
-      });
-      const data = await res.json();
-      paillierQueue.push(data.ciphertext);
-      loadPaillierState();
-      showToast(`Encrypted ${amt} USD homomorphically.`);
-    } catch (e) {
-      showToast("Encryption failed.");
-    }
+  async function paillierSumAndDecrypt(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    if(!paillierQueue.length){alert("Queue empty!");return;}
+    try{
+      const res=await fetch(`${API_BASE}/api/crypto/paillier/sum-and-check`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ciphertexts:paillierQueue,limit:25000})});
+      const d=await res.json();
+      document.getElementById("paillierResult").innerHTML=`<strong>FHE Result:</strong><br>Ciphertext: ${d.homomorphic_total_ciphertext.slice(0,32)}...<br>Decrypted Sum: <strong>${d.decrypted_sum} USD</strong><br>Within limit? <span style="color:${d.within_limit?'var(--green)':'var(--red)'};font-weight:bold;">${d.within_limit?"YES":"NO"}</span>`;
+    }catch(e){showToast("FHE operation failed.");}
   }
 
-  async function paillierSumAndDecrypt() {
-    if (paillierQueue.length === 0) {
-      alert("No ciphertexts in the queue to sum!");
-      return;
-    }
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/paillier/sum-and-check`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ciphertexts: paillierQueue, limit: 25000 })
-      });
-      const data = await res.json();
-      
-      const resDiv = document.getElementById("paillierResult");
-      resDiv.innerHTML = `
-        <strong>FHE Decryption Outcome:</strong><br>
-        Summed Ciphertext: ${data.homomorphic_total_ciphertext.substring(0, 32)}...<br>
-        Decrypted Plaintext Sum: <strong>${data.decrypted_sum} USD</strong><br>
-        Within daily limit of 25,000 USD? <span style="color: ${data.within_limit ? 'var(--green)' : 'var(--red)'}; font-weight:bold;">${data.within_limit ? "YES" : "NO"}</span>
-      `;
-    } catch (e) {
-      showToast("Homomorphic operations failed.");
-    }
+  async function paillierReset(){
+    paillierQueue=[];document.getElementById("paillierResult").innerHTML="";
+    if(isOfflineMode){loadPaillierState();return;}
+    try{await fetch(`${API_BASE}/api/crypto/paillier/keygen`,{method:"POST"});loadPaillierState();showToast("New Paillier keypair generated.");}catch(e){showToast("Key generation failed.");}
   }
 
-  async function paillierReset() {
-    paillierQueue = [];
-    document.getElementById("paillierResult").innerHTML = "";
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/paillier/keygen`, { method: "POST" });
-      const data = await res.json();
-      loadPaillierState();
-      showToast("Generated new toy Paillier keypair.");
-    } catch (e) {
-      showToast("Key pair regeneration failed.");
-    }
+  // ---- DISCLOSURE ----
+  async function openDisclosureRequest(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    const identity=parseInt(document.getElementById("identityCommitment").value);
+    if(!identity){alert("Invalid commitment");return;}
+    for(let i=1;i<=5;i++)document.getElementById(`trustee-${i}`).className="trustee-btn";
+    try{
+      const res=await fetch(`${API_BASE}/api/crypto/disclosure/open`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({identity_commitment:identity,threshold:3,n:5,delay_sec:10})});
+      activeDisclosureRequest=await res.json();clearInterval(currentDelayTimer);let t=10;
+      document.getElementById("disclosureStatus").innerText=`Time Lock Active: ${t}s remaining.`;
+      currentDelayTimer=setInterval(()=>{t--;if(t<=0){clearInterval(currentDelayTimer);document.getElementById("disclosureStatus").innerText="Time Lock Expired. Need 3 approvals.";}else document.getElementById("disclosureStatus").innerText=`Time Lock Active: ${t}s remaining.`;},1000);
+      document.getElementById("disclosureResult").innerHTML="";showToast("Disclosure request opened.");
+    }catch(e){showToast("Failed to open request.");}
   }
 
-  async function openDisclosureRequest() {
-    const identity = parseInt(document.getElementById("identityCommitment").value);
-    if (!identity) {
-      alert("Invalid commitment");
-      return;
-    }
-    
-    for (let i = 1; i <= 5; i++) {
-      const btn = document.getElementById(`trustee-${i}`);
-      btn.className = "trustee-btn";
-    }
-    
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/disclosure/open`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identity_commitment: identity, threshold: 3, n: 5, delay_sec: 10 })
-      });
-      const data = await res.json();
-      activeDisclosureRequest = data;
-      
-      let timeRemaining = 10;
-      clearInterval(currentDelayTimer);
-      
-      document.getElementById("disclosureStatus").innerText = `Request opened. Time Lock Active: ${timeRemaining}s remaining.`;
-      
-      currentDelayTimer = setInterval(() => {
-        timeRemaining -= 1;
-        if (timeRemaining <= 0) {
-          clearInterval(currentDelayTimer);
-          document.getElementById("disclosureStatus").innerText = "Time Lock Expired. Decryption permitted (requires 3 approvals).";
-        } else {
-          document.getElementById("disclosureStatus").innerText = `Request opened. Time Lock Active: ${timeRemaining}s remaining.`;
-        }
-      }, 1000);
-      
-      document.getElementById("disclosureResult").innerHTML = "";
-      showToast("Disclosure request opened with Shamir sharing.");
-    } catch (e) {
-      showToast("Failed to open disclosure request.");
-    }
+  async function approveDisclosure(id){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    if(!activeDisclosureRequest){alert("Open a request first!");return;}
+    try{await fetch(`${API_BASE}/api/crypto/disclosure/approve`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({trustee_id:id})});document.getElementById(`trustee-${id}`).className="trustee-btn approved";showToast(`Trustee ${id} approved.`);}catch(e){showToast("Approval failed.");}
   }
 
-  async function approveDisclosure(trusteeId) {
-    if (!activeDisclosureRequest) {
-      alert("Please open a request first!");
-      return;
-    }
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/disclosure/approve`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ trustee_id: trusteeId })
-      });
-      const data = await res.json();
-      document.getElementById(`trustee-${trusteeId}`).className = "trustee-btn approved";
-      showToast(`Trustee ${trusteeId} approval collected.`);
-    } catch (e) {
-      showToast("Failed to approve.");
-    }
+  async function attemptDisclosureDecryption(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    if(!activeDisclosureRequest){alert("Request not initialized");return;}
+    try{
+      const res=await fetch(`${API_BASE}/api/crypto/disclosure/decrypt`,{method:"POST"});const d=await res.json();
+      const r=document.getElementById("disclosureResult");
+      if(d.success){r.style.color="var(--green)";r.innerHTML=`✓ Decrypted: ${d.decrypted_identity}`;}else{r.style.color="var(--red)";r.innerHTML=`✕ Blocked: ${d.reason}`;}
+    }catch(e){showToast("Decryption error.");}
   }
 
-  async function attemptDisclosureDecryption() {
-    if (!activeDisclosureRequest) {
-      alert("Request not initialized");
-      return;
-    }
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/disclosure/decrypt`, { method: "POST" });
-      const data = await res.json();
-      
-      const resDiv = document.getElementById("disclosureResult");
-      if (data.success) {
-        resDiv.style.color = "var(--green)";
-        resDiv.innerHTML = `Decryption Successful! Plaintext identity: ${data.decrypted_identity}`;
-      } else {
-        resDiv.style.color = "var(--red)";
-        resDiv.innerHTML = `Decryption Blocked: ${data.reason}`;
-      }
-    } catch (e) {
-      showToast("Decryption attempt error.");
-    }
+  // ---- REVOCATION ----
+  async function loadRevocationState(){
+    if(isOfflineMode)return;
+    try{
+      const res=await fetch(`${API_BASE}/api/crypto/revocation`);if(!res.ok)throw new Error();
+      const d=await res.json();
+      document.getElementById("revocationRoot").innerText="0x"+d.revocation_root.slice(0,16)+"...";
+      document.getElementById("revokedList").innerHTML=d.revoked_wallets.length?d.revoked_wallets.map(w=>`Revoked: ${w}`).join("<br>"):"No wallets revoked yet.";
+    }catch(e){console.error(e);}
   }
 
-  async function loadRevocationState() {
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/revocation`);
-      const data = await res.json();
-      document.getElementById("revocationRoot").innerText = "0x" + data.revocation_root.substring(0, 16) + "...";
-      document.getElementById("revocationRoot").title = data.revocation_root;
-      
-      const out = document.getElementById("revokedList");
-      if (data.revoked_wallets.length === 0) {
-        out.innerHTML = "No wallets currently revoked.";
-        return;
-      }
-      out.innerHTML = data.revoked_wallets.map(w => `Revoked: ${w}`).join("<br>");
-    } catch (e) {
-      console.error(e);
-    }
+  async function revokeWallet(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    const wallet=document.getElementById("revokeWalletSelect").value;if(!wallet)return;
+    try{const res=await fetch(`${API_BASE}/api/crypto/revocation/revoke`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wallet})});if(res.ok){showToast(`Revoked ${wallet.slice(0,8)}...`);loadRevocationState();}}catch(e){showToast("Revocation failed.");}
   }
 
-  async function revokeWallet() {
-    const wallet = document.getElementById("revokeWalletSelect").value;
-    if (!wallet) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/revocation/revoke`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wallet })
-      });
-      if (res.ok) {
-        showToast(`Revoked credential index for ${wallet.substring(0, 8)}...`);
-        loadRevocationState();
-      }
-    } catch (e) {
-      showToast("Revocation failed.");
-    }
+  // ---- FOLDING ----
+  async function loadFoldingState(){
+    if(isOfflineMode)return;
+    try{const res=await fetch(`${API_BASE}/api/crypto/folding`);if(!res.ok)throw new Error();const d=await res.json();document.getElementById("foldingRoot").innerText="0x"+d.accumulator.slice(0,20)+"...";}catch(e){console.error(e);}
   }
 
-  async function loadFoldingState() {
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/folding`);
-      const data = await res.json();
-      document.getElementById("foldingRoot").innerText = "0x" + data.accumulator.substring(0, 20) + "...";
-      document.getElementById("foldingRoot").title = data.accumulator;
-    } catch (e) {
-      console.error(e);
-    }
+  async function foldProofStep(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    const witness=document.getElementById("foldingWitness").value;
+    try{const res=await fetch(`${API_BASE}/api/crypto/folding/fold`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({witness})});if(res.ok){showToast("Step folded!");loadFoldingState();}}catch(e){showToast("Folding failed.");}
   }
 
-  async function foldProofStep() {
-    const witness = document.getElementById("foldingWitness").value;
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/folding/fold`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ witness })
-      });
-      if (res.ok) {
-        showToast("Step folded into proof accumulator.");
-        loadFoldingState();
-      }
-    } catch (e) {
-      showToast("Folding failed.");
-    }
+  async function resetFolding(){
+    if(isOfflineMode){showToast("Demo mode — backend offline.");return;}
+    try{const res=await fetch(`${API_BASE}/api/crypto/folding/reset`,{method:"POST"});if(res.ok){showToast("Accumulator reset.");loadFoldingState();}}catch(e){showToast("Reset failed.");}
   }
 
-  async function resetFolding() {
-    try {
-      const res = await fetch(`${API_BASE}/api/crypto/folding/reset`, { method: "POST" });
-      if (res.ok) {
-        showToast("Accumulator reset to Genesis hash.");
-        loadFoldingState();
-      }
-    } catch (e) {
-      showToast("Reset failed.");
-    }
-  }
-
-  // Initial Boot
+  // ---- BOOT ----
   window.onload = function() {
     loadRules();
     loadWallets();
