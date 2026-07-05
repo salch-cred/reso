@@ -7,10 +7,11 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Stellar CLI precompiled binary
+# Install Stellar CLI precompiled binary robustly using find
 RUN curl -sL https://github.com/stellar/stellar-cli/releases/download/v22.0.1/stellar-cli-22.0.1-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C /tmp \
-    && mv /tmp/stellar-cli /usr/local/bin/stellar \
-    && chmod +x /usr/local/bin/stellar
+    && find /tmp -type f -name "stellar" -exec mv {} /usr/local/bin/stellar \; \
+    && chmod +x /usr/local/bin/stellar \
+    && rm -rf /tmp/*
 
 WORKDIR /app
 
