@@ -1,20 +1,14 @@
 {
   "version": 2,
-  "cleanUrls": true,
   "builds": [
-    {
-      "src": "dashboard/**",
-      "use": "@vercel/static"
-    }
+    { "src": "site/**", "use": "@vercel/static" },
+    { "src": "dashboard/**", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "https://salmanch123-reso.hf.space/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dashboard/$1"
-    }
+    { "src": "/api/(.*)", "dest": "https://salmanch123-reso.hf.space/api/$1" },
+    { "src": "/app", "dest": "/dashboard/index.html" },
+    { "src": "/app/(.*)", "dest": "/dashboard/$1" },
+    { "src": "/", "dest": "/site/index.html" },
+    { "src": "/(.*)", "dest": "/site/$1" }
   ]
 }
