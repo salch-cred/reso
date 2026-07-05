@@ -85,3 +85,26 @@ if (toggle && navLinks) {
     navLinks.style.zIndex = '300';
   });
 }
+
+// scroll progress bar
+const progressBar = document.createElement('div');
+progressBar.className = 'scroll-progress';
+document.body.appendChild(progressBar);
+const updateProgress = () => {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight || 1) * 100;
+  progressBar.style.width = scrolled + '%';
+};
+updateProgress();
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+// cursor spotlight glow
+const spotlight = document.createElement('div');
+spotlight.className = 'spotlight';
+document.body.appendChild(spotlight);
+window.addEventListener('mousemove', (e) => {
+  spotlight.style.opacity = '1';
+  spotlight.style.left = e.clientX + 'px';
+  spotlight.style.top = e.clientY + 'px';
+}, { passive: true });
+window.addEventListener('mouseleave', () => { spotlight.style.opacity = '0'; });
