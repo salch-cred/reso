@@ -99,7 +99,17 @@
   .code-block .str { color: #72BC8F; }
   .code-block .com { color: #7D8AA0; }
 
-  footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 13px; }
+  section.closing { padding: 100px 0; text-align: center; background: #14181F; }
+  .closing h2 { color: #fff; font-size: 28px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; margin: 0 0 32px; }
+  .closing .btn-primary { background: var(--blue); }
+
+  footer { padding: 40px 0 32px; border-top: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+  .footer-links a:hover { color: var(--text-primary); }
+  .newsletter { display: flex; gap: 8px; }
+  .newsletter input { border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 13px; width: 200px; }
+  .footer-bottom { text-align: center; }
 
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
   .reveal.in { opacity: 1; transform: translateY(0); }
@@ -286,8 +296,29 @@ compliance_hook.<span class="kw">check_transfer</span>(
   </div>
 </section>
 
+<section class="closing reveal">
+  <div class="wrap">
+    <h2>P R I V A C Y   A T   E V E R Y   L A Y E R</h2>
+    <a class="btn btn-primary" href="#developers">Get started</a>
+  </div>
+</section>
+
 <footer>
-  <div class="wrap">Reso — an early-stage, open-source compliance layer for Stellar. Not audited. Not production-ready yet.</div>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-links">
+        <a href="https://github.com/salch-cred/reso">GitHub</a>
+        <a href="#product">Product</a>
+        <a href="#industries">Industries</a>
+        <a href="#developers">Docs</a>
+      </div>
+      <form class="newsletter" onsubmit="return false;">
+        <input type="email" placeholder="you@company.com" aria-label="Email for updates">
+        <button class="btn btn-ghost" type="submit">Get updates</button>
+      </form>
+    </div>
+    <div class="footer-bottom">Reso — an early-stage, open-source compliance layer for Stellar. Not audited. Not production-ready yet.</div>
+  </div>
 </footer>
 
 <script>
