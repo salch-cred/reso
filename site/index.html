@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reso — Privacy-preserving compliance for Stellar stablecoins</title>
+<style>
+  :root {
+    --text-primary: #2C2C2B;
+    --text-secondary: #7D7A75;
+    --canvas: #FFFFFF;
+    --surface: #F9F8F7;
+    --surface-2: #F0EFED;
+    --border: #E6E5E3;
+    --blue: #2783DE;
+    --blue-soft: #E5F2FC;
+    --green: #46A171;
+    --green-soft: #E8F1EC;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+    background: var(--canvas);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  nav.top { position: sticky; top: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
+  nav.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
+  .brand img { width: 28px; height: 28px; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--text-secondary); }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-cta { display: flex; gap: 12px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; border: none; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(39,131,222,0.30); }
+  .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface-2); }
+
+  header.hero { padding: 96px 0 72px; text-align: center; }
+  .eyebrow { display: inline-block; font-size: 13px; font-weight: 600; color: var(--blue); background: var(--blue-soft); padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; }
+  h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 20px; }
+  h1 span { color: var(--blue); }
+  .hero p.sub { font-size: 19px; color: var(--text-secondary); max-width: 620px; margin: 0 auto 32px; line-height: 1.5; }
+  .hero-ctas { display: flex; gap: 14px; justify-content: center; }
+
+  .trust-bar { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); padding: 20px 0; text-align: center; color: var(--text-secondary); font-size: 14px; }
+
+  section.feature-row { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .feature-row:nth-child(even) .feature-grid { direction: rtl; }
+  .feature-row:nth-child(even) .feature-grid > * { direction: ltr; }
+  .feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--blue-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+  .feature-tag { font-size: 13px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
+  .feature-grid h2 { font-size: 30px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .feature-grid p { color: var(--text-secondary); font-size: 16px; line-height: 1.6; margin: 0 0 20px; }
+  .feature-visual { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+  .stat-callout { display: flex; align-items: baseline; gap: 10px; }
+  .stat-callout .num { font-size: 40px; font-weight: 800; color: var(--text-primary); }
+  .stat-callout .lbl { font-size: 14px; color: var(--text-secondary); }
+
+  .proof-card { font-family: Menlo, Consolas, monospace; font-size: 13px; background: #14181F; color: #C9D6E8; border-radius: 10px; padding: 18px; line-height: 1.7; }
+  .proof-card .ok { color: #72BC8F; }
+  .proof-card .muted { color: #7D8AA0; }
+
+  section.industries { padding: 88px 0; background: var(--surface); }
+  .section-head { text-align: center; margin-bottom: 48px; }
+  .section-head h2 { font-size: 32px; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .section-head p { color: var(--text-secondary); font-size: 16px; margin: 0; }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { background: var(--canvas); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: transform .18s ease, box-shadow .18s ease; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(0,0,0,0.06); }
+  .card .tag { font-size: 12px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .04em; }
+  .card h3 { font-size: 19px; margin: 10px 0 8px; }
+  .card p { color: var(--text-secondary); font-size: 14px; line-height: 1.55; margin: 0 0 14px; }
+  .card a { font-size: 14px; font-weight: 600; color: var(--blue); }
+
+  section.values { padding: 88px 0; }
+  .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .value-card { padding: 8px; }
+  .value-card .quote-mark { font-size: 36px; color: var(--blue); line-height: 1; margin-bottom: 12px; }
+  .value-card p.claim { font-size: 16px; line-height: 1.6; margin: 0 0 14px; }
+  .value-card .who { font-size: 13px; color: var(--text-secondary); }
+
+  section.dev-cta { padding: 96px 0; }
+  .dev-box { background: #14181F; border-radius: 20px; padding: 56px; color: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .dev-box h2 { font-size: 30px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  .dev-box p { color: rgba(255,255,255,0.68); font-size: 16px; line-height: 1.6; margin: 0 0 24px; }
+  .dev-box .btn-primary { background: #fff; color: #14181F; }
+  .dev-box .btn-primary:hover { box-shadow: 0 6px 16px rgba(255,255,255,0.18); }
+  pre.code-block { background: #0D1016; border: 1px solid rgba(255,255,255,0.10); border-radius: 12px; padding: 20px; font-family: Menlo, Consolas, monospace; font-size: 13px; color: #C9D6E8; overflow-x: auto; margin: 0; line-height: 1.7; }
+  .code-block .kw { color: #DE9255; }
+  .code-block .str { color: #72BC8F; }
+  .code-block .com { color: #7D8AA0; }
+
+  footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; color: var(--text-secondary); font-size: 13px; }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .btn, .card { transition: none; }
+  }
+
+  @media (max-width: 860px) {
+    h1 { font-size: 36px; }
+    .feature-grid, .card-grid, .value-grid, .dev-box { grid-template-columns: 1fr; }
+    .feature-row:nth-child(even) .feature-grid { direction: ltr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 200 200"><rect width="200" height="200" rx="44" fill="#2783DE"/><path d="M 138 146 A 82 82 0 0 0 58 62" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity="0.45"/><path d="M 114 146 A 58 58 0 0 0 58 86" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity="0.7"/><path d="M 90 146 A 28 28 0 0 0 58 116" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/><rect x="46" y="134" width="24" height="24" rx="5" fill="#fff" transform="rotate(45 58 146)"/></svg>
+      Reso
+    </div>
+    <div class="nav-links">
+      <a href="#product">Product</a>
+      <a href="#industries">Industries</a>
+      <a href="#values">Why Reso</a>
+      <a href="#developers">Developers</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#developers">Docs</a>
+      <a class="btn btn-primary" href="#developers">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Built for Stellar Soroban</span>
+    <h1>Compliance that <span>proves itself</span>,<br>without exposing anyone</h1>
+    <p class="sub">Reso lets stablecoin and token issuers on Stellar verify every transaction is KYC'd, sanctions-clear, and within limits — using zero-knowledge proofs, not a public ledger of who owns what.</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href="#developers">Get started</a>
+      <a class="btn btn-ghost" href="#product">See how it works</a>
+    </div>
+  </div>
+</header>
+
+<div class="trust-bar">Designed for the SEP-0057 compliance-hook standard, built on Stellar's native zero-knowledge primitives (Protocol 25)</div>
+
+<section class="feature-row reveal" id="product">
+  <div class="wrap feature-grid">
+    <div>
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-3z" stroke="#2783DE" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#2783DE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="feature-tag">Sanctions Screening</div>
+      <h2>Screen every transfer, reveal nobody's identity</h2>
+      <p>Reso checks each transaction against a live sanctions list using a zero-knowledge non-membership proof — the chain learns "clear" or "blocked," never who was checked.</p>
+      <div class="stat-callout"><span class="num">&lt;1s</span><span class="lbl">typical proof verification time on Soroban</span></div>
+    </div>
+    <div class="feature-visual">
+      <div class="proof-card">
+        <div class="muted">// compliance_hook::check_transfer</div>
+        <div>sanctions_root: <span class="ok">0x9f2a...e11</span></div>
+        <div>proof_valid: <span class="ok">true</span></div>
+        <div>identity_disclosed: <span class="ok">none</span></div>
+        <div class="muted">// verified in 340ms</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-row reveal">
+  <div class="wrap feature-grid">
+    <div>
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.2" stroke="#2783DE" stroke-width="1.6"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="#2783DE" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="feature-tag">KYC Verification</div>
+      <h2>One verification, reusable everywhere</h2>
+      <p>Bridge KYC data users already completed at a Stellar anchor directly into a Reso identity commitment — no redundant onboarding, no second copy of anyone's documents.</p>
+      <div class="stat-callout"><span class="num">170+</span><span class="lbl">countries reachable via Stellar's anchor network</span></div>
+    </div>
+    <div class="feature-visual">
+      <div class="proof-card">
+        <div class="muted">// anchor-kyc-bridge</div>
+        <div>sep12_verified: <span class="ok">true</span></div>
+        <div>identity_commitment: <span class="ok">49aa199e...</span></div>
+        <div class="muted">// reusable across any Reso-protected asset</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-row reveal">
+  <div class="wrap feature-grid">
+    <div>
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 18a8 8 0 1116 0" stroke="#2783DE" stroke-width="1.6" stroke-linecap="round"/><path d="M12 18l4-6" stroke="#2783DE" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+      <div class="feature-tag">Spending Limits</div>
+      <h2>Limits enforced without ever seeing a balance</h2>
+      <p>Daily and per-transaction caps run against an encrypted running total, so not even Reso or the issuer can see a user's spending pattern — only the pass/fail result reaches the chain.</p>
+      <div class="stat-callout"><span class="num">0</span><span class="lbl">raw balances ever exposed on-chain</span></div>
+    </div>
+    <div class="feature-visual">
+      <div class="proof-card">
+        <div class="muted">// encrypted daily-volume check</div>
+        <div>encrypted_total: <span class="ok">0x7c11...</span></div>
+        <div>within_limit: <span class="ok">true</span></div>
+        <div class="muted">// homomorphically summed, never decrypted</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="industries" id="industries">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Built for every layer of Stellar's stablecoin ecosystem</h2>
+      <p>One compliance engine, wired into the standards issuers, anchors, and RWA platforms already use.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card reveal">
+        <div class="tag">Issuers</div>
+        <h3>Stablecoin issuers</h3>
+        <p>Plug into SEP-0057 and SEP-8 with a compliance engine built for the standards, not around them.</p>
+        <a href="#developers">Learn more →</a>
+      </div>
+      <div class="card reveal">
+        <div class="tag">Anchors</div>
+        <h3>Cash-in/cash-out anchors</h3>
+        <p>Turn KYC you already collect into reusable, privacy-preserving proofs across every asset on Stellar.</p>
+        <a href="#developers">Learn more →</a>
+      </div>
+      <div class="card reveal">
+        <div class="tag">RWA</div>
+        <h3>Real-world asset platforms</h3>
+        <p>Meet regulatory audit requirements with aggregate, privacy-preserving evidence — not a public ledger of holders.</p>
+        <a href="#developers">Learn more →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="values" id="values">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Why builders choose Reso</h2>
+      <p>This is an early-stage project — these are our design principles, not customer testimonials.</p>
+    </div>
+    <div class="value-grid">
+      <div class="value-card reveal">
+        <div class="quote-mark">“</div>
+        <p class="claim">Compliance shouldn't mean choosing between following the law and protecting your users' privacy.</p>
+        <div class="who">Core design principle</div>
+      </div>
+      <div class="value-card reveal">
+        <div class="quote-mark">“</div>
+        <p class="claim">Every safeguard — revocation, disclosure, clawback — requires a threshold of approval, never one party acting alone.</p>
+        <div class="who">Core design principle</div>
+      </div>
+      <div class="value-card reveal">
+        <div class="quote-mark">“</div>
+        <p class="claim">Built on standards Stellar already has — SEP-0057, SEP-8, SEP-12 — not a one-off protocol nobody else can integrate with.</p>
+        <div class="who">Core design principle</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dev-cta" id="developers">
+  <div class="wrap">
+    <div class="dev-box reveal">
+      <div>
+        <h2>Integrate Reso in an afternoon, not a quarter</h2>
+        <p>Drop-in Soroban compliance hook, a no-code rule builder, and a full spec for every advanced feature — all open on GitHub.</p>
+        <a class="btn btn-primary" href="https://github.com/salch-cred/reso">View on GitHub</a>
+      </div>
+      <pre class="code-block"><span class="com">// check_transfer entrypoint</span>
+compliance_hook.<span class="kw">check_transfer</span>(
+  from: <span class="str">"GABC...XYZ"</span>,
+  amount: <span class="kw">5000</span>,
+  proof: zk_proof
+)
+<span class="com">// -&gt; Ok(()) — no identity, no balance exposed</span></pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Reso — an early-stage, open-source compliance layer for Stellar. Not audited. Not production-ready yet.</div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll(".reveal");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach((el) => io.observe(el));
+</script>
+</body>
+</html>
