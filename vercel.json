@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://YOUR-HF-SPACE-NAME.hf.space/api/$1"
+      "destination": "https://salmanch123-reso.hf.space/api/$1"
     },
     {
       "source": "/(.*)",
