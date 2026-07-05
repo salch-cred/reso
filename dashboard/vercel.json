@@ -5,6 +5,5 @@
       "source": "/api/:path*",
       "destination": "https://salmanch123-reso.hf.space/api/:path*"
     }
-  ],
-  "__trigger": 1
+  ]
 }
