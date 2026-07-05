@@ -23,6 +23,7 @@
       </a>
       <div class="nav-links">
         <a href="#how">How it works</a>
+        <a href="#network">Network</a>
         <a href="#features">Features</a>
         <a href="#integrations">Integrations</a>
         <a href="#usecases">Use cases</a>
@@ -45,7 +46,7 @@
       Recursive proof folding is live
       <i class="hgi-stroke hgi-arrow-right-01"></i>
     </a>
-    <h1 class="display reveal" data-d="1">The compliance engine that means business</h1>
+    <h1 class="display reveal" data-d="1">The compliance engine that <span class="grad-text">means business</span></h1>
     <p class="hero-sub reveal" data-d="2">Reso proves your transactions are compliant without exposing the data behind them. ZK proofs, encrypted policy, and threshold disclosure &mdash; settled natively on Stellar.</p>
     <div class="hero-cta reveal" data-d="3">
       <a href="/" class="btn btn-accent btn-lg">Start building <i class="hgi-stroke hgi-arrow-right-01"></i></a>
@@ -126,6 +127,34 @@
     <div class="marquee-track" id="mq"></div>
   </div>
 </div>
+
+<!-- GLOBAL 3D PROOF NETWORK -->
+<section class="sec globe-sec" id="network">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow reveal">Global network</span>
+      <h2 class="sec-title reveal" data-d="1">Proofs generated across the world, in real time</h2>
+      <p class="sec-lead reveal" data-d="2">Every glowing arc is a zero-knowledge proof settling on Stellar &mdash; instantly, anywhere on Earth. Drag the globe to explore.</p>
+    </div>
+  </div>
+  <div class="globe-stage reveal">
+    <div class="globe-canvas-wrap">
+      <canvas id="globeCanvas"></canvas>
+      <div class="globe-glow"></div>
+    </div>
+    <div class="globe-feed">
+      <div class="gf-label"><span class="live-dot"></span> Live proof feed</div>
+      <div class="gf-list" id="gfList"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="globe-stats">
+      <div class="gstat reveal" data-d="1"><div class="gn" id="gStatProofs">0</div><div class="gl">Proofs this session</div></div>
+      <div class="gstat reveal" data-d="2"><div class="gn" id="gStatCities">0</div><div class="gl">Active regions</div></div>
+      <div class="gstat reveal" data-d="3"><div class="gn">&lt;200ms</div><div class="gl">Avg. verification</div></div>
+    </div>
+  </div>
+</section>
 
 <!-- HOW IT WORKS -->
 <section class="sec" id="how">
@@ -415,5 +444,13 @@
 </footer>
 
 <script src="script.js" defer></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+<script type="module" src="globe.js"></script>
 </body>
 </html>
