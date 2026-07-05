@@ -560,6 +560,7 @@
   <!-- Tabs Navigation -->
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('core')">Rules &amp; Compliance Console</div>
+    <div class="nav-tab" onclick="switchTab('escrow')">ZK-Gated Escrow (Claimable Balances)</div>
     <div class="nav-tab" onclick="switchTab('sandbox')">Advanced Cryptography Sandbox</div>
   </div>
 
@@ -700,10 +701,59 @@
     </div>
   </div>
 
-  <!-- PANEL 2: ADVANCED CRYPTO SANDBOX -->
+  <!-- PANEL 2: ZK-GATED COMPLIANT ESCROW -->
+  <div class="tab-panel" id="panel-escrow">
+    <div class="grid-layout">
+      <!-- Card 1: Deposit Gated Escrow -->
+      <div class="card">
+        <h2>💰 Deposit to ZK-Gated Escrow</h2>
+        <p class="subtitle">Lock funds on-chain for a recipient address. They can only claim them using a valid ZK-proof.</p>
+        
+        <div class="form-group">
+          <label for="escrowSender">Sender Address</label>
+          <select id="escrowSender">
+            <!-- Loaded dynamically -->
+          </select>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="escrowRecipient">Recipient Address</label>
+            <select id="escrowRecipient">
+              <!-- Loaded dynamically -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="escrowDelay">Timelock Delay (seconds)</label>
+            <input type="number" id="escrowDelay" value="30" />
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="escrowAmount">Escrow Amount (USD)</label>
+          <input type="number" id="escrowAmount" value="2500" />
+        </div>
+        
+        <div class="btn-group">
+          <button class="btn purple" onclick="depositEscrow()">Deposit Escrow on Testnet</button>
+        </div>
+      </div>
+      
+      <!-- Card 2: Active Gated Escrows -->
+      <div class="card">
+        <h2>🔒 Active Gated Escrows</h2>
+        <p class="subtitle">Currently locked balances on Stellar Testnet awaiting ZK claim or refund.</p>
+        
+        <div class="custom-list" id="escrowsList" style="max-height: 290px;">
+          <!-- Loaded dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: ADVANCED CRYPTO SANDBOX -->
   <div class="tab-panel" id="panel-sandbox">
     <div class="grid-layout">
-      
       <!-- Feature 1: Homomorphic Spending Limits (Paillier) -->
       <div class="card">
         <h2>🔒 FHE-Encrypted Limits (Paillier)</h2>
@@ -871,6 +921,7 @@
   let paillierQueue = [];
   let currentDelayTimer = null;
   let activeDisclosureRequest = null;
+  let escrowsTimer = null;
   
   // Show message toast
   function showToast(message) {
@@ -885,11 +936,18 @@
     document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     
+    clearInterval(escrowsTimer);
+    
     if (tabId === 'core') {
       document.querySelector(".nav-tab:nth-child(1)").classList.add("active");
       document.getElementById("panel-core").classList.add("active");
-    } else {
+    } else if (tabId === 'escrow') {
       document.querySelector(".nav-tab:nth-child(2)").classList.add("active");
+      document.getElementById("panel-escrow").classList.add("active");
+      loadEscrows();
+      escrowsTimer = setInterval(loadEscrows, 3000);
+    } else {
+      document.querySelector(".nav-tab:nth-child(3)").classList.add("active");
       document.getElementById("panel-sandbox").classList.add("active");
       loadPaillierState();
       loadRevocationState();
@@ -951,11 +1009,18 @@
       
       const simSender = document.getElementById("simSender");
       const revokeSelect = document.getElementById("revokeWalletSelect");
+      const escrowSender = document.getElementById("escrowSender");
+      const escrowRecipient = document.getElementById("escrowRecipient");
+      
       const currentSenderVal = simSender.value;
       const currentRevVal = revokeSelect.value;
+      const currentEscrowSenderVal = escrowSender.value;
+      const currentEscrowRecipientVal = escrowRecipient.value;
       
       simSender.innerHTML = "";
       revokeSelect.innerHTML = "";
+      escrowSender.innerHTML = "";
+      escrowRecipient.innerHTML = "";
       
       data.wallets.forEach(w => {
         const item = document.createElement("div");
@@ -976,17 +1041,26 @@
         `;
         walletList.appendChild(item);
         
-        // Populate Simulation dropdown
+        // Populate dropdowns
         const opt = document.createElement("option");
         opt.value = w.address;
         opt.innerText = `${w.name || w.address.substring(0,8)} (${w.address.substring(0,8)}...)`;
         simSender.appendChild(opt);
         
-        // Revoke dropdown
         const opt2 = document.createElement("option");
         opt2.value = w.address;
         opt2.innerText = `${w.name || w.address.substring(0,8)}`;
         revokeSelect.appendChild(opt2);
+
+        const opt3 = document.createElement("option");
+        opt3.value = w.address;
+        opt3.innerText = `${w.name || w.address.substring(0,8)}`;
+        escrowSender.appendChild(opt3);
+
+        const opt4 = document.createElement("option");
+        opt4.value = w.address;
+        opt4.innerText = `${w.name || w.address.substring(0,8)}`;
+        escrowRecipient.appendChild(opt4);
       });
       
       if (currentSenderVal && [...simSender.options].some(o => o.value === currentSenderVal)) {
@@ -994,6 +1068,12 @@
       }
       if (currentRevVal && [...revokeSelect.options].some(o => o.value === currentRevVal)) {
         revokeSelect.value = currentRevVal;
+      }
+      if (currentEscrowSenderVal && [...escrowSender.options].some(o => o.value === currentEscrowSenderVal)) {
+        escrowSender.value = currentEscrowSenderVal;
+      }
+      if (currentEscrowRecipientVal && [...escrowRecipient.options].some(o => o.value === currentEscrowRecipientVal)) {
+        escrowRecipient.value = currentEscrowRecipientVal;
       }
     } catch (e) {
       console.error("Error loading wallets:", e);
@@ -1115,7 +1195,7 @@
       document.getElementById("icon-sanctions").className = "step-icon pending";
       await delay(600);
       
-      if (!isOk && data.event.rule_checked === "Sanctions screen") {
+      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("sanctions")) {
         document.getElementById("icon-sanctions").className = "step-icon failure";
         document.getElementById("icon-sanctions").innerText = "✕";
         showFinalResult(data);
@@ -1127,7 +1207,7 @@
       // Step 3: KYC Check
       document.getElementById("icon-kyc").className = "step-icon pending";
       await delay(600);
-      if (!isOk && data.event.rule_checked === "KYC tier") {
+      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("KYC")) {
         document.getElementById("icon-kyc").className = "step-icon failure";
         document.getElementById("icon-kyc").innerText = "✕";
         showFinalResult(data);
@@ -1139,7 +1219,7 @@
       // Step 4: Limit Check
       document.getElementById("icon-limit").className = "step-icon pending";
       await delay(600);
-      if (!isOk && (data.event.rule_checked === "Max amount" || data.event.rule_checked === "Daily limit")) {
+      if (!isOk && data.event.rule_checked === "On-chain verification check" && data.reason.includes("AmountExceedsRule")) {
         document.getElementById("icon-limit").className = "step-icon failure";
         document.getElementById("icon-limit").innerText = "✕";
         showFinalResult(data);
@@ -1187,10 +1267,133 @@
   }
 
   # ========================================================
+  # ON-CHAIN GATED ESCROW INTERACTIVE SCRIPTS
+  # ========================================================
+
+  async function loadEscrows() {
+    try {
+      const res = await fetch(`${API_BASE}/api/escrow`);
+      const data = await res.json();
+      
+      const out = document.getElementById("escrowsList");
+      out.innerHTML = "";
+      
+      if (data.escrows.length === 0) {
+        out.innerHTML = "No active escrows currently locked on Testnet.";
+        return;
+      }
+      
+      const now = Math.floor(Date.now() / 1000);
+      
+      data.escrows.forEach(escrow => {
+        const item = document.createElement("div");
+        item.className = "list-item";
+        
+        const timeDiff = escrow.unlock_time - now;
+        const isLocked = timeDiff > 0;
+        
+        const statusBadge = isLocked 
+          ? `<span class="badge ok" style="background:rgba(59,130,246,0.1); color:#3B82F6;">Locked (${timeDiff}s)</span>`
+          : `<span class="badge ok">Claimable</span>`;
+          
+        const actionBtn = isLocked
+          ? `<button class="btn secondary" style="font-size:11px; padding:4px 8px; flex:none; opacity:0.5; cursor:not-allowed;" disabled>Refund Locked</button>`
+          : `<button class="btn secondary" style="font-size:11px; padding:4px 8px; flex:none; color:var(--red); border-color:var(--red);" onclick="refundEscrow('${escrow.recipient}')">Refund</button>`;
+          
+        item.innerHTML = `
+          <div class="item-meta">
+            <span class="item-name">${escrow.amount} USD locked for ${escrow.recipient.substring(0,8)}...</span>
+            <span class="item-sub">Deposited by: ${escrow.sender.substring(0,8)}...</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            ${statusBadge}
+            <button class="btn purple" style="font-size:11px; padding:4px 8px; flex:none;" onclick="claimEscrow('${escrow.recipient}')">ZK Claim</button>
+            ${actionBtn}
+          </div>
+        `;
+        out.appendChild(item);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function depositEscrow() {
+    const sender = document.getElementById("escrowSender").value;
+    const recipient = document.getElementById("escrowRecipient").value;
+    const amount = parseFloat(document.getElementById("escrowAmount").value);
+    const delay = parseInt(document.getElementById("escrowDelay").value);
+    
+    if (sender === recipient) {
+      alert("Sender and recipient cannot be the same address.");
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/escrow/deposit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender, recipient, amount, unlock_delay_sec: delay })
+      });
+      if (res.ok) {
+        showToast("Escrow deposited successfully on Stellar Testnet!");
+        loadEscrows();
+      } else {
+        const err = await res.json();
+        alert("Deposit failed: " + err.detail);
+      }
+    } catch (e) {
+      showToast("Deposit failed.");
+    }
+  }
+
+  async function claimEscrow(recipient) {
+    const proof = prompt("Provide your hex Zero-Knowledge proof to claim:", "11223344");
+    if (!proof) return;
+    
+    try {
+      const res = await fetch(`${API_BASE}/api/escrow/claim`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipient, proof })
+      });
+      if (res.ok) {
+        showToast("Escrow claimed successfully from Stellar Testnet!");
+        loadEscrows();
+        loadAuditLogs();
+      } else {
+        const err = await res.json();
+        alert("Claim failed: " + err.detail);
+      }
+    } catch (e) {
+      showToast("Claim failed.");
+    }
+  }
+
+  async function refundEscrow(recipient) {
+    try {
+      const res = await fetch(`${API_BASE}/api/escrow/refund`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipient })
+      });
+      if (res.ok) {
+        showToast("Escrow refunded. Funds reclaimed on Stellar Testnet!");
+        loadEscrows();
+        loadAuditLogs();
+      } else {
+        const err = await res.json();
+        alert("Refund failed: " + err.detail);
+      }
+    } catch (e) {
+      showToast("Refund failed.");
+    }
+  }
+
+  # ========================================================
   # ADVANCED SANDBOX INTERACTIVE SCRIPTS
   # ========================================================
 
-  // 1. Paillier Homomorphic Encryption
   async function loadPaillierState() {
     const out = document.getElementById("paillierQueue");
     if (paillierQueue.length === 0) {
@@ -1255,7 +1458,6 @@
     }
   }
 
-  // 2. Shamir & Time-locked Disclosure
   async function openDisclosureRequest() {
     const identity = parseInt(document.getElementById("identityCommitment").value);
     if (!identity) {
@@ -1263,7 +1465,6 @@
       return;
     }
     
-    // Reset buttons UI
     for (let i = 1; i <= 5; i++) {
       const btn = document.getElementById(`trustee-${i}`);
       btn.className = "trustee-btn";
@@ -1278,7 +1479,6 @@
       const data = await res.json();
       activeDisclosureRequest = data;
       
-      // Setup Delay Timer Countdown
       let timeRemaining = 10;
       clearInterval(currentDelayTimer);
       
@@ -1313,8 +1513,6 @@
         body: JSON.stringify({ trustee_id: trusteeId })
       });
       const data = await res.json();
-      
-      // Update UI button class
       document.getElementById(`trustee-${trusteeId}`).className = "trustee-btn approved";
       showToast(`Trustee ${trusteeId} approval collected.`);
     } catch (e) {
@@ -1344,12 +1542,10 @@
     }
   }
 
-  // 3. Dynamic Revocation Registry
   async function loadRevocationState() {
     try {
       const res = await fetch(`${API_BASE}/api/crypto/revocation`);
       const data = await res.json();
-      
       document.getElementById("revocationRoot").innerText = "0x" + data.revocation_root.substring(0, 16) + "...";
       document.getElementById("revocationRoot").title = data.revocation_root;
       
@@ -1382,7 +1578,6 @@
     }
   }
 
-  // 4. IVC Proof Folding
   async function loadFoldingState() {
     try {
       const res = await fetch(`${API_BASE}/api/crypto/folding`);
