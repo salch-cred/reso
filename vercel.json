@@ -1,9 +1,0 @@
-{
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://salmanch123-reso.hf.space/api/$1" },
-    { "source": "/app", "destination": "/dashboard/index.html" },
-    { "source": "/app/(.*)", "destination": "/dashboard/$1" },
-    { "source": "/", "destination": "/site/index.html" }
-  ]
-}
