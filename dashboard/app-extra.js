@@ -374,7 +374,30 @@ async function refundEscrow(recipient){
 async function apiPost(path,body,resultId){const el=document.getElementById(resultId);if(el)el.style.display='none';try{const r=await fetch(`${API}${path}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw new Error(d.detail||JSON.stringify(d));return d;}catch(e){showResult(resultId,`<strong>Error:</strong> ${e.message}`,'fail');return null;}}
 async function apiGet(path,resultId){const el=document.getElementById(resultId);if(el)el.style.display='none';try{const r=await fetch(`${API}${path}`);const d=await r.json();if(!r.ok)throw new Error(d.detail||JSON.stringify(d));return d;}catch(e){showResult(resultId,`<strong>Error:</strong> ${e.message}`,'fail');return null;}}
 
-async function stellarCreateAccount(){const label=document.getElementById('newAccLabel').value.trim();showResult('createAccResult','Calling Friendbot… (~5s)','info');const d=await apiPost('/api/stellar/create-account',{label},'createAccResult');if(!d)return;showResult('createAccResult',`<strong>Account Created</strong><br><b>Public:</b> <span class="mono">${d.public_key}</span><br><b>Secret:</b> <span class="mono" style="color:var(--red)">${d.secret_key}</span><br><b>Balance:</b> ${d.starting_balance}<br><a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert →</a>`,'ok');showToast('Account created!');}
+async function stellarCreateAccount(){
+  const label=document.getElementById('newAccLabel').value.trim();
+  showResult('createAccResult','Calling Friendbot… (~5s)','info');
+  const d=await apiPost('/api/stellar/create-account',{label},'createAccResult');
+  if(!d)return;
+  const resultHtml = `
+    <div style="position:relative">
+      <button onclick="clearCreatedAccount()" style="position:absolute;top:0;right:0;background:none;border:none;color:var(--text3);cursor:pointer;font-weight:700">✕</button>
+      <strong>Account Created</strong><br>
+      <b>Public:</b> <span class="mono">${d.public_key}</span><br>
+      <b>Secret:</b> <span class="mono" style="color:var(--red);user-select:all">${d.secret_key}</span><br>
+      <b>Balance:</b> ${d.starting_balance}<br>
+      <a class="tx-link" href="${d.explorer}" target="_blank">View on Stellar.Expert →</a>
+    </div>
+  `;
+  localStorage.setItem('reso_last_created_account', resultHtml);
+  showResult('createAccResult',resultHtml,'ok');
+  showToast('Account created!');
+}
+function clearCreatedAccount() {
+  localStorage.removeItem('reso_last_created_account');
+  const el = document.getElementById('createAccResult');
+  if(el) el.style.display = 'none';
+}
 async function stellarInspect(){const addr=document.getElementById('inspectAddr').value.trim();if(!addr){showToast('Enter a public key.',false);return;}showResult('inspectResult','Loading…','info');const d=await apiGet(`/api/stellar/account/${addr}`,'inspectResult');if(!d)return;const bals=d.balances.map(b=>`<span class="badge b-gold">${b.balance} ${b.asset_type==='native'?'XLM':b.asset_code}</span>`).join(' ');showResult('inspectResult',`<b>Sequence:</b> ${d.sequence}<br><b>Balances:</b> ${bals}<br><a class="tx-link" href="${d.explorer}" target="_blank">View →</a>`,'info');}
 async function stellarTransfer(){const secret=document.getElementById('transferSecret').value.trim();const dest=document.getElementById('transferDest').value.trim();const amount=document.getElementById('transferAmt').value;const memo=document.getElementById('transferMemo').value.trim();if(!secret||!dest){showToast('Secret key and destination required.',false);return;}showResult('transferResult','Submitting…','info');const d=await apiPost('/api/stellar/transfer',{source_secret:secret,destination:dest,amount,memo:memo||'Reso'},'transferResult');if(!d)return;showResult('transferResult',`<strong>Transfer Confirmed</strong><br><a class="tx-link" href="${d.explorer}" target="_blank">View Transaction →</a>`,'ok');showToast('XLM sent!');loadAuditLogs();}
 async function stellarLoadTxHistory(){const addr=document.getElementById('txHistAddr').value.trim();if(!addr){showToast('Enter public key.',false);return;}const d=await apiGet(`/api/stellar/transactions/${addr}`,'inspectResult');if(!d)return;const tbody=document.getElementById('txHistRows');if(!tbody)return;tbody.innerHTML='';if(!d.payments.length){tbody.innerHTML='<tr><td colspan="5" style="color:var(--text3)">No payments found.</td></tr>';return;}d.payments.forEach(p=>{const tr=document.createElement('tr');const dir=p.to===addr?'<span class="badge b-ok">↓ In</span>':'<span class="badge b-blocked">↑ Out</span>';tr.innerHTML=`<td>${p.created_at.slice(0,10)}</td><td>${dir}</td><td>${p.amount||'-'}</td><td>${p.asset_code||'XLM'}</td><td><a class="tx-link" href="${p.explorer}" target="_blank">${p.hash.slice(0,10)}…</a></td>`;tbody.appendChild(tr);});}
@@ -448,6 +471,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadRules();
   loadWallets();
   setTimeout(loadAuditLogs,800);
+  
+  // Restore last created account from local storage
+  const cachedAcc = localStorage.getItem('reso_last_created_account');
+  if (cachedAcc) {
+    showResult('createAccResult', cachedAcc, 'ok');
+  }
 });
 window.addEventListener('click',(e)=>{
   const modal=document.getElementById('walletModal');
