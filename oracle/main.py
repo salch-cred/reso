@@ -107,6 +107,30 @@ class DbCursorWrapper:
                 "INSERT OR REPLACE INTO compliance_proofs (proof_id,wallet_address,proof_type,issued_at,valid_until,renewal_count,active,zk_commitment) VALUES (%s,%s,%s,%s,%s,0,1,%s)",
                 "INSERT INTO compliance_proofs (proof_id,wallet_address,proof_type,issued_at,valid_until,renewal_count,active,zk_commitment) VALUES (%s,%s,%s,%s,%s,0,1,%s) ON CONFLICT (proof_id) DO UPDATE SET wallet_address=EXCLUDED.wallet_address, proof_type=EXCLUDED.proof_type, issued_at=EXCLUDED.issued_at, valid_until=EXCLUDED.valid_until, zk_commitment=EXCLUDED.zk_commitment"
             )
+        elif "INSERT OR REPLACE INTO" in sql_translated:
+            # Generic fallback: convert INSERT OR REPLACE INTO <table> (...) VALUES (...)
+            # to INSERT INTO <table> (...) VALUES (...) ON CONFLICT DO UPDATE SET ...
+            import re as _re
+            m = _re.match(
+                r"INSERT OR REPLACE INTO (\w+)\s*\(([^)]+)\)\s*VALUES\s*(\([^)]+\))",
+                sql_translated.strip(), _re.IGNORECASE
+            )
+            if m:
+                tbl = m.group(1)
+                cols = [c.strip() for c in m.group(2).split(",")]
+                vals_ph = m.group(3)
+                # First column is assumed to be the conflict target (PK)
+                conflict_col = cols[0]
+                updates = ", ".join(
+                    f"{c}=EXCLUDED.{c}" for c in cols[1:]
+                ) if len(cols) > 1 else f"{conflict_col}=EXCLUDED.{conflict_col}"
+                sql_translated = (
+                    f"INSERT INTO {tbl} ({', '.join(cols)}) VALUES {vals_ph} "
+                    f"ON CONFLICT ({conflict_col}) DO UPDATE SET {updates}"
+                )
+            else:
+                # Fallback: just strip OR REPLACE if no match
+                sql_translated = sql_translated.replace("INSERT OR REPLACE INTO", "INSERT INTO")
         elif "INSERT OR IGNORE" in sql_translated:
             sql_translated = sql_translated.replace("INSERT OR IGNORE", "INSERT")
             if "rules" in sql_translated:
@@ -123,6 +147,9 @@ class DbCursorWrapper:
                 sql_translated += " ON CONFLICT (wallet_address) DO NOTHING"
             elif "whistleblower_reports" in sql_translated:
                 sql_translated += " ON CONFLICT (report_id) DO NOTHING"
+            else:
+                sql_translated += " ON CONFLICT DO NOTHING"
+
 
         if params is not None:
             self.cursor.execute(sql_translated, params)
