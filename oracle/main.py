@@ -559,7 +559,8 @@ def _load_kp(secret: str):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "db": "sqlite", "stellar": STELLAR_AVAILABLE, "version": "3.0"}
+    db_type = "postgresql" if IS_POSTGRES else "sqlite"
+    return {"status": "ok", "db": db_type, "stellar": STELLAR_AVAILABLE, "version": "3.0"}
 
 @app.get("/api/rules", response_model=Rules)
 def get_rules(): return Rules(**get_db_rules())
