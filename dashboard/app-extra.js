@@ -72,6 +72,19 @@ function renderWallets(data){
   const sels=['simSender','revokeSelect','escrowSender','escrowRecipient'];
   const saved=sels.map(id=>document.getElementById(id)&&document.getElementById(id).value);
   sels.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  
+  // Check if a user is logged in
+  const rawUser = localStorage.getItem('reso_user');
+  let loggedInKey = null;
+  let loggedInName = null;
+  if(rawUser) {
+    try {
+      const parsed = JSON.parse(rawUser);
+      loggedInKey = parsed.public_key;
+      loggedInName = parsed.username;
+    } catch(e) {}
+  }
+
   data.wallets.forEach(w=>{
     if(wl){
       const item=document.createElement('div');item.className='list-item';
@@ -80,6 +93,10 @@ function renderWallets(data){
     }
     sels.forEach(id=>{
       const sel=document.getElementById(id);if(!sel)return;
+      // Enforce one account, one wallet for the sender dropdown if logged in
+      if(id === 'simSender' && loggedInKey && w.address !== loggedInKey) {
+        return; // Only show their own logged-in wallet in simSender
+      }
       const o=document.createElement('option');o.value=w.address;
       o.textContent=`${w.name||w.address.slice(0,8)} (${w.address.slice(0,8)}...)`;
       sel.appendChild(o);
@@ -89,6 +106,11 @@ function renderWallets(data){
     const el=document.getElementById(id);
     if(el&&saved[i]&&[...el.options].some(o=>o.value===saved[i]))el.value=saved[i];
   });
+  // Auto-select logged-in key for sender if present
+  const simSenderEl = document.getElementById('simSender');
+  if(simSenderEl && loggedInKey) {
+    simSenderEl.value = loggedInKey;
+  }
 }
 
 function loadDemoMode(){

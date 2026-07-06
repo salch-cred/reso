@@ -766,10 +766,11 @@ tr:hover td{background:var(--bg2);}
     </div>
     <div class="hdr-right">
       <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> <span class="hdr-btn-text">Back to Landing</span></a>
-      <div id="userBadge" style="display:none;align-items:center;gap:8px;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer" onclick="authShowModal()">
+      <div id="userBadge" style="display:none;align-items:center;gap:8px;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:6px 12px">
         <i class="hgi-stroke hgi-user-circle" style="color:var(--accent)"></i>
         <span id="userBadgeName" style="font-weight:600;font-size:0.88rem"></span>
         <span style="color:var(--text-muted);font-size:0.75rem" id="userBadgeKey"></span>
+        <button onclick="authLogout()" style="margin-left:8px;padding:3px 8px;border:none;border-radius:6px;background:rgba(239,68,68,0.15);color:#f87171;font-size:0.75rem;cursor:pointer;font-weight:600;transition:background 0.2s" onmouseover="this.style.background='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">Sign Out</button>
       </div>
       <button id="authBtn" onclick="authShowModal()" style="padding:7px 14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:0.85rem;cursor:pointer">Sign In</button>
       <div class="status-badge"><span class="status-dot"></span><span id="statusLabel">Connected</span></div>
@@ -973,6 +974,7 @@ function authSetUser(username, publicKey) {
   document.getElementById('userBadgeName').textContent = username;
   document.getElementById('userBadgeKey').textContent = publicKey ? publicKey.slice(0,6)+'...'+publicKey.slice(-4) : '';
   authClose();
+  if (typeof loadWallets === 'function') loadWallets();
 }
 async function authLogin() {
   const u = document.getElementById('authLoginUser').value.trim();
@@ -1019,6 +1021,14 @@ function authCopySecret() {
 function authCloseSecret() {
   document.getElementById('secretModal').style.display = 'none';
   _secretKeyTemp = '';
+}
+function authLogout() {
+  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(AUTH_USER_KEY);
+  document.getElementById('userBadge').style.display = 'none';
+  document.getElementById('authBtn').style.display = 'block';
+  showToast('Logged out successfully.', true);
+  if (typeof loadWallets === 'function') loadWallets();
 }
 async function authRestoreSession() {
   const token = localStorage.getItem(AUTH_KEY);
