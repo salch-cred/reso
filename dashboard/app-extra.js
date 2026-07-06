@@ -141,6 +141,82 @@ async function loadAuditLogs(){
   }catch(e){}
 }
 
+// ---- PROOF GENERATION AMBIENT AUDIO ----
+// A lightweight, fully synthesized (no external files) sci-fi hum that fades
+// in while a ZK proof is being generated/verified, and fades out when it
+// finishes. Built from two detuned low oscillators through a slowly modulated
+// lowpass filter, plus a faint filtered-noise texture layer.
+const ProofAudio=(()=>{
+  let ctx=null,master=null,liveNodes=null,active=false;
+
+  function ensureCtx(){
+    if(!ctx){
+      const Ctx=window.AudioContext||window.webkitAudioContext;
+      if(!Ctx)return null;
+      ctx=new Ctx();
+      master=ctx.createGain();
+      master.gain.value=0;
+      master.connect(ctx.destination);
+    }
+    if(ctx.state==='suspended')ctx.resume();
+    return ctx;
+  }
+
+  function buildNoiseBuffer(){
+    const len=ctx.sampleRate*2;
+    const buffer=ctx.createBuffer(1,len,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<len;i++)data[i]=Math.random()*2-1;
+    return buffer;
+  }
+
+  function start(){
+    if(!ensureCtx()||active)return;
+    active=true;
+    const now=ctx.currentTime;
+
+    const osc1=ctx.createOscillator();osc1.type='sine';osc1.frequency.setValueAtTime(66,now);
+    const osc2=ctx.createOscillator();osc2.type='sawtooth';osc2.frequency.setValueAtTime(66.7,now);
+    const oscGain=ctx.createGain();oscGain.gain.value=0.4;
+
+    const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=380;filter.Q.value=5;
+    const lfo=ctx.createOscillator();lfo.type='sine';lfo.frequency.value=0.16;
+    const lfoGain=ctx.createGain();lfoGain.gain.value=160;
+    lfo.connect(lfoGain);lfoGain.connect(filter.frequency);
+
+    const noise=ctx.createBufferSource();noise.buffer=buildNoiseBuffer();noise.loop=true;
+    const noiseFilter=ctx.createBiquadFilter();noiseFilter.type='bandpass';noiseFilter.frequency.value=1400;noiseFilter.Q.value=0.7;
+    const noiseGain=ctx.createGain();noiseGain.gain.value=0.025;
+
+    osc1.connect(oscGain);osc2.connect(oscGain);oscGain.connect(filter);filter.connect(master);
+    noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(master);
+
+    osc1.start(now);osc2.start(now);lfo.start(now);noise.start(now);
+
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(0,now);
+    master.gain.linearRampToValueAtTime(0.2,now+0.7);
+
+    liveNodes={osc1,osc2,lfo,noise};
+  }
+
+  function stop(){
+    if(!active||!ctx)return;
+    const now=ctx.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(master.gain.value,now);
+    master.gain.linearRampToValueAtTime(0,now+0.45);
+    const toStop=liveNodes;
+    setTimeout(()=>{
+      if(!toStop)return;
+      [toStop.osc1,toStop.osc2,toStop.lfo,toStop.noise].forEach(n=>{try{n.stop();}catch(e){}});
+    },550);
+    active=false;liveNodes=null;
+  }
+
+  return {start,stop};
+})();
+
 // ---- CIRCUIT ----
 const STEPS=['rev','san','kyc','lim','proof'];
 
@@ -148,6 +224,7 @@ function rndHash(){return'0x'+Array.from({length:12},()=>Math.floor(Math.random(
 function delay(ms){return new Promise(r=>setTimeout(r,ms));}
 
 function resetCircuit(){
+  ProofAudio.stop();
   STEPS.forEach(id=>{
     const cn=document.getElementById('cn-'+id);if(cn)cn.className='cn';
     const ps=document.getElementById('ps-'+id);if(ps)ps.className='pstep';
@@ -166,6 +243,7 @@ async function animateCircuit(results){
   if(!wrap||!scan||!badge)return true;
   wrap.classList.add('running');
   badge.className='ph-badge running';
+  ProofAudio.start();
   const badgeTxt=document.getElementById('phBadgeTxt');if(badgeTxt)badgeTxt.textContent='Generating Proof...';
   for(let i=0;i<STEPS.length;i++){
     const pct=(i/(STEPS.length-1))*100;
@@ -181,11 +259,13 @@ async function animateCircuit(results){
       wrap.classList.remove('running');
       badge.className='ph-badge';
       if(badgeTxt)badgeTxt.textContent='Proof Failed';
+      ProofAudio.stop();
       return false;
     }
   }
   wrap.classList.remove('running');badge.className='ph-badge done';
   if(badgeTxt)badgeTxt.textContent='Proof Verified';
+  ProofAudio.stop();
   return true;
 }
 
