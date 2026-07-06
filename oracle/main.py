@@ -134,11 +134,24 @@ class DbCursorWrapper:
         row = self.cursor.fetchone()
         if row is None:
             return None
-        return dict(row) if self.is_pg else row
+        class PgRow(dict):
+            def __getitem__(self, key):
+                if isinstance(key, int):
+                    return list(self.values())[key]
+                return super().__getitem__(key)
+        return PgRow(row) if self.is_pg else row
 
     def fetchall(self):
         rows = self.cursor.fetchall()
-        return [dict(r) for r in rows] if self.is_pg else rows
+        if not self.is_pg:
+            return rows
+        class PgRow(dict):
+            def __getitem__(self, key):
+                if isinstance(key, int):
+                    return list(self.values())[key]
+                return super().__getitem__(key)
+        return [PgRow(r) for r in rows]
+
 
     def executescript(self, sql_script):
         if not self.is_pg:
