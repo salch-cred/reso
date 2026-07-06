@@ -650,6 +650,51 @@ tr:hover td{background:var(--bg2);}
 </head>
 <body>
 
+<!-- ===== AUTH MODAL ===== -->
+<div id="authOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
+  <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:40px 36px;width:420px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,0.5)">
+    <div style="text-align:center;margin-bottom:28px">
+      <img src="logo.png" alt="Reso" style="height:48px;margin-bottom:12px">
+      <h2 style="margin:0;font-size:1.5rem;font-weight:700">Welcome to Reso</h2>
+      <p style="margin:8px 0 0;color:var(--text-muted);font-size:0.9rem">Sign in or create a permanent account</p>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;background:var(--bg-panel);border-radius:10px;padding:4px;margin-bottom:24px">
+      <button id="authTabLogin" onclick="authShowTab('login')" style="flex:1;padding:8px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;transition:all .2s">Sign In</button>
+      <button id="authTabRegister" onclick="authShowTab('register')" style="flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);font-weight:600;cursor:pointer;transition:all .2s">Register</button>
+    </div>
+    <!-- Login Form -->
+    <div id="authLoginForm">
+      <input id="authLoginUser" placeholder="Username" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);margin-bottom:12px;box-sizing:border-box;font-size:0.95rem">
+      <input id="authLoginPass" type="password" placeholder="Password" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);margin-bottom:16px;box-sizing:border-box;font-size:0.95rem">
+      <button onclick="authLogin()" style="width:100%;padding:13px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:1rem;cursor:pointer">Sign In</button>
+      <p id="authLoginErr" style="color:var(--red);font-size:0.85rem;margin:10px 0 0;display:none"></p>
+    </div>
+    <!-- Register Form -->
+    <div id="authRegisterForm" style="display:none">
+      <input id="authRegUser" placeholder="Username (min 3 chars)" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);margin-bottom:12px;box-sizing:border-box;font-size:0.95rem">
+      <input id="authRegEmail" placeholder="Email (optional)" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);margin-bottom:12px;box-sizing:border-box;font-size:0.95rem">
+      <input id="authRegPass" type="password" placeholder="Password (min 6 chars)" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);margin-bottom:16px;box-sizing:border-box;font-size:0.95rem">
+      <button onclick="authRegister()" style="width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:700;font-size:1rem;cursor:pointer">Create Account & Fund Stellar Wallet</button>
+      <p id="authRegErr" style="color:var(--red);font-size:0.85rem;margin:10px 0 0;display:none"></p>
+    </div>
+    <p style="text-align:center;margin:16px 0 0;font-size:0.8rem;color:var(--text-muted)">Continue as guest? <a href="#" onclick="authClose()" style="color:var(--accent)">Skip for now</a></p>
+  </div>
+</div>
+
+<!-- Secret Key Modal (shown once at registration) -->
+<div id="secretModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center">
+  <div style="background:var(--bg-card);border:2px solid var(--red);border-radius:18px;padding:36px;width:480px;max-width:95vw">
+    <h3 style="margin:0 0 8px;color:var(--red)">⚠️ Save Your Secret Key NOW</h3>
+    <p style="margin:0 0 16px;color:var(--text-muted);font-size:0.9rem">This is shown <strong>ONCE</strong> and never stored. If you lose it, you cannot sign Stellar transactions.</p>
+    <div style="background:var(--bg-panel);border-radius:10px;padding:14px;font-family:monospace;font-size:0.85rem;word-break:break-all;border:1px solid var(--border);margin-bottom:16px" id="secretKeyDisplay"></div>
+    <div style="display:flex;gap:10px">
+      <button onclick="authCopySecret()" style="flex:1;padding:11px;border:none;border-radius:10px;background:var(--bg-panel);color:var(--text);font-weight:600;cursor:pointer;border:1px solid var(--border)">Copy Key</button>
+      <button onclick="authCloseSecret()" style="flex:1;padding:11px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:700;cursor:pointer">I have saved it</button>
+    </div>
+  </div>
+</div>
+
 <div class="offline-bar" id="offlineBar">
   Backend offline — running in demo mode.
   <a href="https://huggingface.co/spaces/salmanch123/reso" target="_blank">Check HF Space →</a>
@@ -684,6 +729,12 @@ tr:hover td{background:var(--bg2);}
     </div>
     <div class="hdr-right">
       <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> <span class="hdr-btn-text">Back to Landing</span></a>
+      <div id="userBadge" style="display:none;align-items:center;gap:8px;background:var(--bg-panel);border:1px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer" onclick="authShowModal()">
+        <i class="hgi-stroke hgi-user-circle" style="color:var(--accent)"></i>
+        <span id="userBadgeName" style="font-weight:600;font-size:0.88rem"></span>
+        <span style="color:var(--text-muted);font-size:0.75rem" id="userBadgeKey"></span>
+      </div>
+      <button id="authBtn" onclick="authShowModal()" style="padding:7px 14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:0.85rem;cursor:pointer">Sign In</button>
       <div class="status-badge"><span class="status-dot"></span><span id="statusLabel">Connected</span></div>
     </div>
   </div>
@@ -855,5 +906,95 @@ tr:hover td{background:var(--bg2);}
 
 <script src="app-extra.js"></script>
 <script src="gpu-fan.js" defer></script>
+
+<script>
+// ===== AUTH SYSTEM =====
+const AUTH_KEY = 'reso_session_token';
+const AUTH_USER_KEY = 'reso_user';
+let _secretKeyTemp = '';
+
+function authShowModal() {
+  document.getElementById('authOverlay').style.display = 'flex';
+}
+function authClose() {
+  document.getElementById('authOverlay').style.display = 'none';
+}
+function authShowTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('authLoginForm').style.display = isLogin ? '' : 'none';
+  document.getElementById('authRegisterForm').style.display = isLogin ? 'none' : '';
+  document.getElementById('authTabLogin').style.background = isLogin ? 'var(--accent)' : 'transparent';
+  document.getElementById('authTabLogin').style.color = isLogin ? '#fff' : 'var(--text-muted)';
+  document.getElementById('authTabRegister').style.background = isLogin ? 'transparent' : 'linear-gradient(135deg,#6366f1,#8b5cf6)';
+  document.getElementById('authTabRegister').style.color = isLogin ? 'var(--text-muted)' : '#fff';
+}
+function authSetUser(username, publicKey) {
+  document.getElementById('userBadge').style.display = 'flex';
+  document.getElementById('authBtn').style.display = 'none';
+  document.getElementById('userBadgeName').textContent = username;
+  document.getElementById('userBadgeKey').textContent = publicKey ? publicKey.slice(0,6)+'...'+publicKey.slice(-4) : '';
+  authClose();
+}
+async function authLogin() {
+  const u = document.getElementById('authLoginUser').value.trim();
+  const p = document.getElementById('authLoginPass').value;
+  const err = document.getElementById('authLoginErr');
+  err.style.display = 'none';
+  if (!u || !p) { err.textContent='Please fill all fields'; err.style.display='block'; return; }
+  try {
+    const r = await fetch(API + '/api/auth/login', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Login failed');
+    localStorage.setItem(AUTH_KEY, d.session_token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify({username:d.username,public_key:d.public_key}));
+    authSetUser(d.username, d.public_key);
+    showToast('Welcome back, ' + d.username + '!', true);
+  } catch(e) { err.textContent = e.message; err.style.display='block'; }
+}
+async function authRegister() {
+  const u = document.getElementById('authRegUser').value.trim();
+  const email = document.getElementById('authRegEmail').value.trim();
+  const p = document.getElementById('authRegPass').value;
+  const err = document.getElementById('authRegErr');
+  err.style.display='none';
+  if (!u || !p) { err.textContent='Please fill required fields'; err.style.display='block'; return; }
+  err.textContent='Creating account & funding wallet... (~10s)'; err.style.display='block'; err.style.color='var(--accent)';
+  try {
+    const r = await fetch(API + '/api/auth/register', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,email:email||null})});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Registration failed');
+    localStorage.setItem(AUTH_KEY, d.session_token);
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify({username:d.username,public_key:d.public_key}));
+    authSetUser(d.username, d.public_key);
+    if (d.secret_key) {
+      _secretKeyTemp = d.secret_key;
+      document.getElementById('secretKeyDisplay').textContent = d.secret_key;
+      document.getElementById('secretModal').style.display = 'flex';
+    }
+    showToast('Account created! Stellar wallet funded with 10,000 XLM.', true);
+  } catch(e) { err.textContent=e.message; err.style.display='block'; err.style.color='var(--red)'; }
+}
+function authCopySecret() {
+  navigator.clipboard.writeText(_secretKeyTemp).then(() => showToast('Secret key copied!', true));
+}
+function authCloseSecret() {
+  document.getElementById('secretModal').style.display = 'none';
+  _secretKeyTemp = '';
+}
+async function authRestoreSession() {
+  const token = localStorage.getItem(AUTH_KEY);
+  if (!token) return;
+  try {
+    const r = await fetch(API + '/api/auth/me?token=' + token);
+    if (!r.ok) { localStorage.removeItem(AUTH_KEY); localStorage.removeItem(AUTH_USER_KEY); return; }
+    const d = await r.json();
+    authSetUser(d.username, d.public_key);
+  } catch(e) {}
+}
+// Restore session on load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(authRestoreSession, 1500); // Wait for API to connect first
+});
+</script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 import os
 import json
 import hashlib
+import hmac
+import secrets
 import time
 import random
 import sqlite3
@@ -276,6 +278,17 @@ def init_db():
         CREATE TABLE IF NOT EXISTS stellar_accounts (
             public_key TEXT PRIMARY KEY,
             label TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE,
+            password_hash TEXT NOT NULL,
+            salt TEXT NOT NULL,
+            public_key TEXT,
+            label TEXT NOT NULL DEFAULT '',
+            session_token TEXT,
             created_at TEXT NOT NULL
         );
         """)
@@ -579,6 +592,135 @@ def _load_kp(secret: str):
         return Keypair.from_secret(secret)
     except Exception:
         raise HTTPException(400, "Invalid secret key format. Must be a valid Stellar secret key (starts with S).")
+
+# ---------------------------------------------------------------------------
+# AUTH ENDPOINTS — Register / Login / Me
+# ---------------------------------------------------------------------------
+
+def _hash_password(password: str, salt: str) -> str:
+    """SHA-256 PBKDF2 password hash"""
+    return hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 260000).hex()
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    email: Optional[str] = None
+    label: Optional[str] = None
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/auth/register")
+async def auth_register(req: RegisterRequest):
+    """Register a new user, auto-create & fund a Stellar keypair"""
+    if len(req.username) < 3:
+        raise HTTPException(400, "Username must be at least 3 characters")
+    if len(req.password) < 6:
+        raise HTTPException(400, "Password must be at least 6 characters")
+
+    with get_conn() as conn:
+        existing = conn.execute("SELECT id FROM users WHERE username = ?", (req.username,)).fetchone()
+        if existing:
+            raise HTTPException(409, "Username already taken")
+
+    # Generate Stellar keypair and fund via Friendbot
+    funded = False
+    public_key = ""
+    secret_key = ""
+    friendbot_tx = ""
+
+    if STELLAR_AVAILABLE:
+        try:
+            kp = Keypair.random()
+            public_key = kp.public_key
+            secret_key = kp.secret
+            async with _httpx.AsyncClient(timeout=30) as client:
+                resp = await client.get(f"{FRIENDBOT_URL}?addr={public_key}")
+            if resp.status_code == 200:
+                funded = True
+                fb = resp.json()
+                friendbot_tx = fb.get("hash", "")
+        except Exception as e:
+            public_key = ""
+            secret_key = ""
+
+    salt = secrets.token_hex(32)
+    password_hash = _hash_password(req.password, salt)
+    session_token = secrets.token_hex(32)
+    now = time.strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO users (username, email, password_hash, salt, public_key, label, session_token, created_at) VALUES (?,?,?,?,?,?,?,?)",
+            (req.username, req.email or "", password_hash, salt, public_key, req.label or req.username, session_token, now)
+        )
+        if public_key:
+            conn.execute(
+                "INSERT OR REPLACE INTO stellar_accounts (public_key, label, created_at) VALUES (?,?,?)",
+                (public_key, req.label or req.username, now)
+            )
+        conn.commit()
+
+    return {
+        "success": True,
+        "username": req.username,
+        "session_token": session_token,
+        "public_key": public_key,
+        "secret_key": secret_key,  # Shown ONCE — user must save this
+        "funded": funded,
+        "starting_balance": "10000 XLM (testnet)" if funded else "Not funded",
+        "friendbot_tx": friendbot_tx,
+        "explorer": f"{EXPLORER_BASE}/account/{public_key}" if public_key else "",
+        "warning": "SAVE YOUR SECRET KEY — it will NOT be shown again. Your public key is stored in our database."
+    }
+
+@app.post("/api/auth/login")
+def auth_login(req: LoginRequest):
+    """Login with username + password, returns session token"""
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT id, password_hash, salt, public_key, label, session_token FROM users WHERE username = ?",
+            (req.username,)
+        ).fetchone()
+    if not row:
+        raise HTTPException(401, "Invalid username or password")
+    expected = _hash_password(req.password, row["salt"])
+    if not hmac.compare_digest(expected, row["password_hash"]):
+        raise HTTPException(401, "Invalid username or password")
+    # Rotate session token on login
+    new_token = secrets.token_hex(32)
+    with get_conn() as conn:
+        conn.execute("UPDATE users SET session_token = ? WHERE username = ?", (new_token, req.username))
+        conn.commit()
+    return {
+        "success": True,
+        "username": req.username,
+        "session_token": new_token,
+        "public_key": row["public_key"] or "",
+        "label": row["label"],
+        "explorer": f"{EXPLORER_BASE}/account/{row['public_key']}" if row["public_key"] else ""
+    }
+
+@app.get("/api/auth/me")
+def auth_me(token: str):
+    """Restore session from token — called on page load"""
+    if not token:
+        raise HTTPException(401, "No token provided")
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT username, public_key, label FROM users WHERE session_token = ?",
+            (token,)
+        ).fetchone()
+    if not row:
+        raise HTTPException(401, "Invalid or expired session token")
+    return {
+        "success": True,
+        "username": row["username"],
+        "public_key": row["public_key"] or "",
+        "label": row["label"],
+        "explorer": f"{EXPLORER_BASE}/account/{row['public_key']}" if row["public_key"] else ""
+    }
 
 # ---------------------------------------------------------------------------
 # CORE COMPLIANCE API Endpoints
