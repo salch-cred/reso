@@ -1606,4 +1606,10 @@ if os.path.exists(dashboard_path):
         if os.path.exists(idx):
             with open(idx, "r", encoding="utf-8") as f: return f.read()
         return "<h1>Reso API running</h1><a href='/api/health'>/api/health</a>"
+    @app.get("/docs", response_class=HTMLResponse)
+    def read_docs():
+      doc_file = os.path.join(dashboard_path, "docs.html")
+      if os.path.exists(doc_file):
+          with open(doc_file, "r", encoding="utf-8") as f: return f.read()
+      return "<h1>Docs Page</h1>"
     app.mount("/static", StaticFiles(directory=dashboard_path), name="dashboard")

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reso — Documentation</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/500.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/600.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
+<style>
+  :root {
+    --bg: #020b14;
+    --bg-panel: #031726;
+    --bg-inner: #042033;
+    --accent: #0EA5E9;
+    --accent2: #38BDF8;
+    --text: #f0f9ff;
+    --text-muted: #7dd3fc;
+    --border: rgba(14, 165, 233, 0.25);
+    --font: 'Uncut Sans', sans-serif;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-panel);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  .hdr-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .brand span {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .hdr-right a {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .hdr-right a:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  /* Main Container */
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+  }
+
+  section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-top: 0;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  p {
+    font-size: 1rem;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+  }
+
+  /* Key features grid */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  @media (max-width: 768px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .feature-card {
+    background: var(--bg-inner);
+    border: 1px solid rgba(14, 165, 233, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .feature-card h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .feature-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+
+  /* Code output styling */
+  pre {
+    background: #010c15;
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 10px;
+    color: var(--accent2);
+    font-family: monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: #475569;
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    background: var(--bg-panel);
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-wrap">
+    <a href="/" class="brand">
+      <img src="logo.png" alt="Reso Logo">
+      <span>Reso Docs</span>
+    </a>
+    <div class="hdr-right">
+      <a href="/"><i class="hgi-stroke hgi-arrow-left-01"></i> Back to Console</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Project Documentation</h1>
+  <div class="subtitle">Understand how Reso handles zero-knowledge compliance on the Stellar Network.</div>
+
+  <!-- SECTION 1: OVERVIEW -->
+  <section>
+    <h2><i class="hgi-stroke hgi-passport"></i> Overview</h2>
+    <p>
+      Reso is a contemporary compliance and identity-guard framework built for the <strong>Stellar Network</strong>. 
+      It utilizes zero-knowledge proofs (ZKP), homomorphic encryption, and multisig authorization logic to guarantee 
+      regulatory alignment (KYC, AML, sanctions screening) without disclosing users' private wallet details or transaction histories on the public ledger.
+    </p>
+  </section>
+
+  <!-- SECTION 2: HOW IT WORKS -->
+  <section>
+    <h2><i class="hgi-stroke hgi-bubble-chart"></i> How it Works</h2>
+    <p>
+      Traditional blockchains require compliance checks to occur on-chain, exposing private user credentials. 
+      Reso shifts the heavy cryptographic computations off-chain to an independent compliance oracle, verifying transactions securely in seconds:
+    </p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>1. Off-Chain Proof Generation</h3>
+        <p>When a transaction is initiated, Reso compiles a cryptographic proof verifying that the user meets all requirements (KYC tier, sanctions clearance, daily transfer limits).</p>
+      </div>
+      <div class="feature-card">
+        <h3>2. On-Chain Verification</h3>
+        <p>The compiled ZK proof is transmitted to the Stellar network ledger. Rather than verifying the transaction contents, the network verifies only the mathematical correctness of the ZK proof.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: CORE MODULES -->
+  <section>
+    <h2><i class="hgi-stroke hgi-command-line"></i> Technical Features</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>ZK-Proof Transaction Simulator</h3>
+        <p>Allows real-time verification of transaction rules. Simulates sanctions screening, KYC tiers, and homomorphic balance cap checks.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Additive Homomorphic Limits</h3>
+        <p>Uses Paillier homomorphic encryption to aggregate daily spending limits without decrypting individual transaction amounts, maintaining financial privacy.</p>
+      </div>
+      <div class="feature-card">
+        <h3>ZK-Gated Escrow</h3>
+        <p>Locks funds on the Stellar network testnet. Releasing/claiming the locked funds requires presenting a valid off-chain ZK verification token.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Shamir Threshold Time-Locks</h3>
+        <p>Implements a 3-of-5 trustee schema with built-in time delays to reveal user identities only under emergency or legal audit situations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: API SPECIFICATION -->
+  <section>
+    <h2><i class="hgi-stroke hgi-api"></i> Oracle Endpoints</h2>
+    <p>The Reso compliance oracle exposes REST endpoints to manage compliance verification steps:</p>
+    <pre>
+POST /api/auth/register       - Register permanent account & wallet
+POST /api/auth/login          - Authenticate and fetch session token
+POST /api/simulate-transfer   - Simulates ZK transfer compliance checks
+POST /api/escrow/deposit      - Lock funds under ZK-gated conditions
+GET  /api/canary/scan         - Scan network for KYC/Sanction compliance</pre>
+  </section>
+</div>
+
+<footer>
+  &copy; 2026 Reso Compliance Network. Powered by Stellar & ZK Cryptography.
+</footer>
+
+</body>
+</html>
