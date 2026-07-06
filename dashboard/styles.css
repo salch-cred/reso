@@ -74,18 +74,18 @@ header.scrolled{padding:10px 0}
 .nav{
   display:flex; align-items:center; justify-content:space-between;
   height:54px; padding:0 10px 0 18px;
-  background:rgba(255,255,255,.55);
+  background:linear-gradient(180deg, rgba(240,249,255,.85), rgba(224,242,254,.65));
   backdrop-filter:blur(28px) saturate(2.2);
   -webkit-backdrop-filter:blur(28px) saturate(2.2);
-  border:1px solid rgba(255,255,255,.65);
+  border:1px solid rgba(186,230,253,.9);
   border-radius:20px;
-  box-shadow:0 8px 30px -10px rgba(15,23,42,.18), inset 0 1px 0 rgba(255,255,255,.7);
+  box-shadow:0 10px 34px -10px rgba(2,132,199,.28), 0 2px 8px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.9);
   transition:all .3s var(--ease);
 }
 header.scrolled .nav{
-  background:rgba(255,255,255,.72);
-  border-color:rgba(255,255,255,.75);
-  box-shadow:0 14px 38px -10px rgba(15,23,42,.22), inset 0 1px 0 rgba(255,255,255,.8);
+  background:linear-gradient(180deg, rgba(240,249,255,.95), rgba(224,242,254,.85));
+  border-color:rgba(125,211,252,.9);
+  box-shadow:0 16px 40px -10px rgba(2,132,199,.32), 0 2px 8px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.95);
 }
 .brand{
   display:flex; align-items:center; gap:9px;
@@ -103,8 +103,8 @@ header.scrolled .nav{
 .brand .logo i{font-size:15px}
 .nav-links{
   display:flex; gap:2px;
-  background:rgba(255,255,255,.4);
-  border:1px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(255,255,255,.7);
   border-radius:100px; padding:3px;
 }
 .nav-links a{
@@ -112,15 +112,15 @@ header.scrolled .nav{
   padding:7px 13px; border-radius:100px;
   transition:background .2s, color .2s, box-shadow .2s;
 }
-.nav-links a:hover{background:rgba(255,255,255,.7); color:var(--ink)}
+.nav-links a:hover{background:rgba(255,255,255,.85); color:var(--ink)}
 .nav-links a.active{
-  background:rgba(255,255,255,.9);
+  background:#fff;
   color:var(--indigo); font-weight:600;
-  box-shadow:0 2px 8px rgba(15,23,42,.1), inset 0 0 0 1px rgba(14,165,233,.18);
+  box-shadow:0 2px 8px rgba(15,23,42,.12), inset 0 0 0 1px rgba(14,165,233,.2);
 }
 .nav-cta{display:flex; align-items:center; gap:8px}
 .nav-toggle{display:none; background:none; border:none; cursor:pointer; padding:6px; font-size:20px; color:var(--ink); border-radius:8px; transition:background .15s}
-.nav-toggle:hover{background:rgba(255,255,255,.6)}
+.nav-toggle:hover{background:rgba(255,255,255,.7)}
 
 /* ---- HERO ---- */
 .hero{
