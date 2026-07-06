@@ -162,6 +162,16 @@ body::before{
 }
 .tab-bar{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;padding:8px 0;}
 .tab-bar::-webkit-scrollbar{display:none;}
+/* Scroll affordance: fade the edges when the tab bar has more tabs off-screen,
+   so it's obvious on mobile that you can swipe to see the rest. */
+.tab-bar-wrap::before,.tab-bar-wrap::after{
+  content:'';position:absolute;top:0;bottom:1px;width:32px;pointer-events:none;
+  z-index:1;opacity:0;transition:opacity .18s ease;
+}
+.tab-bar-wrap::before{left:24px;background:linear-gradient(90deg,#FFFFFF,rgba(255,255,255,0));}
+.tab-bar-wrap::after{right:24px;background:linear-gradient(270deg,#FFFFFF,rgba(255,255,255,0));}
+.tab-bar-wrap.show-left-fade::before{opacity:1;}
+.tab-bar-wrap.show-right-fade::after{opacity:1;}
 .nav-tab{
   display:inline-flex;align-items:center;gap:6px;
   padding:9px 16px;
@@ -585,6 +595,8 @@ tr:hover td{background:var(--bg2);}
   #statusLabel{display:none;}
   .status-badge{padding:6px 9px;}
   .tab-bar-wrap{margin:0 -14px;padding:0 14px;}
+  .tab-bar-wrap::before{left:14px;}
+  .tab-bar-wrap::after{right:14px;}
   .shell{padding:0 14px 100px;}
   .ph-top{flex-wrap:wrap;}
   .ph-left{min-width:100%;}
@@ -655,6 +667,15 @@ tr:hover td{background:var(--bg2);}
   #authOverlay.auth-open { display:flex; }
   #secretModal { display:none; }
   #secretModal.auth-open { display:flex; }
+  /* Visually hidden but screen-reader-accessible labels for the auth
+     inputs above (which rely on placeholder text visually). */
+  .auth-label{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+  @media (max-width:420px){
+    .auth-box{padding:32px 22px !important;}
+  }
   .auth-input {
     width:100%; padding:12px 14px; border-radius:10px;
     border:1px solid #1e3a4a; background:#0d1f2d; color:#e2e8f0;
@@ -680,7 +701,8 @@ tr:hover td{background:var(--bg2);}
 </style>
 
 <div id="authOverlay" style="display:none;position:fixed;inset:0;background:rgba(2,12,20,0.85);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(12px)">
-  <div style="background:#031726;border:1px solid rgba(14,165,233,0.4);border-radius:24px;padding:42px 38px;width:420px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.25), 0 32px 80px rgba(0,0,0,0.8)">
+  <div class="auth-box" style="position:relative;background:#031726;border:1px solid rgba(14,165,233,0.4);border-radius:24px;padding:42px 38px;width:420px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.25), 0 32px 80px rgba(0,0,0,0.8)">
+    <button type="button" onclick="authClose()" aria-label="Close sign in dialog" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;border-radius:50%;background:rgba(14,165,233,0.12);color:#7dd3fc;font-size:16px;line-height:1;cursor:pointer;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(14,165,233,0.25)';this.style.color='#f0f9ff'" onmouseout="this.style.background='rgba(14,165,233,0.12)';this.style.color='#7dd3fc'">✕</button>
     <div style="text-align:center;margin-bottom:30px">
       <!-- Logo with sky-blue glow ring -->
       <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#38BDF8);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 0 6px rgba(14,165,233,0.2), 0 0 30px rgba(14,165,233,0.4);padding:4px">
@@ -699,16 +721,21 @@ tr:hover td{background:var(--bg2);}
     </div>
     <!-- Login Form -->
     <div id="authLoginForm">
-      <input id="authLoginUser" class="auth-input" placeholder="Username" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
-      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <label for="authLoginUser" class="auth-label">Username</label>
+      <input id="authLoginUser" class="auth-input" placeholder="Username" aria-label="Username" autocomplete="username" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <label for="authLoginPass" class="auth-label">Password</label>
+      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password" aria-label="Password" autocomplete="current-password" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
       <button class="auth-btn-primary" onclick="authLogin()">Sign In</button>
       <p id="authLoginErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
     <!-- Register Form -->
     <div id="authRegisterForm" style="display:none">
-      <input id="authRegUser" class="auth-input" placeholder="Username (min 3 chars)" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
-      <input id="authRegEmail" class="auth-input" placeholder="Email (optional)" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
-      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <label for="authRegUser" class="auth-label">Username</label>
+      <input id="authRegUser" class="auth-input" placeholder="Username (min 3 chars)" aria-label="Username, minimum 3 characters" autocomplete="username" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <label for="authRegEmail" class="auth-label">Email (optional)</label>
+      <input id="authRegEmail" class="auth-input" placeholder="Email (optional)" aria-label="Email, optional" autocomplete="email" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <label for="authRegPass" class="auth-label">Password</label>
+      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)" aria-label="Password, minimum 6 characters" autocomplete="new-password" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
       <button class="auth-btn-sky" onclick="authRegister()">Create Account</button>
       <p id="authRegErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
