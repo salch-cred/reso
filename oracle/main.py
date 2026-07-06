@@ -39,7 +39,11 @@ app = FastAPI(title="Reso Compliance Oracle API v3")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    # NOTE: allow_credentials must stay False when allow_origins is "*".
+    # Auth in this API is a bearer/session token returned in the response
+    # body (see /auth/register, /auth/login) and never via cookies, so
+    # cross-site credentialed requests are not needed here.
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
