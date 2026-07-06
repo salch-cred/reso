@@ -566,6 +566,30 @@ tr:hover td{background:var(--bg2);}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+
+/* ============================================================
+   MOBILE RESPONSIVE FIXES
+============================================================ */
+@media(max-width:760px){
+  .hdr-inner{padding:0 14px;gap:8px;}
+  .brand-sub{display:none;}
+  .proof-counter{padding:5px 10px;gap:10px;}
+  .pc-label{display:none;}
+  .pc-sep{display:none;}
+  .hdr-btn-text{display:none;}
+  .hdr-btn{padding:8px 10px;}
+  #statusLabel{display:none;}
+  .status-badge{padding:6px 9px;}
+  .tab-bar-wrap{margin:0 -14px;padding:0 14px;}
+  .shell{padding:0 14px 100px;}
+}
+@media(max-width:480px){
+  .trustee-grid{grid-template-columns:repeat(3,1fr);}
+  .hdr-inner{height:56px;}
+  .brand-name{font-size:15px;}
+  .proof-counter{gap:8px;}
+  .pc-item{gap:4px;}
+}
 </style>
 </head>
 <body>
@@ -603,7 +627,7 @@ tr:hover td{background:var(--bg2);}
       </div>
     </div>
     <div class="hdr-right">
-      <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> Back to Landing</a>
+      <a href="/landing" class="hdr-btn"><i class="hgi-stroke hgi-arrow-left-01"></i> <span class="hdr-btn-text">Back to Landing</span></a>
       <div class="status-badge"><span class="status-dot"></span><span id="statusLabel">Connected</span></div>
     </div>
   </div>
