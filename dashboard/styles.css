@@ -671,6 +671,7 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
 @media(max-width:920px){
   .nav-links{display:none}
   .nav-toggle{display:block}
+  .nav{overflow:visible}
   .steps,.integ-grid,.uc-grid,.stats,.quotes,.feat-grid{grid-template-columns:repeat(2,1fr)}
   .bento{grid-template-columns:1fr 1fr} .card-hero{grid-column:span 2; grid-row:auto}
   .console-body{grid-template-columns:1fr} .c-side{display:none}
@@ -685,6 +686,9 @@ footer{border-top:1px solid var(--line); padding:60px 0 32px; background:var(--s
   .foot-grid{grid-template-columns:1fr} .foot-brand{grid-column:auto}
   .hero-note{gap:10px}
   .cta-wrap{padding:48px 20px}
+  .nav{padding:0 8px 0 14px}
+  .brand{font-size:16px}
+  .nav-cta .btn{padding:9px 14px; font-size:13.5px}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important; transition:none!important}
