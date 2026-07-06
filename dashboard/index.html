@@ -657,45 +657,50 @@ tr:hover td{background:var(--bg2);}
   #secretModal.auth-open { display:flex; }
   .auth-input {
     width:100%; padding:12px 14px; border-radius:10px;
-    border:1px solid #2a2d3a; background:#1a1d2e; color:#e2e8f0;
+    border:1px solid #1e3a4a; background:#0d1f2d; color:#e2e8f0;
     margin-bottom:12px; box-sizing:border-box; font-size:0.95rem;
-    outline:none; transition:border-color .2s;
+    outline:none; transition:border-color .2s, box-shadow .2s;
   }
-  .auth-input:focus { border-color:#3b82f6; }
-  .auth-input::placeholder { color:#64748b; }
+  .auth-input:focus { border-color:#0EA5E9; box-shadow:0 0 0 3px rgba(14,165,233,0.2); }
+  .auth-input::placeholder { color:#4a6a7a; }
   .auth-btn-primary {
     width:100%; padding:13px; border:none; border-radius:10px;
-    background:#3b82f6; color:#fff; font-weight:700;
-    font-size:1rem; cursor:pointer; transition:opacity .2s;
+    background:linear-gradient(135deg,#0EA5E9,#38BDF8); color:#fff; font-weight:700;
+    font-size:1rem; cursor:pointer; transition:opacity .2s, transform .1s;
+    box-shadow: 0 4px 15px rgba(14,165,233,0.35);
   }
-  .auth-btn-primary:hover { opacity:0.88; }
-  .auth-btn-grad {
+  .auth-btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
+  .auth-btn-sky {
     width:100%; padding:13px; border:none; border-radius:10px;
-    background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff;
-    font-weight:700; font-size:1rem; cursor:pointer; transition:opacity .2s;
+    background:linear-gradient(135deg,#0284C7,#0EA5E9); color:#fff;
+    font-weight:700; font-size:1rem; cursor:pointer; transition:opacity .2s, transform .1s;
+    box-shadow: 0 4px 15px rgba(14,165,233,0.4);
   }
-  .auth-btn-grad:hover { opacity:0.88; }
+  .auth-btn-sky:hover { opacity:0.9; transform:translateY(-1px); }
 </style>
 
-<div id="authOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
-  <div style="background:#0f1117;border:1px solid #2a2d3a;border-radius:20px;padding:40px 36px;width:420px;max-width:95vw;box-shadow:0 32px 80px rgba(0,0,0,0.7)">
-    <div style="text-align:center;margin-bottom:28px">
-      <!-- Reso Logo SVG fallback -->
-      <div style="width:52px;height:52px;background:linear-gradient(135deg,#3b82f6,#6366f1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<div id="authOverlay" style="position:fixed;inset:0;background:rgba(5,15,25,0.85);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+  <div style="background:#0a1628;border:1px solid #1e3a4a;border-radius:22px;padding:42px 38px;width:420px;max-width:95vw;box-shadow:0 0 0 1px rgba(14,165,233,0.15), 0 32px 80px rgba(0,0,0,0.8)">
+    <div style="text-align:center;margin-bottom:30px">
+      <!-- Logo with sky-blue glow ring -->
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#38BDF8);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 0 6px rgba(14,165,233,0.15), 0 0 30px rgba(14,165,233,0.3);padding:4px">
+        <img src="logo.png" alt="Reso" style="width:56px;height:56px;border-radius:50%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div style="display:none;width:56px;height:56px;align-items:center;justify-content:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
       </div>
-      <h2 style="margin:0;font-size:1.5rem;font-weight:700;color:#f1f5f9">Welcome to Reso</h2>
-      <p style="margin:8px 0 0;color:#64748b;font-size:0.9rem">Sign in or create a permanent account</p>
+      <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:#f0f9ff;letter-spacing:-0.02em">Welcome to Reso</h2>
+      <p style="margin:8px 0 0;color:#4a6a7a;font-size:0.9rem">Sign in or create a permanent account</p>
     </div>
     <!-- Tabs -->
-    <div style="display:flex;background:#1a1d2e;border-radius:10px;padding:4px;margin-bottom:24px;gap:4px">
-      <button id="authTabLogin" onclick="authShowTab('login')" style="flex:1;padding:9px;border:none;border-radius:8px;background:#3b82f6;color:#fff;font-weight:600;cursor:pointer;transition:all .2s">Sign In</button>
-      <button id="authTabRegister" onclick="authShowTab('register')" style="flex:1;padding:9px;border:none;border-radius:8px;background:transparent;color:#64748b;font-weight:600;cursor:pointer;transition:all .2s">Register</button>
+    <div style="display:flex;background:#0d1f2d;border-radius:12px;padding:4px;margin-bottom:24px;gap:4px;border:1px solid #1e3a4a">
+      <button id="authTabLogin" onclick="authShowTab('login')" style="flex:1;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#0EA5E9,#38BDF8);color:#fff;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(14,165,233,0.3)">Sign In</button>
+      <button id="authTabRegister" onclick="authShowTab('register')" style="flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:#4a6a7a;font-weight:600;cursor:pointer;transition:all .2s">Register</button>
     </div>
     <!-- Login Form -->
     <div id="authLoginForm">
       <input id="authLoginUser" class="auth-input" placeholder="Username">
-      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password">
+      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password" style="margin-bottom:16px">
       <button class="auth-btn-primary" onclick="authLogin()">Sign In</button>
       <p id="authLoginErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
@@ -703,28 +708,29 @@ tr:hover td{background:var(--bg2);}
     <div id="authRegisterForm" style="display:none">
       <input id="authRegUser" class="auth-input" placeholder="Username (min 3 chars)">
       <input id="authRegEmail" class="auth-input" placeholder="Email (optional)">
-      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)">
-      <button class="auth-btn-grad" onclick="authRegister()">Create Account &amp; Fund Stellar Wallet</button>
+      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)" style="margin-bottom:16px">
+      <button class="auth-btn-sky" onclick="authRegister()">🚀 Create Account &amp; Fund Stellar Wallet</button>
       <p id="authRegErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
-    <p style="text-align:center;margin:18px 0 0;font-size:0.82rem;color:#475569">
-      Continue as guest? <a href="#" onclick="authClose();return false;" style="color:#3b82f6;text-decoration:none">Skip for now</a>
+    <p style="text-align:center;margin:18px 0 0;font-size:0.82rem;color:#334e5e">
+      Continue as guest? <a href="#" onclick="authClose();return false;" style="color:#0EA5E9;text-decoration:none;font-weight:600">Skip for now</a>
     </p>
   </div>
 </div>
 
 <!-- Secret Key Modal (shown once at registration) -->
-<div id="secretModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center">
-  <div style="background:#0f1117;border:2px solid #ef4444;border-radius:20px;padding:36px;width:500px;max-width:95vw">
-    <h3 style="margin:0 0 8px;color:#ef4444;font-size:1.2rem">⚠️ Save Your Secret Key NOW</h3>
-    <p style="margin:0 0 16px;color:#94a3b8;font-size:0.9rem">This is shown <strong style="color:#f1f5f9">ONCE</strong> and never stored. If you lose it, you cannot sign Stellar transactions.</p>
-    <div id="secretKeyDisplay" style="background:#1a1d2e;border-radius:10px;padding:16px;font-family:monospace;font-size:0.88rem;word-break:break-all;border:1px solid #2a2d3a;margin-bottom:16px;color:#a5f3fc;line-height:1.6"></div>
+<div id="secretModal" style="position:fixed;inset:0;background:rgba(5,15,25,0.92);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+  <div style="background:#0a1628;border:2px solid #ef4444;border-radius:22px;padding:36px;width:500px;max-width:95vw;box-shadow:0 0 30px rgba(239,68,68,0.2)">
+    <h3 style="margin:0 0 8px;color:#f87171;font-size:1.2rem">⚠️ Save Your Secret Key NOW</h3>
+    <p style="margin:0 0 16px;color:#4a6a7a;font-size:0.9rem">This is shown <strong style="color:#f0f9ff">ONCE</strong> and never stored. If you lose it, you cannot sign Stellar transactions.</p>
+    <div id="secretKeyDisplay" style="background:#0d1f2d;border-radius:10px;padding:16px;font-family:monospace;font-size:0.88rem;word-break:break-all;border:1px solid #1e3a4a;margin-bottom:16px;color:#38BDF8;line-height:1.6"></div>
     <div style="display:flex;gap:10px">
-      <button onclick="authCopySecret()" style="flex:1;padding:11px;border:1px solid #2a2d3a;border-radius:10px;background:#1a1d2e;color:#e2e8f0;font-weight:600;cursor:pointer">📋 Copy Key</button>
+      <button onclick="authCopySecret()" style="flex:1;padding:11px;border:1px solid #1e3a4a;border-radius:10px;background:#0d1f2d;color:#e2e8f0;font-weight:600;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#0EA5E9'" onmouseout="this.style.borderColor='#1e3a4a'">📋 Copy Key</button>
       <button onclick="authCloseSecret()" style="flex:1;padding:11px;border:none;border-radius:10px;background:#ef4444;color:#fff;font-weight:700;cursor:pointer">✓ I have saved it</button>
     </div>
   </div>
 </div>
+
 
 <div class="offline-bar" id="offlineBar">
   Backend offline — running in demo mode.
@@ -954,10 +960,10 @@ function authShowTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('authLoginForm').style.display = isLogin ? '' : 'none';
   document.getElementById('authRegisterForm').style.display = isLogin ? 'none' : '';
-  document.getElementById('authTabLogin').style.background = isLogin ? '#3b82f6' : 'transparent';
-  document.getElementById('authTabLogin').style.color = isLogin ? '#fff' : '#64748b';
-  document.getElementById('authTabRegister').style.background = isLogin ? 'transparent' : 'linear-gradient(135deg,#6366f1,#8b5cf6)';
-  document.getElementById('authTabRegister').style.color = isLogin ? '#64748b' : '#fff';
+  document.getElementById('authTabLogin').style.background = isLogin ? 'linear-gradient(135deg,#0EA5E9,#38BDF8)' : 'transparent';
+  document.getElementById('authTabLogin').style.color = isLogin ? '#fff' : '#4a6a7a';
+  document.getElementById('authTabRegister').style.background = isLogin ? 'transparent' : 'linear-gradient(135deg,#0284C7,#0EA5E9)';
+  document.getElementById('authTabRegister').style.color = isLogin ? '#4a6a7a' : '#fff';
 }
 function authSetUser(username, publicKey) {
   document.getElementById('userBadge').style.display = 'flex';
