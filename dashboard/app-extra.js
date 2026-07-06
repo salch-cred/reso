@@ -62,7 +62,30 @@ function switchTab(id,el){
   if(panel)panel.classList.add('active');
   if(id==='escrow'){loadEscrows();escrowPoller=setInterval(loadEscrows,3000);}
   if(id==='sandbox'){loadRevocation();loadFolding();}
+  // Keep the clicked tab fully in view (helps when the bar is scrolled
+  // partway and the tap lands near an edge) and refresh the scroll fades.
+  if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'});
+  updateTabBarFade();
 }
+
+// ---- Tab bar scroll affordance ----
+// Shows a soft fade on whichever edge(s) still have hidden tabs, so it's
+// obvious the tab bar is horizontally scrollable on narrow/mobile screens.
+function updateTabBarFade(){
+  const bar=document.querySelector('.tab-bar');
+  const wrap=document.querySelector('.tab-bar-wrap');
+  if(!bar||!wrap)return;
+  const maxScroll=bar.scrollWidth-bar.clientWidth;
+  wrap.classList.toggle('show-left-fade',bar.scrollLeft>4);
+  wrap.classList.toggle('show-right-fade',bar.scrollLeft<maxScroll-4);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const bar=document.querySelector('.tab-bar');
+  if(!bar)return;
+  updateTabBarFade();
+  bar.addEventListener('scroll',updateTabBarFade,{passive:true});
+  window.addEventListener('resize',updateTabBarFade);
+});
 
 // ---- WALLETS ----
 function renderWallets(data){

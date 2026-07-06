@@ -110,6 +110,53 @@
     padding: 30px;
     margin-bottom: 30px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    scroll-margin-top: 84px; /* keep anchored sections clear of the sticky header + quick nav */
+  }
+
+  /* In-page quick navigation */
+  .quick-nav-wrap {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .quick-nav-wrap::before, .quick-nav-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; width: 32px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .18s ease;
+  }
+  .quick-nav-wrap::before { left: 24px; background: linear-gradient(90deg, var(--bg-panel), rgba(3,23,38,0)); }
+  .quick-nav-wrap::after { right: 24px; background: linear-gradient(270deg, var(--bg-panel), rgba(3,23,38,0)); }
+  .quick-nav-wrap.show-left-fade::before { opacity: 1; }
+  .quick-nav-wrap.show-right-fade::after { opacity: 1; }
+  .quick-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 12px 24px;
+  }
+  .quick-nav::-webkit-scrollbar { display: none; }
+  .quick-nav a {
+    flex: none;
+    white-space: nowrap;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-inner);
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .quick-nav a:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(14, 165, 233, 0.12);
   }
   
   h2 {
@@ -195,14 +242,38 @@
       <a href="/"><i class="hgi-stroke hgi-arrow-left-01"></i> Back to Console</a>
     </div>
   </div>
+  <nav class="quick-nav-wrap">
+    <div class="quick-nav" aria-label="Documentation sections">
+      <a href="#overview">Overview</a>
+      <a href="#how-it-works">How it Works</a>
+      <a href="#features">Technical Features</a>
+      <a href="#endpoints">Oracle Endpoints</a>
+    </div>
+  </nav>
 </header>
+
+<script>
+  (function(){
+    var bar = document.querySelector('.quick-nav');
+    var wrap = document.querySelector('.quick-nav-wrap');
+    if(!bar || !wrap) return;
+    function update(){
+      var maxScroll = bar.scrollWidth - bar.clientWidth;
+      wrap.classList.toggle('show-left-fade', bar.scrollLeft > 4);
+      wrap.classList.toggle('show-right-fade', bar.scrollLeft < maxScroll - 4);
+    }
+    update();
+    bar.addEventListener('scroll', update, {passive:true});
+    window.addEventListener('resize', update);
+  })();
+</script>
 
 <div class="container">
   <h1>Project Documentation</h1>
   <div class="subtitle">Understand how Reso handles zero-knowledge compliance on the Stellar Network.</div>
 
   <!-- SECTION 1: OVERVIEW -->
-  <section>
+  <section id="overview">
     <h2><i class="hgi-stroke hgi-passport"></i> Overview</h2>
     <p>
       Reso is a contemporary compliance and identity-guard framework built for the <strong>Stellar Network</strong>. 
@@ -212,7 +283,7 @@
   </section>
 
   <!-- SECTION 2: HOW IT WORKS -->
-  <section>
+  <section id="how-it-works">
     <h2><i class="hgi-stroke hgi-bubble-chart"></i> How it Works</h2>
     <p>
       Traditional blockchains require compliance checks to occur on-chain, exposing private user credentials. 
@@ -231,7 +302,7 @@
   </section>
 
   <!-- SECTION 3: CORE MODULES -->
-  <section>
+  <section id="features">
     <h2><i class="hgi-stroke hgi-command-line"></i> Technical Features</h2>
     <div class="feature-grid">
       <div class="feature-card">
@@ -254,7 +325,7 @@
   </section>
 
   <!-- SECTION 4: API SPECIFICATION -->
-  <section>
+  <section id="endpoints">
     <h2><i class="hgi-stroke hgi-api"></i> Oracle Endpoints</h2>
     <p>The Reso compliance oracle exposes REST endpoints to manage compliance verification steps:</p>
     <pre>
