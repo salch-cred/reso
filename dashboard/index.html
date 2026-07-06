@@ -678,12 +678,12 @@ tr:hover td{background:var(--bg2);}
   }
   .auth-input {
     width:100%; padding:12px 14px; border-radius:10px;
-    border:1px solid #1e3a4a; background:#0d1f2d; color:#e2e8f0;
+    border:1px solid #BAE6FD; background:#F7FAFD; color:#0F172A;
     margin-bottom:12px; box-sizing:border-box; font-size:0.95rem;
     outline:none; transition:border-color .2s, box-shadow .2s;
   }
   .auth-input:focus { border-color:#0EA5E9; box-shadow:0 0 0 3px rgba(14,165,233,0.2); }
-  .auth-input::placeholder { color:#4a6a7a; }
+  .auth-input::placeholder { color:#94A3B8; }
   .auth-btn-primary {
     width:100%; padding:13px; border:none; border-radius:10px;
     background:linear-gradient(135deg,#0EA5E9,#38BDF8); color:#fff; font-weight:700;
@@ -700,59 +700,59 @@ tr:hover td{background:var(--bg2);}
   .auth-btn-sky:hover { opacity:0.9; transform:translateY(-1px); }
 </style>
 
-<div id="authOverlay" style="display:none;position:fixed;inset:0;background:rgba(2,12,20,0.85);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(12px)">
-  <div class="auth-box" style="position:relative;background:#031726;border:1px solid rgba(14,165,233,0.4);border-radius:24px;padding:42px 38px;width:420px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.25), 0 32px 80px rgba(0,0,0,0.8)">
-    <button type="button" onclick="authClose()" aria-label="Close sign in dialog" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;border-radius:50%;background:rgba(14,165,233,0.12);color:#7dd3fc;font-size:16px;line-height:1;cursor:pointer;transition:background .15s,color .15s" onmouseover="this.style.background='rgba(14,165,233,0.25)';this.style.color='#f0f9ff'" onmouseout="this.style.background='rgba(14,165,233,0.12)';this.style.color='#7dd3fc'">✕</button>
+<div id="authOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(12px)">
+  <div class="auth-box" style="position:relative;background:#FFFFFF;border:1px solid #BAE6FD;border-radius:24px;padding:42px 38px;width:420px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.15), 0 32px 80px rgba(15,23,42,0.25)">
+    <button type="button" onclick="authClose()" aria-label="Close sign in dialog" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border:none;border-radius:50%;background:#F0F9FF;color:#0369A1;font-size:16px;line-height:1;cursor:pointer;transition:background .15s,color .15s" onmouseover="this.style.background='#E0F2FE';this.style.color='#0F172A'" onmouseout="this.style.background='#F0F9FF';this.style.color='#0369A1'">✕</button>
     <div style="text-align:center;margin-bottom:30px">
       <!-- Logo with sky-blue glow ring -->
-      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#38BDF8);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 0 6px rgba(14,165,233,0.2), 0 0 30px rgba(14,165,233,0.4);padding:4px">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#38BDF8);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 0 6px rgba(14,165,233,0.15), 0 0 30px rgba(14,165,233,0.3);padding:4px">
         <img src="logo.png" alt="Reso" style="width:56px;height:56px;border-radius:50%;object-fit:cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div style="display:none;width:56px;height:56px;align-items:center;justify-content:center">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
       </div>
-      <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:#f0f9ff;letter-spacing:-0.02em">Welcome to Reso</h2>
-      <p style="margin:8px 0 0;color:#7dd3fc;font-size:0.9rem">Sign in or create a permanent account</p>
+      <h2 style="margin:0;font-size:1.5rem;font-weight:800;color:#0F172A;letter-spacing:-0.02em">Welcome to Reso</h2>
+      <p style="margin:8px 0 0;color:#475569;font-size:0.9rem">Sign in or create a permanent account</p>
     </div>
     <!-- Tabs -->
-    <div style="display:flex;background:#05243a;border-radius:12px;padding:4px;margin-bottom:24px;gap:4px;border:1px solid rgba(14,165,233,0.3)">
+    <div style="display:flex;background:#F0F9FF;border-radius:12px;padding:4px;margin-bottom:24px;gap:4px;border:1px solid #BAE6FD">
       <button id="authTabLogin" onclick="authShowTab('login')" style="flex:1;padding:9px;border:none;border-radius:9px;background:linear-gradient(135deg,#0EA5E9,#38BDF8);color:#fff;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(14,165,233,0.3)">Sign In</button>
-      <button id="authTabRegister" onclick="authShowTab('register')" style="flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:#7dd3fc;font-weight:600;cursor:pointer;transition:all .2s">Register</button>
+      <button id="authTabRegister" onclick="authShowTab('register')" style="flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:#0369A1;font-weight:600;cursor:pointer;transition:all .2s">Register</button>
     </div>
     <!-- Login Form -->
     <div id="authLoginForm">
       <label for="authLoginUser" class="auth-label">Username</label>
-      <input id="authLoginUser" class="auth-input" placeholder="Username" aria-label="Username" autocomplete="username" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <input id="authLoginUser" class="auth-input" placeholder="Username" aria-label="Username" autocomplete="username">
       <label for="authLoginPass" class="auth-label">Password</label>
-      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password" aria-label="Password" autocomplete="current-password" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <input id="authLoginPass" type="password" class="auth-input" placeholder="Password" aria-label="Password" autocomplete="current-password" style="margin-bottom:16px">
       <button class="auth-btn-primary" onclick="authLogin()">Sign In</button>
-      <p id="authLoginErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
+      <p id="authLoginErr" style="color:#DC2626;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
     <!-- Register Form -->
     <div id="authRegisterForm" style="display:none">
       <label for="authRegUser" class="auth-label">Username</label>
-      <input id="authRegUser" class="auth-input" placeholder="Username (min 3 chars)" aria-label="Username, minimum 3 characters" autocomplete="username" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <input id="authRegUser" class="auth-input" placeholder="Username (min 3 chars)" aria-label="Username, minimum 3 characters" autocomplete="username">
       <label for="authRegEmail" class="auth-label">Email (optional)</label>
-      <input id="authRegEmail" class="auth-input" placeholder="Email (optional)" aria-label="Email, optional" autocomplete="email" style="border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <input id="authRegEmail" class="auth-input" placeholder="Email (optional)" aria-label="Email, optional" autocomplete="email">
       <label for="authRegPass" class="auth-label">Password</label>
-      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)" aria-label="Password, minimum 6 characters" autocomplete="new-password" style="margin-bottom:16px;border:1px solid rgba(14,165,233,0.3);background:#042033;color:#f0f9ff">
+      <input id="authRegPass" type="password" class="auth-input" placeholder="Password (min 6 chars)" aria-label="Password, minimum 6 characters" autocomplete="new-password" style="margin-bottom:16px">
       <button class="auth-btn-sky" onclick="authRegister()">Create Account</button>
-      <p id="authRegErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
+      <p id="authRegErr" style="color:#DC2626;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
-    <p style="text-align:center;margin:18px 0 0;font-size:0.82rem;color:#7dd3fc">
-      Continue as guest? <a href="#" onclick="authClose();return false;" style="color:#38BDF8;text-decoration:none;font-weight:700;text-shadow:0 0 10px rgba(56,189,248,0.3)">Skip for now</a>
+    <p style="text-align:center;margin:18px 0 0;font-size:0.82rem;color:#475569">
+      Continue as guest? <a href="#" onclick="authClose();return false;" style="color:#0284C7;text-decoration:none;font-weight:700">Skip for now</a>
     </p>
   </div>
 </div>
 
 <!-- Secret Key Modal (shown once at registration) -->
-<div id="secretModal" style="display:none;position:fixed;inset:0;background:rgba(2,12,20,0.92);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
-  <div style="background:#031726;border:2px solid #0EA5E9;border-radius:24px;padding:36px;width:500px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.3)">
-    <h3 style="margin:0 0 8px;color:#38BDF8;font-size:1.2rem;font-weight:800">⚠️ Save Your Secret Key NOW</h3>
-    <p style="margin:0 0 16px;color:#7dd3fc;font-size:0.9rem">This is shown <strong style="color:#f0f9ff">ONCE</strong> and never stored. If you lose it, you cannot sign Stellar transactions.</p>
-    <div id="secretKeyDisplay" style="background:#042033;border-radius:10px;padding:16px;font-family:monospace;font-size:0.88rem;word-break:break-all;border:1px solid rgba(14,165,233,0.4);margin-bottom:16px;color:#38BDF8;line-height:1.6"></div>
+<div id="secretModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+  <div style="background:#FFFFFF;border:2px solid #0EA5E9;border-radius:24px;padding:36px;width:500px;max-width:95vw;box-shadow:0 0 40px rgba(14,165,233,0.2), 0 24px 60px rgba(15,23,42,0.2)">
+    <h3 style="margin:0 0 8px;color:#0284C7;font-size:1.2rem;font-weight:800">⚠️ Save Your Secret Key NOW</h3>
+    <p style="margin:0 0 16px;color:#475569;font-size:0.9rem">This is shown <strong style="color:#0F172A">ONCE</strong> and never stored. If you lose it, you cannot sign Stellar transactions.</p>
+    <div id="secretKeyDisplay" style="background:#F0F9FF;border-radius:10px;padding:16px;font-family:monospace;font-size:0.88rem;word-break:break-all;border:1px solid #BAE6FD;margin-bottom:16px;color:#0369A1;line-height:1.6"></div>
     <div style="display:flex;gap:10px">
-      <button onclick="authCopySecret()" style="flex:1;padding:11px;border:1px solid rgba(14,165,233,0.4);border-radius:10px;background:#042033;color:#e2e8f0;font-weight:600;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#38BDF8'" onmouseout="this.style.borderColor='rgba(14,165,233,0.4)'">📋 Copy Key</button>
+      <button onclick="authCopySecret()" style="flex:1;padding:11px;border:1px solid #BAE6FD;border-radius:10px;background:#FFFFFF;color:#0F172A;font-weight:600;cursor:pointer;transition:border-color .2s" onmouseover="this.style.borderColor='#0EA5E9'" onmouseout="this.style.borderColor='#BAE6FD'">📋 Copy Key</button>
       <button onclick="authCloseSecret()" style="flex:1;padding:11px;border:none;border-radius:10px;background:#0EA5E9;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(14,165,233,0.3)">✓ I have saved it</button>
     </div>
   </div>
