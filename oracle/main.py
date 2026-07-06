@@ -45,19 +45,158 @@ app.add_middleware(
 state_lock = threading.Lock()
 
 # ---------------------------------------------------------------------------
-# SQLite Database Setup
+# Dynamic Database Setup (Postgres / Supabase vs SQLite fallback)
 # ---------------------------------------------------------------------------
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+IS_POSTGRES = DATABASE_URL is not None
+
+if IS_POSTGRES:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    print("Database: Connecting to Supabase Cloud PostgreSQL")
+else:
+    print("Database: Connecting to local SQLite file")
+
+class DbCursorWrapper:
+    def __init__(self, cursor, is_pg=False):
+        self.cursor = cursor
+        self.is_pg = is_pg
+
+    def execute(self, sql, params=None):
+        if not self.is_pg:
+            # SQLite: keep parameters as ?
+            if params is not None:
+                self.cursor.execute(sql, params)
+            else:
+                self.cursor.execute(sql)
+            return self
+
+        # PostgreSQL Query translation layer:
+        # 1. Translate parameter placeholders from ? to %s
+        sql_translated = sql.replace("?", "%s")
+
+        # 2. Translate table column types or constraints for dynamic creation
+        sql_translated = sql_translated.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+        sql_translated = sql_translated.replace("REAL", "DOUBLE PRECISION")
+        sql_translated = sql_translated.replace("TEXT", "VARCHAR(255)")
+
+        # 3. Translate UPSERT commands
+        if "INSERT OR REPLACE INTO rules" in sql_translated:
+            sql_translated = sql_translated.replace(
+                "INSERT OR REPLACE INTO rules (id, max_amount, daily_limit, min_kyc_tier, sanctions_enabled) VALUES (1,%s,%s,%s,%s)",
+                "INSERT INTO rules (id, max_amount, daily_limit, min_kyc_tier, sanctions_enabled) VALUES (1,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET max_amount=EXCLUDED.max_amount, daily_limit=EXCLUDED.daily_limit, min_kyc_tier=EXCLUDED.min_kyc_tier, sanctions_enabled=EXCLUDED.sanctions_enabled"
+            )
+        elif "INSERT OR REPLACE INTO wallets" in sql_translated:
+            sql_translated = sql_translated.replace(
+                "INSERT OR REPLACE INTO wallets (address, kyc_tier, is_sanctioned, name, daily_volume) VALUES (%s,%s,%s,%s,%s)",
+                "INSERT INTO wallets (address, kyc_tier, is_sanctioned, name, daily_volume) VALUES (%s,%s,%s,%s,%s) ON CONFLICT (address) DO UPDATE SET kyc_tier=EXCLUDED.kyc_tier, is_sanctioned=EXCLUDED.is_sanctioned, name=EXCLUDED.name, daily_volume=EXCLUDED.daily_volume"
+            )
+        elif "INSERT OR REPLACE INTO escrows" in sql_translated:
+            sql_translated = sql_translated.replace(
+                "INSERT OR REPLACE INTO escrows (recipient, sender, amount, unlock_time, onchain_tx) VALUES (%s,%s,%s,%s,%s)",
+                "INSERT INTO escrows (recipient, sender, amount, unlock_time, onchain_tx) VALUES (%s,%s,%s,%s,%s) ON CONFLICT (recipient) DO UPDATE SET sender=EXCLUDED.sender, amount=EXCLUDED.amount, unlock_time=EXCLUDED.unlock_time, onchain_tx=EXCLUDED.onchain_tx"
+            )
+        elif "INSERT OR REPLACE INTO soulbound_tokens" in sql_translated:
+            sql_translated = sql_translated.replace(
+                "INSERT OR REPLACE INTO soulbound_tokens VALUES (%s,%s,%s,%s,%s,%s,0,'reso-oracle-v1',%s)",
+                "INSERT INTO soulbound_tokens VALUES (%s,%s,%s,%s,%s,%s,0,'reso-oracle-v1',%s) ON CONFLICT (token_id) DO UPDATE SET wallet_address=EXCLUDED.wallet_address, kyc_tier=EXCLUDED.kyc_tier, jurisdiction=EXCLUDED.jurisdiction, issued_at=EXCLUDED.issued_at, expires_at=EXCLUDED.expires_at, metadata=EXCLUDED.metadata"
+            )
+        elif "INSERT OR REPLACE INTO compliance_proofs" in sql_translated:
+            sql_translated = sql_translated.replace(
+                "INSERT OR REPLACE INTO compliance_proofs (proof_id,wallet_address,proof_type,issued_at,valid_until,renewal_count,active,zk_commitment) VALUES (%s,%s,%s,%s,%s,0,1,%s)",
+                "INSERT INTO compliance_proofs (proof_id,wallet_address,proof_type,issued_at,valid_until,renewal_count,active,zk_commitment) VALUES (%s,%s,%s,%s,%s,0,1,%s) ON CONFLICT (proof_id) DO UPDATE SET wallet_address=EXCLUDED.wallet_address, proof_type=EXCLUDED.proof_type, issued_at=EXCLUDED.issued_at, valid_until=EXCLUDED.valid_until, zk_commitment=EXCLUDED.zk_commitment"
+            )
+        elif "INSERT OR IGNORE" in sql_translated:
+            sql_translated = sql_translated.replace("INSERT OR IGNORE", "INSERT")
+            if "rules" in sql_translated:
+                sql_translated += " ON CONFLICT (id) DO NOTHING"
+            elif "wallets" in sql_translated:
+                sql_translated += " ON CONFLICT (address) DO NOTHING"
+            elif "escrows" in sql_translated:
+                sql_translated += " ON CONFLICT (recipient) DO NOTHING"
+            elif "deadman_registry" in sql_translated:
+                sql_translated += " ON CONFLICT (wallet_address) DO NOTHING"
+            elif "kyc_tree" in sql_translated:
+                sql_translated += " ON CONFLICT (child_wallet) DO NOTHING"
+            elif "canary_freezes" in sql_translated:
+                sql_translated += " ON CONFLICT (wallet_address) DO NOTHING"
+            elif "whistleblower_reports" in sql_translated:
+                sql_translated += " ON CONFLICT (report_id) DO NOTHING"
+
+        if params is not None:
+            self.cursor.execute(sql_translated, params)
+        else:
+            self.cursor.execute(sql_translated)
+        return self
+
+    def fetchone(self):
+        row = self.cursor.fetchone()
+        if row is None:
+            return None
+        return dict(row) if self.is_pg else row
+
+    def fetchall(self):
+        rows = self.cursor.fetchall()
+        return [dict(r) for r in rows] if self.is_pg else rows
+
+    def executescript(self, sql_script):
+        if not self.is_pg:
+            self.cursor.executescript(sql_script)
+            return self
+        
+        # PostgreSQL Script conversion: split commands and execute
+        commands = sql_script.split(";")
+        for cmd in commands:
+            cmd_clean = cmd.strip()
+            if cmd_clean:
+                self.execute(cmd_clean)
+        return self
+
+class DbConnectionWrapper:
+    def __init__(self, conn, is_pg=False):
+        self.conn = conn
+        self.is_pg = is_pg
+
+    def cursor(self):
+        return DbCursorWrapper(self.conn.cursor(), is_pg=self.is_pg)
+
+    def execute(self, sql, params=None):
+        return DbCursorWrapper(self.conn.cursor(), is_pg=self.is_pg).execute(sql, params)
+
+    def executescript(self, sql_script):
+        return DbCursorWrapper(self.conn.cursor(), is_pg=self.is_pg).executescript(sql_script)
+
+    def commit(self):
+        self.conn.commit()
+
+    def rollback(self):
+        self.conn.rollback()
+
+    def close(self):
+        self.conn.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self.rollback()
+        else:
+            self.commit()
 
 DB_PATH = "/data/reso.db" if os.path.isdir("/data") else os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "reso.db"
 )
 
-
 def get_conn():
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
-
+    if IS_POSTGRES:
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        return DbConnectionWrapper(conn, is_pg=True)
+    else:
+        conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        return DbConnectionWrapper(conn, is_pg=False)
 
 def init_db():
     with get_conn() as conn:
@@ -115,7 +254,6 @@ def init_db():
                 w,
             )
         conn.commit()
-
 
 init_db()
 
