@@ -14,8 +14,9 @@ ZK-native compliance infrastructure built on Stellar Protocol 25.
 
 ## Live
 
-- **Landing**: [reso-nine.vercel.app](https://reso-nine.vercel.app)
-- **App Console**: [reso-nine.vercel.app/app](https://reso-nine.vercel.app/app)
+- **App Console**: [reso-nine.vercel.app](https://reso-nine.vercel.app)
+- **Landing page**: [reso-nine.vercel.app/landing](https://reso-nine.vercel.app/landing)
+- **Docs**: [reso-nine.vercel.app/docs](https://reso-nine.vercel.app/docs)
 - **API (HF Space)**: [salmanch123-reso.hf.space](https://salmanch123-reso.hf.space)
 
 ## Stack
