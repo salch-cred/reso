@@ -188,11 +188,11 @@ h1.display{
 }
 .hero-cta{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:20px}
 .hero-note{
-  font-size:13px; color:var(--faint);
-  display:flex; gap:18px; justify-content:center; flex-wrap:wrap;
+  font-size:14px; color:var(--ink-2); font-weight:500;
+  display:flex; gap:20px; justify-content:center; flex-wrap:wrap;
 }
 .hero-note span{display:inline-flex; align-items:center; gap:6px}
-.hero-note i{font-size:14px; color:var(--green)}
+.hero-note i{font-size:16px; color:var(--indigo)}
 
 /* ---- CONSOLE MOCKUP ---- */
 .console{
