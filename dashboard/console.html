@@ -992,6 +992,7 @@ async function authLogin() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Login failed');
     localStorage.setItem(AUTH_KEY, d.session_token);
+    localStorage.setItem('reso_session_expires', Date.now() + 10 * 60 * 1000);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify({username:d.username,public_key:d.public_key}));
     authSetUser(d.username, d.public_key);
     showToast('Welcome back, ' + d.username + '!', true);
@@ -1010,6 +1011,7 @@ async function authRegister() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail || 'Registration failed');
     localStorage.setItem(AUTH_KEY, d.session_token);
+    localStorage.setItem('reso_session_expires', Date.now() + 10 * 60 * 1000);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify({username:d.username,public_key:d.public_key}));
     authSetUser(d.username, d.public_key);
     if (d.secret_key) {
@@ -1030,15 +1032,28 @@ function authCloseSecret() {
 function authLogout() {
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem(AUTH_USER_KEY);
+  localStorage.removeItem('reso_session_expires');
   document.getElementById('userBadge').style.display = 'none';
   document.getElementById('authBtn').style.display = 'block';
   showToast('Logged out successfully.', true);
   authShowModal();
   if (typeof loadWallets === 'function') loadWallets();
 }
+
+function authCheckTimeout() {
+  const exp = localStorage.getItem('reso_session_expires');
+  if (exp && Date.now() > parseInt(exp, 10)) {
+    authLogout();
+    showToast('Session expired (10 min limit). Please log in again.', false);
+  }
+}
+setInterval(authCheckTimeout, 30000);
+
 async function authRestoreSession() {
   const token = localStorage.getItem(AUTH_KEY);
-  if (!token) {
+  const exp = localStorage.getItem('reso_session_expires');
+  if (!token || (exp && Date.now() > parseInt(exp, 10))) {
+    if (token) localStorage.removeItem(AUTH_KEY);
     authShowModal();
     return;
   }
