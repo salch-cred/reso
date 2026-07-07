@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Reso — 3D Motion Presentation</title>
+<title>Reso — Immersive 3D Experience</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
 <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
 <style>
   :root {
-    --bg: #020b14;
+    --bg: #01080e;
     --accent: #0EA5E9;
     --accent2: #38BDF8;
     --text: #f0f9ff;
@@ -107,7 +107,7 @@
     letter-spacing: 0.05em;
   }
 
-  /* Buttons overlay - clickable */
+  /* Controls */
   .controls {
     position: absolute;
     bottom: 40px;
@@ -127,14 +127,41 @@
     font-size: 0.9rem;
     backdrop-filter: blur(8px);
     transition: background 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
   .btn:hover {
     background: rgba(14, 165, 233, 0.35);
     border-color: var(--accent);
   }
+
+  /* Audio Prompt Overlay */
+  #audio-prompt {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 11, 20, 0.95);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    backdrop-filter: blur(15px);
+    transition: opacity 0.5s ease;
+  }
 </style>
 </head>
 <body>
+
+<div id="audio-prompt">
+  <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#38BDF8);display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(14,165,233,0.4)">
+    <img src="logo.png" alt="Logo" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+  </div>
+  <h2 style="margin:0;font-size:1.6rem;font-weight:800;color:#f0f9ff;letter-spacing:-0.02em;text-align:center">Experience Reso 3D</h2>
+  <p style="margin:0;color:#7dd3fc;font-size:1rem;text-align:center;max-width:320px">Listen to the spatial soundscape accompanying the network simulation.</p>
+  <button class="btn" onclick="startExperience()" style="background:#0EA5E9;border:none;padding:12px 30px;font-size:1rem;box-shadow:0 4px 15px rgba(14,165,233,0.4)"><i class="hgi-stroke hgi-play"></i> Start Experience</button>
+</div>
 
 <div id="canvas-container"></div>
 
@@ -142,7 +169,7 @@
   <div class="hud-top">
     <div class="brand">
       <img src="logo.png" alt="Logo">
-      <span>Reso 3D Presentation</span>
+      <span>Reso Spatial Experience</span>
     </div>
   </div>
   <div class="hud-center">
@@ -157,6 +184,7 @@
 </div>
 
 <div class="controls">
+  <button id="mute-btn" class="btn" onclick="toggleMute()"><i class="hgi-stroke hgi-volume-high"></i> Sound On</button>
   <button class="btn" onclick="restartVideo()"><i class="hgi-stroke hgi-refresh"></i> Replay</button>
   <a href="/" class="btn" style="text-decoration:none"><i class="hgi-stroke hgi-arrow-right-01"></i> Dashboard</a>
 </div>
@@ -166,18 +194,88 @@
 
 <script>
   let scene, camera, renderer;
-  let sphereMesh, nodeParticles, ringMeshes = [];
+  let sphereMesh, nodeParticles, connectionLines, ringMeshes = [];
+  let starField;
   let startTime = Date.now();
-  const duration = 30000; // 30 seconds
+  const duration = 30000;
+  
+  // Web Audio Synth setup
+  let audioCtx, droneOsc, modulationOsc, filterNode, mainGain;
+  let audioInitialized = false;
+
+  function initAudio() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioCtx();
+      
+      mainGain = audioCtx.createGain();
+      mainGain.gain.setValueAtTime(0.08, audioCtx.currentTime); // Low background volume
+      mainGain.connect(audioCtx.destination);
+      
+      // Main deep drone oscillator
+      droneOsc = audioCtx.createOscillator();
+      droneOsc.type = 'sawtooth';
+      droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // A1 note
+      
+      // LFO modulation oscillator for spatial drift
+      modulationOsc = audioCtx.createOscillator();
+      modulationOsc.type = 'sine';
+      modulationOsc.frequency.setValueAtTime(0.2, audioCtx.currentTime); // slow wave
+      
+      const modGain = audioCtx.createGain();
+      modGain.gain.setValueAtTime(15, audioCtx.currentTime);
+      
+      // Filter setup
+      filterNode = audioCtx.createBiquadFilter();
+      filterNode.type = 'lowpass';
+      filterNode.frequency.setValueAtTime(120, audioCtx.currentTime);
+      filterNode.Q.setValueAtTime(3, audioCtx.currentTime);
+      
+      // Connect routing
+      modulationOsc.connect(modGain);
+      modGain.connect(filterNode.frequency);
+      
+      droneOsc.connect(filterNode);
+      filterNode.connect(mainGain);
+      
+      droneOsc.start();
+      modulationOsc.start();
+      
+      audioInitialized = true;
+    } catch(e) {
+      console.warn("Audio Context init failed:", e);
+    }
+  }
+
+  function startExperience() {
+    document.getElementById('audio-prompt').style.opacity = 0;
+    setTimeout(() => {
+      document.getElementById('audio-prompt').style.display = 'none';
+    }, 500);
+    initAudio();
+    init3D();
+  }
+
+  function toggleMute() {
+    if (!audioCtx) return;
+    const btn = document.getElementById('mute-btn');
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+      btn.innerHTML = '<i class="hgi-stroke hgi-volume-high"></i> Sound On';
+    } else {
+      audioCtx.suspend();
+      btn.innerHTML = '<i class="hgi-stroke hgi-volume-mute"></i> Muted';
+    }
+  }
 
   function init3D() {
     const container = document.getElementById('canvas-container');
     
     // Scene setup
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2('#020b14', 0.015);
+    scene.fog = new THREE.FogExp2('#01080e', 0.015);
 
-    // Camera setup
+    // Camera
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 8;
 
@@ -188,28 +286,28 @@
     renderer.setClearColor(scene.fog.color);
     container.appendChild(renderer.domElement);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0x0a1e3f, 1.5);
+    // Ambient Lighting
+    const ambientLight = new THREE.AmbientLight(0x0a1e3f, 1.8);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x0EA5E9, 2.5, 50);
+    const pointLight = new THREE.PointLight(0x0EA5E9, 3, 50);
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
-    // 3D Object 1: Rotating Wireframe Cryptographic Sphere (ZK Accumulator)
+    // 1. ZK Wireframe Sphere
     const geom = new THREE.IcosahedronGeometry(2, 2);
     const mat = new THREE.MeshBasicMaterial({
       color: 0x38BDF8,
       wireframe: true,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.35
     });
     sphereMesh = new THREE.Mesh(geom, mat);
     scene.add(sphereMesh);
 
-    // 3D Object 2: Concentric Cryptographic Protection Rings
+    // 2. Concentric rings
     for (let i = 0; i < 3; i++) {
-      const ringGeom = new THREE.RingGeometry(2.4 + i*0.4, 2.45 + i*0.4, 64);
+      const ringGeom = new THREE.RingGeometry(2.4 + i*0.4, 2.43 + i*0.4, 64);
       const ringMat = new THREE.MeshBasicMaterial({
         color: 0x0EA5E9,
         side: THREE.DoubleSide,
@@ -223,26 +321,71 @@
       ringMeshes.push(ring);
     }
 
-    // 3D Object 3: Stellar Network Nodes (Particles)
-    const particleCount = 150;
-    const particleGeom = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      positions[i] = (Math.random() - 0.5) * 15;
-      positions[i+1] = (Math.random() - 0.5) * 15;
-      positions[i+2] = (Math.random() - 0.5) * 15;
+    // 3. Stellar Network Nodes (3D Particle field)
+    const particleCount = 80;
+    const positions = [];
+    for (let i = 0; i < particleCount; i++) {
+      positions.push(
+        (Math.random() - 0.5) * 12,
+        (Math.random() - 0.5) * 12,
+        (Math.random() - 0.5) * 12
+      );
     }
-    particleGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    
-    // Circle particle texture
+    const particleGeom = new THREE.BufferGeometry();
+    particleGeom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     const pMat = new THREE.PointsMaterial({
       color: 0x38BDF8,
-      size: 0.12,
+      size: 0.15,
       transparent: true,
-      opacity: 0.6
+      opacity: 0.7
     });
     nodeParticles = new THREE.Points(particleGeom, pMat);
     scene.add(nodeParticles);
+
+    // 4. Connective Transaction Flow Lines
+    const lineIndices = [];
+    for (let i = 0; i < particleCount; i++) {
+      for (let j = i + 1; j < particleCount; j++) {
+        const dx = positions[i*3] - positions[j*3];
+        const dy = positions[i*3+1] - positions[j*3+1];
+        const dz = positions[i*3+2] - positions[j*3+2];
+        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        if (dist < 3.5) {
+          lineIndices.push(i, j);
+        }
+      }
+    }
+    const lineGeom = new THREE.BufferGeometry();
+    lineGeom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    lineGeom.setIndex(lineIndices);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0x0EA5E9,
+      transparent: true,
+      opacity: 0.15
+    });
+    connectionLines = new THREE.LineSegments(lineGeom, lineMat);
+    scene.add(connectionLines);
+
+    // 5. Starfield Background
+    const starsCount = 400;
+    const starPos = [];
+    for (let i = 0; i < starsCount; i++) {
+      starPos.push(
+        (Math.random() - 0.5) * 40,
+        (Math.random() - 0.5) * 40,
+        (Math.random() - 0.5) * 40
+      );
+    }
+    const starGeom = new THREE.BufferGeometry();
+    starGeom.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.05,
+      transparent: true,
+      opacity: 0.3
+    });
+    starField = new THREE.Points(starGeom, starMat);
+    scene.add(starField);
 
     animate();
   }
@@ -257,34 +400,40 @@
     const formattedSec = Math.floor(currentSecond).toString().padStart(2, '0');
     document.getElementById('timer').textContent = `00:${formattedSec} / 00:30`;
 
-    // Rotate geometries
+    // Rotations
     if (sphereMesh) {
-      sphereMesh.rotation.y += 0.003;
+      sphereMesh.rotation.y += 0.0025;
       sphereMesh.rotation.x += 0.001;
     }
-    
     ringMeshes.forEach((ring, idx) => {
-      ring.rotation.z += 0.002 * (idx + 1);
+      ring.rotation.z += 0.001 * (idx + 1);
     });
-
     if (nodeParticles) {
-      nodeParticles.rotation.y -= 0.001;
+      nodeParticles.rotation.y += 0.0006;
+      connectionLines.rotation.y += 0.0006;
+    }
+    if (starField) {
+      starField.rotation.y -= 0.0002;
     }
 
-    // Orbit Camera path over time (30s presentation)
-    camera.position.x = Math.sin(elapsed * 0.00015) * 8;
-    camera.position.z = Math.cos(elapsed * 0.00015) * 8;
+    // Camera fly path
+    camera.position.x = Math.sin(elapsed * 0.00015) * 9;
+    camera.position.z = Math.cos(elapsed * 0.00015) * 9;
     camera.lookAt(0, 0, 0);
+
+    // Audio frequency shift based on camera coordinates
+    if (audioInitialized && audioCtx.state === 'running') {
+      const droneFreq = 55 + Math.abs(camera.position.x) * 4;
+      droneOsc.frequency.setValueAtTime(droneFreq, audioCtx.currentTime);
+      filterNode.frequency.setValueAtTime(120 + Math.abs(camera.position.z) * 40, audioCtx.currentTime);
+    }
 
     // Toggle slide subtitles
     let activeSlide = 0;
     if (currentSecond >= 22.5) {
       activeSlide = 3;
-      // Morph wireframe to be solid/dense
-      if (sphereMesh) sphereMesh.material.opacity = 0.85;
     } else if (currentSecond >= 15) {
       activeSlide = 2;
-      if (sphereMesh) sphereMesh.material.opacity = 0.45;
     } else if (currentSecond >= 7.5) {
       activeSlide = 1;
     } else {
@@ -316,8 +465,6 @@
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-
-  init3D();
 </script>
 </body>
 </html>
