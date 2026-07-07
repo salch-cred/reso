@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://salmanch123-reso.hf.space/api/:path*" },
     { "source": "/landing", "destination": "/landing.html" },
-    { "source": "/docs", "destination": "/docs.html" }
+    { "source": "/docs", "destination": "/docs.html" },
+    { "source": "/intro", "destination": "/intro.html" }
   ]
 }

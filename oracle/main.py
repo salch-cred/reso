@@ -1612,4 +1612,10 @@ if os.path.exists(dashboard_path):
       if os.path.exists(doc_file):
           with open(doc_file, "r", encoding="utf-8") as f: return f.read()
       return "<h1>Docs Page</h1>"
+    @app.get("/intro", response_class=HTMLResponse)
+    def read_intro():
+      intro_file = os.path.join(dashboard_path, "intro.html")
+      if os.path.exists(intro_file):
+          with open(intro_file, "r", encoding="utf-8") as f: return f.read()
+      return "<h1>Intro Presentation Page</h1>"
     app.mount("/static", StaticFiles(directory=dashboard_path), name="dashboard")

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reso — Intro Video Presentation</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
+<style>
+  :root {
+    --bg: #020b14;
+    --accent: #0EA5E9;
+    --accent2: #38BDF8;
+    --text: #f0f9ff;
+    --font: 'Uncut Sans', sans-serif;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Overlay HUD */
+  .hud {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px;
+    z-index: 10;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+
+  .hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
+  }
+  .brand span {
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hud-center {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .title-text {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    text-shadow: 0 0 40px rgba(14, 165, 233, 0.3);
+  }
+  .title-text.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hud-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .time-indicator {
+    font-size: 0.9rem;
+    color: var(--accent2);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* Buttons overlay - clickable */
+  .controls {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    z-index: 20;
+    display: flex;
+    gap: 12px;
+  }
+  .btn {
+    background: rgba(14, 165, 233, 0.15);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn:hover {
+    background: rgba(14, 165, 233, 0.35);
+    border-color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="videoCanvas"></canvas>
+
+<div class="hud">
+  <div class="hud-top">
+    <div class="brand">
+      <img src="logo.png" alt="Logo">
+      <span>Reso Motion Presentation</span>
+    </div>
+  </div>
+  <div class="hud-center">
+    <div id="slide0" class="title-text active">Cryptographic Compliance settled natively on Stellar</div>
+    <div id="slide1" class="title-text">Prove compliance. Never expose your balances or key details</div>
+    <div id="slide2" class="title-text">Additive Homomorphic Limit Verification via Paillier ZK</div>
+    <div id="slide3" class="title-text">Reso — Zero-Knowledge Compliance settled.</div>
+  </div>
+  <div class="hud-bottom">
+    <div class="time-indicator" id="timer">00:00</div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn" onclick="restartVideo()"><i class="hgi-stroke hgi-refresh"></i> Replay</button>
+  <a href="/" class="btn" style="text-decoration:none"><i class="hgi-stroke hgi-arrow-right-01"></i> Dashboard</a>
+</div>
+
+<script>
+  const canvas = document.getElementById('videoCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  let animationFrameId;
+  let startTime = Date.now();
+  let duration = 30000; // 30 seconds
+  let isRunning = true;
+
+  function resize() {
+    canvas.width = window.innerWidth * window.devicePixelRatio;
+    canvas.height = window.innerHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Particle systems
+  const particles = [];
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 2 + 1,
+      dx: (Math.random() - 0.5) * 1.5,
+      dy: (Math.random() - 0.5) * 1.5,
+      hue: 200 + Math.random() * 20
+    });
+  }
+
+  function drawParticles(elapsed) {
+    particles.forEach(p => {
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0 || p.x > window.innerWidth) p.dx *= -1;
+      if (p.y < 0 || p.y > window.innerHeight) p.dy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, 0.3)`;
+      ctx.fill();
+    });
+  }
+
+  function drawCryptographicRings(elapsed, w, h) {
+    const cx = w / 2;
+    const cy = h / 2;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(elapsed * 0.0003);
+
+    for (let r = 80; r <= 240; r += 40) {
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 1.5);
+      ctx.strokeStyle = `rgba(14, 165, 233, ${0.4 - (r / 800)})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawNodes(elapsed, w, h) {
+    const points = [
+      {x: w*0.3, y: h*0.4},
+      {x: w*0.4, y: h*0.6},
+      {x: w*0.6, y: h*0.4},
+      {x: w*0.7, y: h*0.6},
+    ];
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    points.forEach((p, idx) => {
+      if(idx > 0) ctx.lineTo(p.x, p.y);
+    });
+    ctx.strokeStyle = 'rgba(14, 165, 233, 0.2)';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    points.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#38BDF8';
+      ctx.fill();
+    });
+  }
+
+  function render() {
+    if (!isRunning) return;
+
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const elapsed = Date.now() - startTime;
+    const currentSecond = Math.min(elapsed / 1000, 30);
+
+    // Update timer HUD
+    const formattedSec = Math.floor(currentSecond).toString().padStart(2, '0');
+    document.getElementById('timer').textContent = `00:${formattedSec} / 00:30`;
+
+    // Clear background
+    ctx.fillStyle = '#020b14';
+    ctx.fillRect(0, 0, w, h);
+
+    // Dynamic grid overlay
+    ctx.strokeStyle = 'rgba(14, 165, 233, 0.04)';
+    ctx.lineWidth = 1;
+    const gridSize = 60;
+    for (let x = 0; x < w; x += gridSize) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y < h; y += gridSize) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    drawParticles(elapsed);
+
+    // Slide logic
+    let activeSlide = 0;
+    if (currentSecond >= 25) {
+      activeSlide = 3;
+      // Finale logo rendering
+      ctx.save();
+      ctx.translate(w/2, h/2 - 40);
+      const scale = Math.min(1, (currentSecond - 25) / 1.5);
+      ctx.scale(scale, scale);
+      
+      // Draw a neat sky-blue shield icon representing the logo
+      ctx.beginPath();
+      ctx.moveTo(0, -40);
+      ctx.lineTo(35, -20);
+      ctx.lineTo(35, 20);
+      ctx.lineTo(0, 45);
+      ctx.lineTo(-35, 20);
+      ctx.lineTo(-35, -20);
+      ctx.closePath();
+      ctx.fillStyle = '#0EA5E9';
+      ctx.fill();
+      ctx.strokeStyle = '#38BDF8';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.restore();
+    } else if (currentSecond >= 15) {
+      activeSlide = 2;
+      // Draw homomorphic folding waves
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y = h/2 + Math.sin(x * 0.01 + elapsed * 0.003) * 30;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.stroke();
+    } else if (currentSecond >= 7) {
+      activeSlide = 1;
+      drawNodes(elapsed, w, h);
+    } else {
+      activeSlide = 0;
+      drawCryptographicRings(elapsed, w, h);
+    }
+
+    // Toggle slide subtitles
+    for (let i = 0; i < 4; i++) {
+      const el = document.getElementById(`slide${i}`);
+      if (el) {
+        if (i === activeSlide) el.classList.add('active');
+        else el.classList.remove('active');
+      }
+    }
+
+    if (elapsed >= duration) {
+      // Loop video
+      startTime = Date.now();
+    }
+
+    animationFrameId = requestAnimationFrame(render);
+  }
+
+  function restartVideo() {
+    startTime = Date.now();
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>
