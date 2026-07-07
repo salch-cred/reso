@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Reso — Intro Video Presentation</title>
+<title>Reso — 3D Motion Presentation</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
@@ -31,7 +31,7 @@
     align-items: center;
   }
 
-  canvas {
+  #canvas-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -136,13 +136,13 @@
 </head>
 <body>
 
-<canvas id="videoCanvas"></canvas>
+<div id="canvas-container"></div>
 
 <div class="hud">
   <div class="hud-top">
     <div class="brand">
       <img src="logo.png" alt="Logo">
-      <span>Reso Motion Presentation</span>
+      <span>Reso 3D Presentation</span>
     </div>
   </div>
   <div class="hud-center">
@@ -152,7 +152,7 @@
     <div id="slide3" class="title-text">Reso — Zero-Knowledge Compliance settled.</div>
   </div>
   <div class="hud-bottom">
-    <div class="time-indicator" id="timer">00:00</div>
+    <div class="time-indicator" id="timer">00:00 / 00:30</div>
   </div>
 </div>
 
@@ -161,96 +161,95 @@
   <a href="/" class="btn" style="text-decoration:none"><i class="hgi-stroke hgi-arrow-right-01"></i> Dashboard</a>
 </div>
 
+<!-- Load open source Three.js library from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
-  const canvas = document.getElementById('videoCanvas');
-  const ctx = canvas.getContext('2d');
-  
-  let animationFrameId;
+  let scene, camera, renderer;
+  let sphereMesh, nodeParticles, ringMeshes = [];
   let startTime = Date.now();
-  let duration = 30000; // 30 seconds
-  let isRunning = true;
+  const duration = 30000; // 30 seconds
 
-  function resize() {
-    canvas.width = window.innerWidth * window.devicePixelRatio;
-    canvas.height = window.innerHeight * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  }
-  window.addEventListener('resize', resize);
-  resize();
+  function init3D() {
+    const container = document.getElementById('canvas-container');
+    
+    // Scene setup
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2('#020b14', 0.015);
 
-  // Particle systems
-  const particles = [];
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      r: Math.random() * 2 + 1,
-      dx: (Math.random() - 0.5) * 1.5,
-      dy: (Math.random() - 0.5) * 1.5,
-      hue: 200 + Math.random() * 20
+    // Camera setup
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 8;
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(scene.fog.color);
+    container.appendChild(renderer.domElement);
+
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0x0a1e3f, 1.5);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0x0EA5E9, 2.5, 50);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    // 3D Object 1: Rotating Wireframe Cryptographic Sphere (ZK Accumulator)
+    const geom = new THREE.IcosahedronGeometry(2, 2);
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0x38BDF8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.4
     });
-  }
+    sphereMesh = new THREE.Mesh(geom, mat);
+    scene.add(sphereMesh);
 
-  function drawParticles(elapsed) {
-    particles.forEach(p => {
-      p.x += p.dx;
-      p.y += p.dy;
-      if (p.x < 0 || p.x > window.innerWidth) p.dx *= -1;
-      if (p.y < 0 || p.y > window.innerHeight) p.dy *= -1;
-
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, 0.3)`;
-      ctx.fill();
-    });
-  }
-
-  function drawCryptographicRings(elapsed, w, h) {
-    const cx = w / 2;
-    const cy = h / 2;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(elapsed * 0.0003);
-
-    for (let r = 80; r <= 240; r += 40) {
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 1.5);
-      ctx.strokeStyle = `rgba(14, 165, 233, ${0.4 - (r / 800)})`;
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    // 3D Object 2: Concentric Cryptographic Protection Rings
+    for (let i = 0; i < 3; i++) {
+      const ringGeom = new THREE.RingGeometry(2.4 + i*0.4, 2.45 + i*0.4, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x0EA5E9,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.25 - i*0.05
+      });
+      const ring = new THREE.Mesh(ringGeom, ringMat);
+      ring.rotation.x = Math.random() * Math.PI;
+      ring.rotation.y = Math.random() * Math.PI;
+      scene.add(ring);
+      ringMeshes.push(ring);
     }
-    ctx.restore();
+
+    // 3D Object 3: Stellar Network Nodes (Particles)
+    const particleCount = 150;
+    const particleGeom = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 15;
+      positions[i+1] = (Math.random() - 0.5) * 15;
+      positions[i+2] = (Math.random() - 0.5) * 15;
+    }
+    particleGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    
+    // Circle particle texture
+    const pMat = new THREE.PointsMaterial({
+      color: 0x38BDF8,
+      size: 0.12,
+      transparent: true,
+      opacity: 0.6
+    });
+    nodeParticles = new THREE.Points(particleGeom, pMat);
+    scene.add(nodeParticles);
+
+    animate();
   }
 
-  function drawNodes(elapsed, w, h) {
-    const points = [
-      {x: w*0.3, y: h*0.4},
-      {x: w*0.4, y: h*0.6},
-      {x: w*0.6, y: h*0.4},
-      {x: w*0.7, y: h*0.6},
-    ];
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    points.forEach((p, idx) => {
-      if(idx > 0) ctx.lineTo(p.x, p.y);
-    });
-    ctx.strokeStyle = 'rgba(14, 165, 233, 0.2)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
+  function animate() {
+    requestAnimationFrame(animate);
 
-    points.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#38BDF8';
-      ctx.fill();
-    });
-  }
-
-  function render() {
-    if (!isRunning) return;
-
-    const w = window.innerWidth;
-    const h = window.innerHeight;
     const elapsed = Date.now() - startTime;
     const currentSecond = Math.min(elapsed / 1000, 30);
 
@@ -258,67 +257,40 @@
     const formattedSec = Math.floor(currentSecond).toString().padStart(2, '0');
     document.getElementById('timer').textContent = `00:${formattedSec} / 00:30`;
 
-    // Clear background
-    ctx.fillStyle = '#020b14';
-    ctx.fillRect(0, 0, w, h);
-
-    // Dynamic grid overlay
-    ctx.strokeStyle = 'rgba(14, 165, 233, 0.04)';
-    ctx.lineWidth = 1;
-    const gridSize = 60;
-    for (let x = 0; x < w; x += gridSize) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    // Rotate geometries
+    if (sphereMesh) {
+      sphereMesh.rotation.y += 0.003;
+      sphereMesh.rotation.x += 0.001;
     }
-    for (let y = 0; y < h; y += gridSize) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    
+    ringMeshes.forEach((ring, idx) => {
+      ring.rotation.z += 0.002 * (idx + 1);
+    });
+
+    if (nodeParticles) {
+      nodeParticles.rotation.y -= 0.001;
     }
 
-    drawParticles(elapsed);
-
-    // Slide logic
-    let activeSlide = 0;
-    if (currentSecond >= 25) {
-      activeSlide = 3;
-      // Finale logo rendering
-      ctx.save();
-      ctx.translate(w/2, h/2 - 40);
-      const scale = Math.min(1, (currentSecond - 25) / 1.5);
-      ctx.scale(scale, scale);
-      
-      // Draw a neat sky-blue shield icon representing the logo
-      ctx.beginPath();
-      ctx.moveTo(0, -40);
-      ctx.lineTo(35, -20);
-      ctx.lineTo(35, 20);
-      ctx.lineTo(0, 45);
-      ctx.lineTo(-35, 20);
-      ctx.lineTo(-35, -20);
-      ctx.closePath();
-      ctx.fillStyle = '#0EA5E9';
-      ctx.fill();
-      ctx.strokeStyle = '#38BDF8';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-      ctx.restore();
-    } else if (currentSecond >= 15) {
-      activeSlide = 2;
-      // Draw homomorphic folding waves
-      ctx.beginPath();
-      for (let x = 0; x < w; x++) {
-        const y = h/2 + Math.sin(x * 0.01 + elapsed * 0.003) * 30;
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-      ctx.stroke();
-    } else if (currentSecond >= 7) {
-      activeSlide = 1;
-      drawNodes(elapsed, w, h);
-    } else {
-      activeSlide = 0;
-      drawCryptographicRings(elapsed, w, h);
-    }
+    // Orbit Camera path over time (30s presentation)
+    camera.position.x = Math.sin(elapsed * 0.00015) * 8;
+    camera.position.z = Math.cos(elapsed * 0.00015) * 8;
+    camera.lookAt(0, 0, 0);
 
     // Toggle slide subtitles
+    let activeSlide = 0;
+    if (currentSecond >= 22.5) {
+      activeSlide = 3;
+      // Morph wireframe to be solid/dense
+      if (sphereMesh) sphereMesh.material.opacity = 0.85;
+    } else if (currentSecond >= 15) {
+      activeSlide = 2;
+      if (sphereMesh) sphereMesh.material.opacity = 0.45;
+    } else if (currentSecond >= 7.5) {
+      activeSlide = 1;
+    } else {
+      activeSlide = 0;
+    }
+
     for (let i = 0; i < 4; i++) {
       const el = document.getElementById(`slide${i}`);
       if (el) {
@@ -327,20 +299,25 @@
       }
     }
 
+    // Reset loop
     if (elapsed >= duration) {
-      // Loop video
       startTime = Date.now();
     }
 
-    animationFrameId = requestAnimationFrame(render);
+    renderer.render(scene, camera);
   }
 
   function restartVideo() {
     startTime = Date.now();
-    render();
   }
 
-  render();
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  init3D();
 </script>
 </body>
 </html>
