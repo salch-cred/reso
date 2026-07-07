@@ -196,30 +196,30 @@ h2.sec-title .ital{font-family:var(--serif); font-style:italic; font-weight:400}
 .card h3{font-size:20px; font-weight:600; letter-spacing:-.015em; margin-bottom:9px}
 .card p{color:var(--muted); font-size:14.5px; line-height:1.55}
 .card.span2{grid-column:span 1}
-.card.feature-hero{grid-row:span 2; background:linear-gradient(165deg,#0E0E14,#1a1a2e); color:#fff; border-color:rgba(255,255,255,.08)}
-.card.feature-hero h3{color:#fff}
-.card.feature-hero p{color:rgba(255,255,255,.6)}
-.card.feature-hero .c-ic{background:rgba(99,102,241,.2); color:#a5b4fc}
-.card.feature-hero .mini-viz{margin-top:24px; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:16px; background:rgba(255,255,255,.03)}
-.viz-row{display:flex;align-items:center;justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:13px}
+.card.feature-hero{grid-row:span 2; background:var(--canvas); color:var(--ink); border-color:var(--line)}
+.card.feature-hero h3{color:var(--ink)}
+.card.feature-hero p{color:var(--muted)}
+.card.feature-hero .c-ic{background:var(--tint); color:var(--indigo)}
+.card.feature-hero .mini-viz{margin-top:24px; border:1px solid var(--line); border-radius:12px; padding:16px; background:var(--soft)}
+.viz-row{display:flex;align-items:center;justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:13px}
 .viz-row:last-child{border-bottom:none}
-.viz-row .k{color:rgba(255,255,255,.55); font-family:var(--mono); font-size:12px}
-.viz-row .v{font-family:var(--mono); font-size:12px; color:#5eead4}
-.viz-row .locked{color:#a5b4fc}
+.viz-row .k{color:var(--faint); font-family:var(--mono); font-size:12px}
+.viz-row .v{font-family:var(--mono); font-size:12px; color:var(--indigo)}
+.viz-row .locked{color:var(--ink-2)}
 
 /* ---------- features grid ---------- */
-.dark{background:#082F49; color:#fff}
-.dark .eyebrow{color:#38BDF8}.dark .eyebrow::before{background:#38BDF8}
-.dark .sec-lead{color:rgba(255,255,255,.8)}
-.feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius-lg); overflow:hidden}
-.feat{background:#0B0B12; padding:30px 28px; transition:background .3s var(--ease)}
-.feat:hover{background:#12121c}
-.feat .f-ic{width:42px;height:42px; border-radius:11px; display:grid;place-items:center; background:rgba(255,255,255,.05); color:#c7cbff; margin-bottom:18px; transition:transform .4s var(--ease-spring)}
+.dark{background:transparent; color:var(--ink)}
+.dark .eyebrow{color:var(--indigo)}.dark .eyebrow::before{background:var(--indigo)}
+.dark .sec-lead{color:var(--muted)}
+.feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden}
+.feat{background:var(--canvas); padding:30px 28px; transition:background .3s var(--ease)}
+.feat:hover{background:var(--soft)}
+.feat .f-ic{width:42px;height:42px; border-radius:11px; display:grid;place-items:center; background:var(--tint); color:var(--indigo); margin-bottom:18px; transition:transform .4s var(--ease-spring)}
 .feat:hover .f-ic{transform:translateY(-3px) scale(1.06)}
 .feat .f-ic svg{width:21px;height:21px}
-.feat .f-tag{font-family:var(--mono); font-size:11px; color:#6b7099; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px}
-.feat h3{font-size:17.5px; font-weight:600; letter-spacing:-.01em; margin-bottom:8px}
-.feat p{color:rgba(255,255,255,.55); font-size:14px; line-height:1.55}
+.feat .f-tag{font-family:var(--mono); font-size:11px; color:var(--faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px}
+.feat h3{font-size:17.5px; font-weight:600; letter-spacing:-.01em; margin-bottom:8px; color:var(--ink)}
+.feat p{color:var(--muted); font-size:14px; line-height:1.55}
 
 /* ---------- integrations ---------- */
 .integ-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
@@ -266,17 +266,17 @@ h2.sec-title .ital{font-family:var(--serif); font-style:italic; font-weight:400}
 .quote .who .rl{font-size:12.5px; color:var(--muted)}
 
 /* ---------- CTA ---------- */
-.cta-wrap{position:relative; border-radius:28px; overflow:hidden; background:linear-gradient(150deg,#0369A1,#0284C7 55%,#0C4A6E); padding:80px 40px; text-align:center; color:#fff}
+.cta-wrap{position:relative; border-radius:28px; overflow:hidden; background:linear-gradient(150deg,#F0F9FF,#E0F2FE 55%,#BAE6FD); padding:80px 40px; text-align:center; color:var(--ink)}
 .cta-wrap .grid-overlay{opacity:.18; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000,transparent 75%); -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000,transparent 75%)}
 .cta-blob{position:absolute; width:500px;height:500px; border-radius:50%; filter:blur(100px); opacity:.4}
 .cta-blob.a{background:#38BDF8; left:-8%; top:-30%}
 .cta-blob.b{background:#0EA5E9; right:-8%; bottom:-40%}
 .cta-wrap h2{font-size:clamp(32px,4.6vw,52px); letter-spacing:-.03em; font-weight:600; line-height:1.05; position:relative; margin-bottom:18px}
 .cta-wrap h2 .ital{font-family:var(--serif); font-style:italic; font-weight:400}
-.cta-wrap p{color:rgba(255,255,255,.65); font-size:18px; max-width:52ch; margin:0 auto 32px; position:relative}
+.cta-wrap p{color:var(--muted); font-size:18px; max-width:52ch; margin:0 auto 32px; position:relative}
 .cta-wrap .hero-cta{position:relative}
-.cta-wrap .btn-ghost{background:rgba(255,255,255,.08); color:#fff; border-color:rgba(255,255,255,.16)}
-.cta-wrap .btn-ghost:hover{background:rgba(255,255,255,.14)}
+.cta-wrap .btn-ghost{background:var(--canvas); color:var(--ink); border-color:var(--line)}
+.cta-wrap .btn-ghost:hover{background:var(--soft)}
 .publish-bar{display:inline-flex; align-items:center; gap:10px; margin-top:30px; padding:8px 8px 8px 16px; border-radius:12px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); position:relative}
 .publish-bar .u{font-family:var(--mono); font-size:13px; color:rgba(255,255,255,.7)}
 .publish-bar .pb-btn{background:#fff;color:var(--ink); font-size:13px; font-weight:600; padding:7px 14px; border-radius:8px}
