@@ -18,7 +18,7 @@
     <nav class="nav">
       <a href="#" class="brand">
         <span class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg>
+          <img src="assets/reso-logo.png" alt="Reso" style="width: 24px; height: 24px; object-fit: cover; border-radius: 6px;">
         </span>
         Reso
       </a>
@@ -56,44 +56,10 @@
       <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> SEP-8 &amp; SEP-12 ready</span>
     </div>
 
-    <!-- CONSOLE MOCKUP -->
-    <div class="console reveal" data-d="2">
+    <!-- LAUNCH VIDEO -->
+    <div class="console reveal" data-d="2" style="padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
       <div class="console-glow"></div>
-      <div class="console-bar">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div class="addr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> app.reso.xyz/console</div>
-      </div>
-      <div class="console-body">
-        <aside class="c-side">
-          <span class="s-label">Engine</span>
-          <div class="s-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/></svg> Proof simulator</div>
-          <div class="s-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Spending limits</div>
-          <div class="s-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg> Identity disclosure</div>
-          <span class="s-label">Ledger</span>
-          <div class="s-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></svg> Revocation</div>
-          <div class="s-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5"/></svg> Settlement</div>
-        </aside>
-        <main class="c-main">
-          <h4>ZK Transaction Simulation <span class="badge-ok"><span class="dot"></span> LIVE</span></h4>
-          <div class="c-desc">Verifying a $48,200 cross-border payment against encrypted policy…</div>
-          <div class="proof-row" data-p="1">
-            <div class="proof-ico pi-indigo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg></div>
-            <div class="proof-txt"><div class="t">Sanctions screening proof</div><div class="s">groth16 · 1,024 constraints</div></div>
-            <span class="badge-ok"><span class="dot"></span> valid</span>
-          </div>
-          <div class="proof-row" data-p="2">
-            <div class="proof-ico pi-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-            <div class="proof-txt"><div class="t">FHE spending limit check</div><div class="s">paillier · amount stays encrypted</div></div>
-            <span class="badge-ok"><span class="dot"></span> within limit</span>
-          </div>
-          <div class="proof-row" data-p="3">
-            <div class="proof-ico pi-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5"/></svg></div>
-            <div class="proof-txt"><div class="t">Settle on Stellar</div><div class="s">soroban · claimable balance escrow</div></div>
-            <span class="badge-ok"><span class="dot"></span> confirmed</span>
-          </div>
-          <div class="c-proofbar"><i id="pbar"></i></div>
-        </main>
-      </div>
+      <video src="assets/launch-video.mp4" autoplay loop muted playsinline style="width: 100%; display: block; border-radius: 12px; position: relative; z-index: 10;"></video>
     </div>
   </div>
 </section>
@@ -214,7 +180,7 @@
       <p class="sec-lead reveal" data-d="2">Reso stitches together battle-tested primitives and the Stellar stack — no proprietary black boxes.</p>
     </div>
     <div class="integ-grid">
-      <div class="integ reveal" data-d="1"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5"/></svg></div><div><div class="i-t">Stellar</div><div class="i-s">Protocol 25</div></div></div>
+      <div class="integ reveal" data-d="1"><div class="i-ic"><img src="assets/stellar-logo.png" alt="Stellar" style="width: 24px; height: 24px; object-fit: contain;"></div><div><div class="i-t">Stellar</div><div class="i-s">Protocol 25</div></div></div>
       <div class="integ reveal" data-d="2"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l-4 8 4 8M16 4l4 8-4 8"/></svg></div><div><div class="i-t">Soroban</div><div class="i-s">Smart contracts</div></div></div>
       <div class="integ reveal" data-d="3"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div><div class="i-t">Paillier FHE</div><div class="i-s">Encrypted maths</div></div></div>
       <div class="integ reveal" data-d="4"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 5v8l-8 5-8-5V8z"/><path d="M12 8v8M8 6.5v7M16 6.5v7"/></svg></div><div><div class="i-t">Nova IVC</div><div class="i-s">Recursive proofs</div></div></div>
@@ -296,7 +262,7 @@
       </div>
       <div class="publish-bar">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-        <span class="u">https://reso-nine.vercel.app</span>
+        <span class="u">https://resohq.xyz</span>
         <span class="pb-btn">Live</span>
       </div>
     </div>
@@ -308,7 +274,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a href="#" class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg></span>Reso</a>
+        <a href="#" class="brand"><span class="logo"><img src="assets/reso-logo.png" alt="Reso" style="width: 24px; height: 24px; object-fit: cover; border-radius: 6px;"></span>Reso</a>
         <p>Privacy-preserving compliance infrastructure on Stellar. Prove it, don’t expose it.</p>
       </div>
       <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="#integrations">Integrations</a><a href="#usecases">Use cases</a></div>
