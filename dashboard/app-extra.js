@@ -380,37 +380,37 @@ async function stellarCreateAccount(){
   const d=await apiPost('/api/stellar/create-account',{label},'createAccResult');
   if(!d)return;
   const resultHtml = `
-    <div style="position:relative;background:#031c2f;border:1px solid rgba(14,165,233,0.45);border-radius:14px;padding:20px;box-shadow:0 8px 32px rgba(14,165,233,0.15);margin-top:12px">
-      <button onclick="clearCreatedAccount()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:#7dd3fc;cursor:pointer;font-size:16px;font-weight:700;line-height:1">✕</button>
+    <div style="position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow-lg);margin-top:12px">
+      <button onclick="clearCreatedAccount()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;font-weight:700;line-height:1">✕</button>
       
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;color:#38BDF8">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;color:var(--accent)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        <span style="font-weight:700;font-size:0.95rem;color:#f0f9ff">Account Created Successfully</span>
+        <span style="font-weight:700;font-size:0.95rem;color:var(--text)">Account Created Successfully</span>
       </div>
 
       <div style="margin-bottom:12px">
-        <div style="font-size:0.75rem;color:#7dd3fc;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Public Key</div>
-        <div style="display:flex;gap:8px;background:#042841;border:1px solid rgba(14,165,233,0.25);border-radius:8px;padding:8px 12px;align-items:center">
-          <span class="mono" style="flex:1;font-size:0.85rem;color:#f0f9ff;word-break:break-all">${d.public_key}</span>
-          <button onclick="navigator.clipboard.writeText('${d.public_key}').then(() => showToast('Public Key copied!', true))" style="background:rgba(14,165,233,0.15);border:none;border-radius:6px;color:#38BDF8;padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(14,165,233,0.3)'" onmouseout="this.style.background='rgba(14,165,233,0.15)'" title="Copy Public Key">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Public Key</div>
+        <div style="display:flex;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;align-items:center">
+          <span class="mono" style="flex:1;font-size:0.85rem;color:var(--text);word-break:break-all">${d.public_key}</span>
+          <button onclick="navigator.clipboard.writeText('${d.public_key}').then(() => showToast('Public Key copied!', true))" style="background:var(--accent-light);border:1px solid var(--accent-border);border-radius:6px;color:var(--accent);padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='var(--border-hi)'" onmouseout="this.style.background='var(--accent-light)'" title="Copy Public Key">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           </button>
         </div>
       </div>
 
       <div style="margin-bottom:14px">
-        <div style="font-size:0.75rem;color:#f87171;margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Secret Key (Warning: Save this now!)</div>
-        <div style="display:flex;gap:8px;background:#1a0f18;border:1px solid rgba(239,68,68,0.35);border-radius:8px;padding:8px 12px;align-items:center">
-          <span class="mono" style="flex:1;font-size:0.85rem;color:#fca5a5;word-break:break-all;user-select:all">${d.secret_key}</span>
-          <button onclick="navigator.clipboard.writeText('${d.secret_key}').then(() => showToast('Secret Key copied!', true))" style="background:rgba(239,68,68,0.15);border:none;border-radius:6px;color:#f87171;padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'" title="Copy Secret Key">
+        <div style="font-size:0.75rem;color:var(--red);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">Secret Key (Warning: Save this now!)</div>
+        <div style="display:flex;gap:8px;background:var(--red-light);border:1px solid var(--red-border);border-radius:8px;padding:8px 12px;align-items:center">
+          <span class="mono" style="flex:1;font-size:0.85rem;color:var(--red);word-break:break-all;user-select:all">${d.secret_key}</span>
+          <button onclick="navigator.clipboard.writeText('${d.secret_key}').then(() => showToast('Secret Key copied!', true))" style="background:var(--surface);border:1px solid var(--red-border);border-radius:6px;color:var(--red);padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='var(--red-light)'" onmouseout="this.style.background='var(--surface)'" title="Copy Secret Key">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           </button>
         </div>
       </div>
 
-      <div style="display:flex;justify-content:between;align-items:center;border-top:1px solid rgba(14,165,233,0.15);padding-top:12px;font-size:0.85rem">
-        <span style="color:#7dd3fc">Balance: <strong style="color:#f0f9ff">${d.starting_balance}</strong></span>
-        <a class="tx-link" href="${d.explorer}" target="_blank" style="color:#38BDF8;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:4px">
+      <div style="display:flex;justify-content:between;align-items:center;border-top:1px solid var(--border);padding-top:12px;font-size:0.85rem">
+        <span style="color:var(--text3)">Balance: <strong style="color:var(--text)">${d.starting_balance}</strong></span>
+        <a class="tx-link" href="${d.explorer}" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:4px">
           View on Explorer 
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
         </a>
