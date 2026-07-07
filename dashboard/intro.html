@@ -313,17 +313,58 @@
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
-    // 1. ZK Globe Mesh with Earth Map Texture
-    const geom = new THREE.SphereGeometry(2, 64, 64);
+    // 1. ZK Globe Mesh with Dotted World Map Texture
+    const geom = new THREE.SphereGeometry(2.2, 64, 64);
     
-    // Load high-resolution, open-source equirectangular world map texture
-    const textureLoader = new THREE.TextureLoader();
-    const mapTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/c/c4/Earthmap1000x500compac.jpg');
+    // Create a vector-based digital world map canvas texture to bypass CORS limits
+    const mapCanvas = document.createElement('canvas');
+    mapCanvas.width = 1024;
+    mapCanvas.height = 512;
+    const mctx = mapCanvas.getContext('2d');
+    
+    // Space background
+    mctx.fillStyle = '#01080e';
+    mctx.fillRect(0, 0, 1024, 512);
+    
+    // Draw digital world map matrix
+    mctx.fillStyle = '#38BDF8';
+    // Simplified continent layouts
+    const land = [
+      // North America
+      {x: 100, y: 100, w: 180, h: 120},
+      // South America
+      {x: 250, y: 220, w: 80, h: 180},
+      // Eurasia / Africa
+      {x: 450, y: 80, w: 320, h: 140},
+      {x: 480, y: 200, w: 120, h: 150},
+      // Australia
+      {x: 800, y: 280, w: 80, h: 80}
+    ];
+    
+    // Fill with modern grid dots representing network compliance
+    for (let x = 0; x < 1024; x += 8) {
+      for (let y = 0; y < 512; y += 8) {
+        let inside = false;
+        // Check map coordinates to print dots
+        for (let l of land) {
+          if (x >= l.x && x <= l.x + l.w && y >= l.y && y <= l.y + l.h) {
+            inside = true;
+            break;
+          }
+        }
+        if (inside && Math.random() > 0.15) {
+          mctx.beginPath();
+          mctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          mctx.fill();
+        }
+      }
+    }
 
+    const mapTexture = new THREE.CanvasTexture(mapCanvas);
     const mat = new THREE.MeshBasicMaterial({
       map: mapTexture,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.85,
       color: 0x38BDF8
     });
     sphereMesh = new THREE.Mesh(geom, mat);
