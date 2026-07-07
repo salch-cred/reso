@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Reso — Immersive 3D Experience</title>
+<title>Reso — 3D Globe Experience</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/400.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/700.css"/>
@@ -200,8 +200,16 @@
   const duration = 30000;
   
   // Web Audio Synth setup
-  let audioCtx, droneOsc, modulationOsc, filterNode, mainGain;
+  let audioCtx, synthInterval, oscillators = [], filterNode, mainGain;
   let audioInitialized = false;
+
+  // Cinematic Chords (A minor, F major, C major, G major)
+  const chords = [
+    [110.00, 130.81, 164.81, 220.00], // Am (A2, C3, E3, A3)
+    [87.31, 130.81, 174.61, 261.63],  // F (F2, C3, F3, C4)
+    [130.81, 164.81, 196.00, 261.63], // C (C3, E3, G3, C4)
+    [98.00, 146.83, 196.00, 293.66]   // G (G2, D3, G3, D4)
+  ];
 
   function initAudio() {
     try {
@@ -209,37 +217,48 @@
       audioCtx = new AudioCtx();
       
       mainGain = audioCtx.createGain();
-      mainGain.gain.setValueAtTime(0.08, audioCtx.currentTime); // Low background volume
+      mainGain.gain.setValueAtTime(0.06, audioCtx.currentTime); // Low background volume
       mainGain.connect(audioCtx.destination);
       
-      // Main deep drone oscillator
-      droneOsc = audioCtx.createOscillator();
-      droneOsc.type = 'sawtooth';
-      droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // A1 note
-      
-      // LFO modulation oscillator for spatial drift
-      modulationOsc = audioCtx.createOscillator();
-      modulationOsc.type = 'sine';
-      modulationOsc.frequency.setValueAtTime(0.2, audioCtx.currentTime); // slow wave
-      
-      const modGain = audioCtx.createGain();
-      modGain.gain.setValueAtTime(15, audioCtx.currentTime);
-      
-      // Filter setup
       filterNode = audioCtx.createBiquadFilter();
       filterNode.type = 'lowpass';
-      filterNode.frequency.setValueAtTime(120, audioCtx.currentTime);
-      filterNode.Q.setValueAtTime(3, audioCtx.currentTime);
-      
-      // Connect routing
-      modulationOsc.connect(modGain);
-      modGain.connect(filterNode.frequency);
-      
-      droneOsc.connect(filterNode);
+      filterNode.frequency.setValueAtTime(300, audioCtx.currentTime);
+      filterNode.Q.setValueAtTime(1, audioCtx.currentTime);
       filterNode.connect(mainGain);
-      
-      droneOsc.start();
-      modulationOsc.start();
+
+      let chordIndex = 0;
+
+      function playNextChord() {
+        // Clear previous oscillators
+        oscillators.forEach(osc => {
+          try { osc.stop(); } catch(e) {}
+        });
+        oscillators = [];
+
+        const currentChord = chords[chordIndex];
+        currentChord.forEach(freq => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          
+          // Soft attack envelope
+          gain.gain.setValueAtTime(0, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 1.5);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 6.8);
+          
+          osc.connect(gain);
+          gain.connect(filterNode);
+          osc.start();
+          oscillators.push(osc);
+        });
+
+        chordIndex = (chordIndex + 1) % chords.length;
+      }
+
+      playNextChord();
+      synthInterval = setInterval(playNextChord, 7000); // Shift chords every 7 seconds
       
       audioInitialized = true;
     } catch(e) {
@@ -273,7 +292,7 @@
     
     // Scene setup
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2('#01080e', 0.015);
+    scene.fog = new THREE.FogExp2('#01080e', 0.012);
 
     // Camera
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -294,13 +313,18 @@
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
-    // 1. ZK Wireframe Sphere
-    const geom = new THREE.IcosahedronGeometry(2, 2);
+    // 1. ZK Globe Mesh with Earth Map Texture
+    const geom = new THREE.SphereGeometry(2, 64, 64);
+    
+    // Load high-resolution, open-source equirectangular world map texture
+    const textureLoader = new THREE.TextureLoader();
+    const mapTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/c/c4/Earthmap1000x500compac.jpg');
+
     const mat = new THREE.MeshBasicMaterial({
-      color: 0x38BDF8,
-      wireframe: true,
+      map: mapTexture,
       transparent: true,
-      opacity: 0.35
+      opacity: 0.75,
+      color: 0x38BDF8
     });
     sphereMesh = new THREE.Mesh(geom, mat);
     scene.add(sphereMesh);
@@ -402,8 +426,8 @@
 
     // Rotations
     if (sphereMesh) {
-      sphereMesh.rotation.y += 0.0025;
-      sphereMesh.rotation.x += 0.001;
+      sphereMesh.rotation.y += 0.0018;
+      sphereMesh.rotation.x += 0.0004;
     }
     ringMeshes.forEach((ring, idx) => {
       ring.rotation.z += 0.001 * (idx + 1);
@@ -421,11 +445,9 @@
     camera.position.z = Math.cos(elapsed * 0.00015) * 9;
     camera.lookAt(0, 0, 0);
 
-    // Audio frequency shift based on camera coordinates
+    // Dynamic Filter Frequency based on camera coordinate
     if (audioInitialized && audioCtx.state === 'running') {
-      const droneFreq = 55 + Math.abs(camera.position.x) * 4;
-      droneOsc.frequency.setValueAtTime(droneFreq, audioCtx.currentTime);
-      filterNode.frequency.setValueAtTime(120 + Math.abs(camera.position.z) * 40, audioCtx.currentTime);
+      filterNode.frequency.setValueAtTime(300 + Math.abs(camera.position.z) * 120, audioCtx.currentTime);
     }
 
     // Toggle slide subtitles
