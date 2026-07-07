@@ -4,11 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Reso — Privacy-preserving compliance on Stellar</title>
-<meta name="description" content="Reso is a ZK-native compliance engine on Stellar. Prove compliance without exposing data — encrypted policy, threshold disclosure, and on-chain settlement built in." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="landing-styles.css">
+<meta name="description" content="Reso is a ZK-native compliance engine on Stellar. Prove compliance without exposing data." />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/uncut-sans@latest/index.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
@@ -17,22 +16,21 @@
   <div class="wrap">
     <nav class="nav">
       <a href="#" class="brand">
-        <span class="logo">
-          <img src="assets/reso-logo.png" alt="Reso" style="width: 24px; height: 24px; object-fit: cover; border-radius: 6px;">
+        <span class="brand-mark" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;margin-right:8px">
+          <img src="assets/reso-logo.png" alt="Reso" style="width:100%;height:100%;object-fit:contain;border-radius:6px">
         </span>
         Reso
       </a>
       <div class="nav-links">
         <a href="#how">How it works</a>
+        <a href="#network">Network</a>
         <a href="#features">Features</a>
         <a href="#integrations">Integrations</a>
         <a href="#usecases">Use cases</a>
-        <a href="#docs">Docs</a>
       </div>
       <div class="nav-cta">
-        <a href="#" class="btn btn-ghost" style="padding:9px 15px">Sign in</a>
-        <a href="/console" class="btn btn-primary" style="padding:9px 16px">Open console</a>
-        <button class="nav-toggle" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <a href="/" class="btn btn-primary">Dashboard</a>
+        <button class="nav-toggle" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
       </div>
     </nav>
   </div>
@@ -40,68 +38,108 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
   <div class="grid-overlay"></div>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
   <div class="wrap">
-    <a href="#features" class="pill reveal"><span class="tag">New</span> Recursive proof folding is live <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    <h1 class="display reveal" data-d="1">The compliance engine that <span class="grad">means business</span></h1>
-    <p class="hero-sub reveal" data-d="2">Reso proves your transactions are compliant <span class="ital" style="font-family:var(--serif);font-style:italic">without</span> exposing the data behind them. ZK proofs, encrypted policy, and threshold disclosure — settled natively on Stellar.</p>
+    <a href="#features" class="pill reveal">
+      <span class="tag">New</span>
+      Recursive proof folding is live
+      <i class="fa-solid fa-arrow-right"></i>
+    </a>
+    <h1 class="display reveal" data-d="1">The compliance engine that <span class="grad-text">means business</span></h1>
+    <p class="hero-sub reveal" data-d="2">Reso proves your transactions are compliant without exposing the data behind them. ZK proofs, encrypted policy, and threshold disclosure &mdash; settled natively on Stellar.</p>
     <div class="hero-cta reveal" data-d="3">
-      <a href="#cta" class="btn btn-accent btn-lg">Start building <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a href="#how" class="btn btn-ghost btn-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7-11-7Z"/></svg> See how it works</a>
+      <a href="/console" class="btn btn-accent btn-lg">Dashboard <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="#how" class="btn btn-ghost btn-lg"><i class="fa-solid fa-play"></i> See how it works</a>
     </div>
     <div class="hero-note reveal" data-d="4">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No data leaves your control</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Stellar Protocol 25 native</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> SEP-8 &amp; SEP-12 ready</span>
+      <span><i class="fa-solid fa-circle-check"></i> No data leaves your control</span>
+      <span><i class="fa-solid fa-circle-check"></i> Stellar Protocol 25 native</span>
+      <span><i class="fa-solid fa-circle-check"></i> SEP-8 &amp; SEP-12 ready</span>
     </div>
 
-    <!-- LAUNCH VIDEO -->
-    <div class="console reveal" data-d="2" style="padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-      <div class="console-glow"></div>
+    <!-- CONSOLE MOCKUP -->
+    <div class="console reveal" data-d="2">
       <div class="console-bar">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div class="addr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> app.reso.xyz</div>
+        <div class="cb-left">
+          <span class="cb-dot d1"></span>
+          <span class="cb-dot d2"></span>
+          <span class="cb-dot d3"></span>
+        </div>
+        <div class="addr"><i class="fa-solid fa-lock"></i> resohq.xyz</div>
+        <div class="cb-right"><span class="live-badge"><span class="live-dot"></span> Live</span></div>
       </div>
-      <video src="assets/launch-video.mp4" autoplay loop muted playsinline style="width: 100%; display: block; position: relative; z-index: 10;"></video>
+      <video src="assets/launch-video.mp4" autoplay loop muted playsinline style="width: 100%; display: block; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; position: relative; z-index: 10;"></video>
     </div>
   </div>
 </section>
 
 <!-- TRUST MARQUEE -->
-<div class="trust wrap">
-  <p class="reveal">Built on open cryptography &amp; the Stellar network</p>
+<div class="trust">
+  <div class="wrap">
+    <p class="reveal">Built on open cryptography &amp; the Stellar network</p>
+  </div>
   <div class="marquee reveal">
     <div class="marquee-track" id="mq"></div>
   </div>
 </div>
+
+<!-- GLOBAL 3D PROOF NETWORK -->
+<section class="sec globe-sec" id="network">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow reveal">Global network</span>
+      <h2 class="sec-title reveal" data-d="1">Proofs generated across the world, in real time</h2>
+      <p class="sec-lead reveal" data-d="2">Every glowing arc is a zero-knowledge proof settling on Stellar &mdash; instantly, anywhere on Earth. Drag the globe to explore.</p>
+    </div>
+  </div>
+  <div class="globe-stage reveal">
+    <div class="globe-canvas-wrap">
+      <canvas id="globeCanvas"></canvas>
+      <div class="globe-glow"></div>
+    </div>
+    <div class="globe-feed">
+      <div class="gf-label"><span class="live-dot"></span> Live proof feed</div>
+      <div class="gf-list" id="gfList"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="globe-stats">
+      <div class="gstat reveal" data-d="1"><div class="gn" id="gStatProofs">0</div><div class="gl">Proofs this session</div></div>
+      <div class="gstat reveal" data-d="2"><div class="gn" id="gStatCities">0</div><div class="gl">Active regions</div></div>
+      <div class="gstat reveal" data-d="3"><div class="gn">&lt;200ms</div><div class="gl">Avg. verification</div></div>
+    </div>
+  </div>
+</section>
 
 <!-- HOW IT WORKS -->
 <section class="sec" id="how">
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow reveal">How it works</span>
-      <h2 class="sec-title reveal" data-d="1">Compliance in three steps, <span class="ital">not three months</span></h2>
+      <h2 class="sec-title reveal" data-d="1">Compliance in three steps, not three months</h2>
       <p class="sec-lead reveal" data-d="2">Describe your policy once. Reso generates the proofs, keeps the data encrypted, and settles the outcome on-chain.</p>
     </div>
     <div class="steps">
       <div class="step reveal" data-d="1">
         <div class="num">01</div>
-        <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg>
+        <i class="fa-solid fa-shield-halved s-ic"></i>
         <h3>Simulate with ZK proofs</h3>
-        <p>Run any transaction through the simulator. Reso produces a zero-knowledge proof that policy was met — the underlying data never leaves your machine.</p>
-        <div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <p>Run any transaction through the simulator. Reso produces a zero-knowledge proof that policy was met &mdash; the underlying data never leaves your machine.</p>
+        <div class="connector"><i class="fa-solid fa-arrow-right"></i></div>
       </div>
       <div class="step reveal" data-d="2">
         <div class="num">02</div>
-        <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <i class="fa-solid fa-lock s-ic"></i>
         <h3>Enforce encrypted policy</h3>
-        <p>Spending limits and rules run over encrypted values with FHE. Approvals require a threshold of keyholders — no single party can peek.</p>
-        <div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <p>Spending limits and rules run over encrypted values with FHE. Approvals require a threshold of keyholders &mdash; no single party can peek.</p>
+        <div class="connector"><i class="fa-solid fa-arrow-right"></i></div>
       </div>
       <div class="step reveal" data-d="3">
         <div class="num">03</div>
-        <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5"/></svg>
+        <i class="fa-solid fa-layer-group s-ic"></i>
         <h3>Settle on Stellar</h3>
         <p>Verified outcomes settle through Soroban with claimable-balance escrow, SEP-8 approval, and instant revocation baked in.</p>
       </div>
@@ -109,68 +147,112 @@
   </div>
 </section>
 
-<!-- WHY / BENTO -->
+<!-- WHY RESO -->
 <section class="sec" style="padding-top:0" id="why">
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow reveal">Why Reso</span>
-      <h2 class="sec-title reveal" data-d="1">Prove compliance. <span class="ital">Reveal nothing.</span></h2>
-      <p class="sec-lead reveal" data-d="2">Auditors get certainty. Users keep their privacy. You keep control of who sees what — and when.</p>
+      <h2 class="sec-title reveal" data-d="1">Prove compliance. Reveal nothing.</h2>
+      <p class="sec-lead reveal" data-d="2">Auditors get certainty. Users keep their privacy. You keep control of who sees what &mdash; and when.</p>
     </div>
     <div class="bento">
-      <div class="card feature-hero reveal" data-d="1">
-        <div class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <div class="card card-hero reveal" data-d="1">
+        <div class="c-ic"><i class="fa-solid fa-shield-halved"></i></div>
         <h3>Zero-knowledge by default</h3>
         <p>Every check produces a verifiable proof instead of a data dump. Prove a rule holds without ever transmitting the sensitive value behind it.</p>
         <div class="mini-viz">
-          <div class="viz-row"><span class="k">wallet.balance</span><span class="v locked">🔒 encrypted</span></div>
-          <div class="viz-row"><span class="k">kyc.identity</span><span class="v locked">🔒 encrypted</span></div>
-          <div class="viz-row"><span class="k">policy.satisfied</span><span class="v">✓ proven</span></div>
+          <div class="viz-row"><span class="k">wallet.balance</span><span class="v locked"><i class="fa-solid fa-lock"></i> encrypted</span></div>
+          <div class="viz-row"><span class="k">kyc.identity</span><span class="v locked"><i class="fa-solid fa-lock"></i> encrypted</span></div>
+          <div class="viz-row"><span class="k">policy.satisfied</span><span class="v proven"><i class="fa-solid fa-circle-check"></i> proven</span></div>
         </div>
       </div>
       <div class="card reveal" data-d="2">
-        <div class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+        <div class="c-ic"><i class="fa-solid fa-gear"></i></div>
         <h3>Understand every rule</h3>
-        <p>Inspect and change compliance logic in a visual console — no cryptography PhD required.</p>
+        <p>Inspect and change compliance logic in a visual console &mdash; no cryptography PhD required.</p>
       </div>
       <div class="card reveal" data-d="3">
-        <div class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><path d="M16 3.5a3 3 0 0 1 0 5.8M18 20c0-2-.8-3.6-2-4.6"/></svg></div>
+        <div class="c-ic"><i class="fa-solid fa-users"></i></div>
         <h3>Threshold disclosure</h3>
-        <p>Identity is revealed only when 3-of-5 keyholders agree, and only after a time-lock.</p>
+        <p>Identity is revealed only when 3-of-5 keyholders agree, and only after a time-lock expires.</p>
       </div>
       <div class="card reveal" data-d="2">
-        <div class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg></div>
+        <div class="c-ic"><i class="fa-solid fa-clock"></i></div>
         <h3>Instant revocation</h3>
         <p>Merkle-backed credentials revoke in real time. Clawback triggers propagate automatically.</p>
       </div>
       <div class="card reveal" data-d="3">
-        <div class="c-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5"/><path d="M5 16l7 5 7-5"/></svg></div>
+        <div class="c-ic"><i class="fa-solid fa-globe"></i></div>
         <h3>Native to Stellar</h3>
-        <p>Built on Protocol 25 and Soroban — fast finality, low fees, regulated-asset ready.</p>
+        <p>Built on Protocol 25 and Soroban &mdash; fast finality, low fees, regulated-asset ready.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES (dark) -->
-<section class="sec dark" id="features">
+<!-- FEATURES -->
+<section class="sec sec-alt" id="features">
   <div class="wrap">
     <div class="sec-head center">
       <span class="eyebrow reveal">Features</span>
-      <h2 class="sec-title reveal" data-d="1">Everything you need to ship <span class="ital">compliant privacy</span></h2>
+      <h2 class="sec-title reveal" data-d="1">Everything you need to ship compliant privacy</h2>
       <p class="sec-lead reveal" data-d="2">Nine production-grade primitives, one engine. Composable, auditable, and open.</p>
     </div>
     <div class="feat-grid reveal">
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 7.5 8 10 4.5-2.5 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="f-tag">Proofs</div><h3>ZK-Proof Transaction Simulator</h3><p>Dry-run any transaction and generate a succinct proof that it satisfies policy before it ever touches the ledger.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v2"/></svg></div><div class="f-tag">FHE</div><h3>FHE Spending Limits</h3><p>Enforce budgets and caps directly over Paillier-encrypted amounts — the number stays secret end to end.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/><path d="M12 11.5v2.5"/></svg></div><div class="f-tag">Identity</div><h3>Threshold + Time-Locked Disclosure</h3><p>Shamir 3-of-5 secret sharing means identity can only be unsealed by consensus, after a mandatory delay.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><path d="M3 4v5h5"/></svg></div><div class="f-tag">Revocation</div><h3>Real-Time Credential Revocation</h3><p>Merkle-tree accumulators let you revoke a credential and have verifiers reject it in the same block.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h6v6H4zM14 11h6v6h-6z"/><path d="M10 10l4 3"/></svg></div><div class="f-tag">Scaling</div><h3>Recursive Proof Folding</h3><p>Nova-style IVC folds thousands of checks into one constant-size proof — verify a whole history in milliseconds.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/><circle cx="12" cy="14.5" r="1.5"/></svg></div><div class="f-tag">Escrow</div><h3>ZK-Gated Claimable Balance Escrow</h3><p>Funds unlock only when a valid proof is presented — programmable escrow with privacy guarantees.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div><div class="f-tag">SEP-8</div><h3>Regulated Asset Approval</h3><p>Full SEP-8 approval flow so issuers can gate transfers of regulated assets with on-chain policy.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v4H4zM4 14h16v4H4z"/><path d="M8 8h.01M8 16h.01"/></svg></div><div class="f-tag">SEP-12</div><h3>Anchor KYC Bridge</h3><p>Bridge existing anchor KYC via SEP-12 without duplicating or exposing customer PII.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 19v-5h5"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div><div class="f-tag">Enforcement</div><h3>Clawback-Triggered Revocation</h3><p>Tie Stellar clawbacks to automatic credential revocation for airtight enforcement.</p></div>
-      <div class="feat"><div class="f-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14v12H5z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M9 12h6"/></svg></div><div class="f-tag">Open core</div><h3>Self-host or cloud</h3><p>Run the whole engine yourself with Docker, or deploy in minutes. FastAPI backend, vanilla frontend, no lock-in.</p></div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="f-tag">Proofs</div>
+        <h3>ZK-Proof Simulator</h3>
+        <p>Dry-run any transaction and generate a succinct proof before it touches the ledger.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-lock"></i></div>
+        <div class="f-tag">FHE</div>
+        <h3>FHE Spending Limits</h3>
+        <p>Enforce budgets directly over Paillier-encrypted amounts &mdash; the number stays secret end to end.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-user"></i></div>
+        <div class="f-tag">Identity</div>
+        <h3>Threshold Disclosure</h3>
+        <p>Shamir 3-of-5 secret sharing &mdash; identity unsealed only by consensus, after a mandatory delay.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="f-tag">Revocation</div>
+        <h3>Real-Time Revocation</h3>
+        <p>Merkle-tree accumulators let you revoke a credential and have verifiers reject it in the same block.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-layer-group"></i></div>
+        <div class="f-tag">Scaling</div>
+        <h3>Recursive Proof Folding</h3>
+        <p>Nova-style IVC folds thousands of checks into one constant-size proof &mdash; verify a whole history in milliseconds.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-box-archive"></i></div>
+        <div class="f-tag">Escrow</div>
+        <h3>ZK-Gated Escrow</h3>
+        <p>Funds unlock only when a valid proof is presented &mdash; programmable escrow with privacy guarantees.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="f-tag">SEP-8</div>
+        <h3>Regulated Asset Approval</h3>
+        <p>Full SEP-8 approval flow so issuers can gate transfers with on-chain policy.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-fingerprint"></i></div>
+        <div class="f-tag">SEP-12</div>
+        <h3>Anchor KYC Bridge</h3>
+        <p>Bridge existing anchor KYC via SEP-12 without duplicating or exposing customer PII.</p>
+      </div>
+      <div class="feat">
+        <div class="f-ic"><i class="fa-solid fa-code"></i></div>
+        <div class="f-tag">Open core</div>
+        <h3>Self-host or cloud</h3>
+        <p>Run the whole engine yourself with Docker, or deploy in minutes. No lock-in.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -180,18 +262,18 @@
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow reveal">Integrations</span>
-      <h2 class="sec-title reveal" data-d="1">Composed from cryptography <span class="ital">you can trust</span></h2>
-      <p class="sec-lead reveal" data-d="2">Reso stitches together battle-tested primitives and the Stellar stack — no proprietary black boxes.</p>
+      <h2 class="sec-title reveal" data-d="1">Composed from cryptography you can trust</h2>
+      <p class="sec-lead reveal" data-d="2">Reso stitches together battle-tested primitives and the Stellar stack &mdash; no proprietary black boxes.</p>
     </div>
     <div class="integ-grid">
       <div class="integ reveal" data-d="1"><div class="i-ic"><img src="assets/stellar-logo.png" alt="Stellar" style="width: 24px; height: 24px; object-fit: contain;"></div><div><div class="i-t">Stellar</div><div class="i-s">Protocol 25</div></div></div>
-      <div class="integ reveal" data-d="2"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l-4 8 4 8M16 4l4 8-4 8"/></svg></div><div><div class="i-t">Soroban</div><div class="i-s">Smart contracts</div></div></div>
-      <div class="integ reveal" data-d="3"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div><div class="i-t">Paillier FHE</div><div class="i-s">Encrypted maths</div></div></div>
-      <div class="integ reveal" data-d="4"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 5v8l-8 5-8-5V8z"/><path d="M12 8v8M8 6.5v7M16 6.5v7"/></svg></div><div><div class="i-t">Nova IVC</div><div class="i-s">Recursive proofs</div></div></div>
-      <div class="integ reveal" data-d="1"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><div class="i-t">Shamir SSS</div><div class="i-s">3-of-5 sharing</div></div></div>
-      <div class="integ reveal" data-d="2"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6M6 21l6-8 6 8M6 21h12"/></svg></div><div><div class="i-t">Merkle Trees</div><div class="i-s">Revocation</div></div></div>
-      <div class="integ reveal" data-d="3"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 9h16"/><circle cx="7" cy="7.5" r=".5"/></svg></div><div><div class="i-t">SEP-8 / SEP-12</div><div class="i-s">Anchor standards</div></div></div>
-      <div class="integ reveal" data-d="4"><div class="i-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10M4 17h16M4 17l-2 3h20l-2-3"/><path d="M9 9l-2 2 2 2M15 9l2 2-2 2"/></svg></div><div><div class="i-t">Docker + FastAPI</div><div class="i-s">Self-hostable</div></div></div>
+      <div class="integ reveal" data-d="2"><div class="i-ic"><i class="fa-solid fa-code"></i></div><div><div class="i-t">Soroban</div><div class="i-s">Smart contracts</div></div></div>
+      <div class="integ reveal" data-d="3"><div class="i-ic"><i class="fa-solid fa-lock"></i></div><div><div class="i-t">Paillier FHE</div><div class="i-s">Encrypted maths</div></div></div>
+      <div class="integ reveal" data-d="4"><div class="i-ic"><i class="fa-solid fa-layer-group"></i></div><div><div class="i-t">Nova IVC</div><div class="i-s">Recursive proofs</div></div></div>
+      <div class="integ reveal" data-d="1"><div class="i-ic"><i class="fa-solid fa-users"></i></div><div><div class="i-t">Shamir SSS</div><div class="i-s">3-of-5 sharing</div></div></div>
+      <div class="integ reveal" data-d="2"><div class="i-ic"><i class="fa-solid fa-code-fork"></i></div><div><div class="i-t">Merkle Trees</div><div class="i-s">Revocation</div></div></div>
+      <div class="integ reveal" data-d="3"><div class="i-ic"><i class="fa-solid fa-fingerprint"></i></div><div><div class="i-t">SEP-8 / SEP-12</div><div class="i-s">Anchor standards</div></div></div>
+      <div class="integ reveal" data-d="4"><div class="i-ic"><i class="fa-solid fa-database"></i></div><div><div class="i-t">Docker + FastAPI</div><div class="i-s">Self-hostable</div></div></div>
     </div>
   </div>
 </section>
@@ -205,10 +287,30 @@
       <p class="sec-lead reveal" data-d="2">Clone a template, wire in your policy, and deploy compliant privacy for your product.</p>
     </div>
     <div class="uc-grid">
-      <div class="uc reveal" data-d="1"><div class="uc-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18M6 3h12l3 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"/></svg></div><div class="uc-b"><div class="uc-cat">Anchors</div><h3>Compliant on/off-ramps</h3><p>KYC once, prove forever. Bridge SEP-12 identity without storing PII in your app.</p></div></div>
-      <div class="uc reveal" data-d="2"><div class="uc-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14M3 21h18M9 21v-6h6v6"/></svg></div><div class="uc-b"><div class="uc-cat">RWA</div><h3>Regulated asset issuance</h3><p>Gate transfers of tokenized securities with SEP-8 approval and clawback enforcement.</p></div></div>
-      <div class="uc reveal" data-d="3"><div class="uc-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div><div class="uc-b"><div class="uc-cat">Payments</div><h3>Private cross-border</h3><p>Prove sanctions and limit checks pass while keeping amounts and parties encrypted.</p></div></div>
-      <div class="uc reveal" data-d="4"><div class="uc-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4 7l8-5 8 5M4 17l8 5 8-5"/></svg></div><div class="uc-b"><div class="uc-cat">DeFi</div><h3>Permissioned pools</h3><p>Let only proven-eligible wallets interact — without doxxing them to the protocol.</p></div></div>
+      <div class="uc reveal" data-d="1">
+        <div class="uc-ic"><i class="fa-solid fa-building-columns"></i></div>
+        <div class="uc-cat">Anchors</div>
+        <h3>Compliant on/off-ramps</h3>
+        <p>KYC once, prove forever. Bridge SEP-12 identity without storing PII in your app.</p>
+      </div>
+      <div class="uc reveal" data-d="2">
+        <div class="uc-ic"><i class="fa-solid fa-building"></i></div>
+        <div class="uc-cat">RWA</div>
+        <h3>Regulated asset issuance</h3>
+        <p>Gate transfers of tokenized securities with SEP-8 approval and clawback enforcement.</p>
+      </div>
+      <div class="uc reveal" data-d="3">
+        <div class="uc-ic"><i class="fa-solid fa-paper-plane"></i></div>
+        <div class="uc-cat">Payments</div>
+        <h3>Private cross-border</h3>
+        <p>Prove sanctions and limit checks pass while keeping amounts and parties encrypted.</p>
+      </div>
+      <div class="uc reveal" data-d="4">
+        <div class="uc-ic"><i class="fa-solid fa-right-left"></i></div>
+        <div class="uc-cat">DeFi</div>
+        <h3>Permissioned pools</h3>
+        <p>Let only proven-eligible wallets interact &mdash; without doxxing them to the protocol.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -229,24 +331,24 @@
 <section class="sec" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head center">
-      <span class="eyebrow reveal">Loved by builders</span>
+      <span class="eyebrow reveal">Builders</span>
       <h2 class="sec-title reveal" data-d="1">Teams building the compliant, private web</h2>
     </div>
     <div class="quotes">
       <div class="quote reveal" data-d="1">
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote>“We replaced a fragile KYC pipeline with Reso in a weekend. <b>Auditors get proofs, users keep their privacy</b> — exactly the trade we wanted.”</blockquote>
-        <div class="who"><span class="av" style="background:linear-gradient(135deg,#4F46E5,#7C3AED)">AK</span><div><div class="nm">Amara Koffi</div><div class="rl">CTO, Sahel Anchor</div></div></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <blockquote>&ldquo;We replaced a fragile KYC pipeline with Reso in a weekend. Auditors get proofs, users keep their privacy &mdash; exactly the trade we wanted.&rdquo;</blockquote>
+        <div class="who"><span class="av" style="background:#0EA5E9">AK</span><div><div class="nm">Amara Koffi</div><div class="rl">CTO, Sahel Anchor</div></div></div>
       </div>
       <div class="quote reveal" data-d="2">
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote>“The FHE spending limits are wild — <b>we enforce caps without ever decrypting the amount</b>. Our compliance team finally sleeps at night.”</blockquote>
-        <div class="who"><span class="av" style="background:linear-gradient(135deg,#2783DE,#0EA5A5)">DV</span><div><div class="nm">Diego Vargas</div><div class="rl">Founder, Andes Pay</div></div></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <blockquote>&ldquo;The FHE spending limits are incredible &mdash; we enforce caps without ever decrypting the amount. Our compliance team finally sleeps at night.&rdquo;</blockquote>
+        <div class="who"><span class="av" style="background:#38BDF8">DV</span><div><div class="nm">Diego Vargas</div><div class="rl">Founder, Andes Pay</div></div></div>
       </div>
       <div class="quote reveal" data-d="3">
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote>“Recursive folding meant we could <b>verify an entire year of activity in one proof</b>. On Stellar. It shouldn’t be this easy.”</blockquote>
-        <div class="who"><span class="av" style="background:linear-gradient(135deg,#7C3AED,#DB2777)">LM</span><div><div class="nm">Lena Meyer</div><div class="rl">Lead Eng, Vela RWA</div></div></div>
+        <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+        <blockquote>&ldquo;Recursive folding meant we could verify an entire year of activity in one proof. On Stellar. It shouldn&rsquo;t be this easy.&rdquo;</blockquote>
+        <div class="who"><span class="av" style="background:#0284C7">LM</span><div><div class="nm">Lena Meyer</div><div class="rl">Lead Eng, Vela RWA</div></div></div>
       </div>
     </div>
   </div>
@@ -256,17 +358,16 @@
 <section class="sec" style="padding-top:0" id="cta">
   <div class="wrap">
     <div class="cta-wrap reveal">
-      <span class="cta-blob a"></span><span class="cta-blob b"></span>
-      <div class="grid-overlay"></div>
-      <h2>What will you <span class="ital">prove?</span></h2>
+      <span class="eyebrow" style="color:rgba(255,255,255,.7)">Get started</span>
+      <h2>What will you prove?</h2>
       <p>Spin up the console, run your first zero-knowledge compliance check, and settle it on Stellar in minutes.</p>
       <div class="hero-cta">
-        <a href="/console" class="btn btn-accent btn-lg">Open the console <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a href="#" class="btn btn-ghost btn-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7A5.2 5.2 0 0 0 20 5.8 4.8 4.8 0 0 0 19.9 2S18.7 1.6 16 3.5a13.4 13.4 0 0 0-7 0C6.3 1.6 5.1 2 5.1 2A4.8 4.8 0 0 0 5 5.8 5.2 5.2 0 0 0 3.7 9.4c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></svg> Star on GitHub</a>
+        <a href="/console" class="btn btn-white btn-lg">Open the console <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="https://github.com/salch-cred/reso" target="_blank" class="btn btn-ghost-white btn-lg"><i class="fa-brands fa-github"></i> Star on GitHub</a>
       </div>
       <div class="publish-bar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-        <span class="u">https://resohq.xyz</span>
+        <i class="fa-solid fa-circle-check" style="color:#4ade80"></i>
+        <span class="u">https://reso-nine.vercel.app</span>
         <span class="pb-btn">Live</span>
       </div>
     </div>
@@ -278,25 +379,38 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <a href="#" class="brand"><span class="logo"><img src="assets/reso-logo.png" alt="Reso" style="width: 24px; height: 24px; object-fit: cover; border-radius: 6px;"></span>Reso</a>
-        <p>Privacy-preserving compliance infrastructure on Stellar. Prove it, don’t expose it.</p>
+        <a href="#" class="brand">
+          <span class="brand-mark" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;margin-right:8px">
+            <img src="assets/reso-logo.png" alt="Reso" style="width:100%;height:100%;object-fit:contain;border-radius:6px">
+          </span>
+          Reso
+        </a>
+        <p>Privacy-preserving compliance infrastructure on Stellar. Prove it, don&rsquo;t expose it.</p>
       </div>
       <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="#integrations">Integrations</a><a href="#usecases">Use cases</a></div>
-      <div class="foot-col"><h4>Developers</h4><a href="#">Documentation</a><a href="#">API reference</a><a href="#">Console</a><a href="#">Status</a></div>
+      <div class="foot-col"><h4>Developers</h4><a href="#">Documentation</a><a href="#">API reference</a><a href="/">Console</a><a href="#">Status</a></div>
       <div class="foot-col"><h4>Resources</h4><a href="#">Whitepaper</a><a href="#">Security</a><a href="#">Changelog</a><a href="#">Blog</a></div>
       <div class="foot-col"><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a><a href="#">Legal</a></div>
     </div>
     <div class="foot-bottom">
       <p>&copy; 2026 Reso. Built on Stellar. Open-core under Apache 2.0.</p>
       <div class="foot-social">
-        <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7A5.2 5.2 0 0 0 20 5.8 4.8 4.8 0 0 0 19.9 2S18.7 1.6 16 3.5a13.4 13.4 0 0 0-7 0C6.3 1.6 5.1 2 5.1 2A4.8 4.8 0 0 0 5 5.8 5.2 5.2 0 0 0 3.7 9.4c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></svg></a>
-        <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.6l-5.2-6.8L5.3 22H2l7.8-8.9L1.5 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20Z"/></svg></a>
-        <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8a15 15 0 0 1 10 0M6 18a18 18 0 0 0 12 0M8.5 19l-1 2s-3.5-1-5-4c0-6 2-9 2-9a11 11 0 0 1 4-1l1 2M15.5 19l1 2s3.5-1 5-4c0-6-2-9-2-9a11 11 0 0 0-4-1l-1 2"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg></a>
+        <a href="https://github.com/salch-cred/reso" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="https://x.com/Resohq" aria-label="X / Twitter" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
       </div>
     </div>
   </div>
 </footer>
 
-<script src="landing-script.js" defer></script>
+<script src="script.js" defer></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+<script type="module" src="globe.js"></script>
+<script src="gpu-fan.js" defer></script>
 </body>
 </html>
