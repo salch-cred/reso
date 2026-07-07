@@ -712,9 +712,6 @@ tr:hover td{background:var(--bg2);}
       <button class="auth-btn-sky" onclick="authRegister()">Create Account</button>
       <p id="authRegErr" style="color:#f87171;font-size:0.85rem;margin:10px 0 0;display:none"></p>
     </div>
-    <p style="text-align:center;margin:18px 0 0;font-size:0.82rem;color:#7dd3fc">
-      Continue as guest? <a href="#" onclick="authClose();return false;" style="color:#38BDF8;text-decoration:none;font-weight:700;text-shadow:0 0 10px rgba(56,189,248,0.3)">Skip for now</a>
-    </p>
   </div>
 </div>
 
@@ -959,6 +956,10 @@ function authShowModal() {
   el.style.display = 'flex';
 }
 function authClose() {
+  // Only allow closing the modal if the user is logged in
+  if (!localStorage.getItem(AUTH_KEY)) {
+    return;
+  }
   const el = document.getElementById('authOverlay');
   el.style.display = 'none';
 }
@@ -976,7 +977,8 @@ function authSetUser(username, publicKey) {
   document.getElementById('authBtn').style.display = 'none';
   document.getElementById('userBadgeName').textContent = username;
   document.getElementById('userBadgeKey').textContent = publicKey ? publicKey.slice(0,6)+'...'+publicKey.slice(-4) : '';
-  authClose();
+  // Set display directly to none to override any block states
+  document.getElementById('authOverlay').style.display = 'none';
   if (typeof loadWallets === 'function') loadWallets();
 }
 async function authLogin() {
@@ -1031,21 +1033,35 @@ function authLogout() {
   document.getElementById('userBadge').style.display = 'none';
   document.getElementById('authBtn').style.display = 'block';
   showToast('Logged out successfully.', true);
+  authShowModal();
   if (typeof loadWallets === 'function') loadWallets();
 }
 async function authRestoreSession() {
   const token = localStorage.getItem(AUTH_KEY);
-  if (!token) return;
+  if (!token) {
+    authShowModal();
+    return;
+  }
   try {
     const r = await fetch(API + '/api/auth/me?token=' + token);
-    if (!r.ok) { localStorage.removeItem(AUTH_KEY); localStorage.removeItem(AUTH_USER_KEY); return; }
+    if (!r.ok) {
+      localStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(AUTH_USER_KEY);
+      authShowModal();
+      return;
+    }
     const d = await r.json();
     authSetUser(d.username, d.public_key);
-  } catch(e) {}
+  } catch(e) {
+    // If request fails (e.g. offline backend), let them see dashboard in offline mode, but still show modal if no token
+  }
 }
 // Restore session on load
 window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(authRestoreSession, 1500); // Wait for API to connect first
+  if (!localStorage.getItem(AUTH_KEY)) {
+    authShowModal();
+  }
+  setTimeout(authRestoreSession, 1200); // Verify session token
 });
 </script>
 </body>
