@@ -255,16 +255,28 @@
     </div>
   </section>
 
-  <!-- SECTION 4: API SPECIFICATION -->
+  <!-- SECTION 4: COMPLIANCE FLOWS -->
   <section>
-    <h2><i class="hgi-stroke hgi-api"></i> Oracle Endpoints</h2>
-    <p>The Reso compliance oracle exposes REST endpoints to manage compliance verification steps:</p>
-    <pre>
-POST /api/auth/register       - Register permanent account & wallet
-POST /api/auth/login          - Authenticate and fetch session token
-POST /api/simulate-transfer   - Simulates ZK transfer compliance checks
-POST /api/escrow/deposit      - Lock funds under ZK-gated conditions
-GET  /api/canary/scan         - Scan network for KYC/Sanction compliance</pre>
+    <h2><i class="hgi-stroke hgi-workflow-status"></i> Compliance Workflows</h2>
+    <p>Reso processes compliance checks sequentially inside isolated ZK circuits, generating verification proofs step-by-step:</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>1. Sanctions Merkle Proof</h3>
+        <p>Checks if your wallet address exists in a Merkle tree of blacklisted/sanctioned entities. The ZK circuit proves the non-membership of your public key without revealing your actual address.</p>
+      </div>
+      <div class="feature-card">
+        <h3>2. KYC Tier Verification</h3>
+        <p>Verifies if your registered profile meets the required compliance tier (Tier 0, 1, or 2) for the target action. The proof validates that your credentials meet or exceed the threshold dynamically.</p>
+      </div>
+      <div class="feature-card">
+        <h3>3. Homomorphic Limit Attestation</h3>
+        <p>Aggregates transaction sums utilizing Paillier additive homomorphic encryption. This validates that the transaction is within daily spending limits without revealing the transaction amounts.</p>
+      </div>
+      <div class="feature-card">
+        <h3>4. On-Chain Settlement</h3>
+        <p>Once all compliance proofs are successfully compiled and folded together, the transaction is released to the Stellar Horizon API for final on-chain settlement.</p>
+      </div>
+    </div>
   </section>
 </div>
 
