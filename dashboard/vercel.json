@@ -4,6 +4,7 @@
     { "source": "/api/:path*", "destination": "https://salmanch123-reso.hf.space/api/:path*" },
     { "source": "/console", "destination": "/console.html" },
     { "source": "/docs", "destination": "/docs.html" },
-    { "source": "/intro", "destination": "/intro.html" }
+    { "source": "/intro", "destination": "/intro.html" },
+    { "source": "/bridge", "destination": "/bridge.html" }
   ]
 }

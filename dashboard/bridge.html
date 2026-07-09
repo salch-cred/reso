@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reso — Cross-Chain Compliance Bridge</title>
+<meta name="description" content="Bridge your Stellar ZK compliance proof to Ethereum, Solana, Cosmos and Polygon without re-verification."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css"/>
+<style>
+:root {
+  --bg: #020b14;
+  --bg2: #031420;
+  --card: rgba(5,28,50,0.85);
+  --border: rgba(14,165,233,0.18);
+  --border2: rgba(14,165,233,0.08);
+  --accent: #0EA5E9;
+  --accent2: #38BDF8;
+  --accent3: #7DD3FC;
+  --text: #f0f9ff;
+  --muted: #7dd3fc;
+  --dim: rgba(240,249,255,0.45);
+  --green: #22c55e;
+  --red: #f87171;
+  --font: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(14,165,233,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14,165,233,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- NAV ---- */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 64px;
+  background: rgba(2,11,20,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.nav-brand img { width: 32px; height: 32px; border-radius: 8px; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text); }
+.nav-badge {
+  background: linear-gradient(135deg,#0EA5E9,#38BDF8);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+}
+
+/* ---- LAYOUT ---- */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ---- HERO ---- */
+.hero {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14,165,233,0.1);
+  border: 1px solid var(--border);
+  color: var(--accent2);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 99px;
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ---- CARDS ---- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  padding: 28px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(14,165,233,0.4), transparent);
+}
+
+/* ---- PROOF EXPORT CARD ---- */
+.proof-card {
+  margin-bottom: 32px;
+}
+.proof-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.proof-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.proof-title h2 { font-size: 1.15rem; font-weight: 700; }
+.proof-title i { color: var(--accent); font-size: 1.2rem; }
+
+.proof-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.meta-chip {
+  background: rgba(14,165,233,0.07);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.meta-chip label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.meta-chip span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.meta-chip span.ok { color: var(--green); }
+.meta-chip span.warn { color: #fbbf24; }
+
+.proof-hash-box {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--accent3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+.proof-hash-box .label { color: var(--muted); font-size: 0.72rem; margin-bottom: 4px; font-family: var(--font); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.copy-btn {
+  flex-shrink: 0;
+  background: rgba(14,165,233,0.12);
+  border: 1px solid var(--border);
+  color: var(--accent2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+.copy-btn:hover { background: rgba(14,165,233,0.25); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(14,165,233,0.25);
+  font-family: var(--font);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(14,165,233,0.35); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ---- CHAINS GRID ---- */
+.chains-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chains-title i { color: var(--accent); }
+
+.chains-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media (max-width: 640px) { .chains-grid { grid-template-columns: 1fr; } }
+
+.chain-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.chain-card:hover {
+  border-color: rgba(14,165,233,0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.chain-card.bridging { opacity: 0.7; pointer-events: none; }
+.chain-card.verified {
+  border-color: rgba(34,197,94,0.4);
+  background: rgba(34,197,94,0.04);
+}
+
+.chain-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.chain-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: white;
+  flex-shrink: 0;
+}
+.chain-status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.chain-status.ready { background: rgba(14,165,233,0.12); color: var(--accent2); border: 1px solid var(--border); }
+.chain-status.loading { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+.chain-status.verified { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+
+.chain-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.chain-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+
+.chain-tx {
+  display: none;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--green);
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+.chain-tx.visible { display: block; }
+.chain-tx .tx-label { font-family: var(--font); font-size: 0.7rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+
+.bridge-btn {
+  width: 100%;
+  background: rgba(14,165,233,0.1);
+  border: 1px solid var(--border);
+  color: var(--accent2);
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  font-family: var(--font);
+}
+.bridge-btn:hover { background: rgba(14,165,233,0.2); border-color: rgba(14,165,233,0.4); }
+.bridge-btn.done { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.25); color: var(--green); }
+.bridge-btn.done:hover { background: rgba(34,197,94,0.15); }
+
+/* ---- PROGRESS ---- */
+.progress-bar {
+  height: 3px;
+  background: rgba(14,165,233,0.12);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 8px;
+  display: none;
+}
+.progress-bar.visible { display: block; }
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* ---- STATUS LOG ---- */
+.status-log {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-top: 32px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--accent3);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.status-log .log-line { margin-bottom: 4px; }
+.status-log .log-line.ok { color: var(--green); }
+.status-log .log-line.err { color: var(--red); }
+.status-log .log-line.dim { color: var(--dim); }
+
+/* ---- AUTH WARNING ---- */
+.auth-warning {
+  background: rgba(248,113,113,0.06);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.auth-warning i { color: var(--red); font-size: 1.3rem; flex-shrink: 0; }
+.auth-warning p { font-size: 0.9rem; color: var(--text); }
+.auth-warning a { color: var(--accent2); text-decoration: none; font-weight: 600; }
+
+/* ---- HOW IT WORKS ---- */
+.how-section { margin-top: 48px; }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+@media (max-width: 720px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+.step {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+.step-num {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg,#0EA5E9,#38BDF8);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.9rem;
+  margin: 0 auto 12px;
+  color: white;
+}
+.step h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+.step p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(14,165,233,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+/* Pulse dot */
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s ease-in-out infinite; display: inline-block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">
+    <img src="logo.png" alt="Reso">
+    <span>Reso</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Dashboard</a>
+    <a href="/bridge" class="active">Bridge <span class="nav-badge">NEW</span></a>
+    <a href="/docs">Docs</a>
+    <a href="/landing">Landing</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag"><i class="hgi-stroke hgi-link-02"></i> Cross-Chain Compliance Bridge</div>
+    <h1>Prove once.<br>Verify everywhere.</h1>
+    <p>Export your Stellar ZK compliance proof to Ethereum, Solana, Cosmos, and Polygon — without re-running KYC or re-verification.</p>
+  </div>
+
+  <!-- Auth warning (shown if not logged in) -->
+  <div id="authWarn" class="auth-warning" style="display:none">
+    <i class="hgi-stroke hgi-alert-02"></i>
+    <p>You must be <a href="/">signed in to your Reso account</a> to generate and bridge compliance proofs.</p>
+  </div>
+
+  <!-- PROOF EXPORT CARD -->
+  <div class="card proof-card" id="proofCard">
+    <div class="proof-header">
+      <div class="proof-title">
+        <i class="hgi-stroke hgi-shield-check"></i>
+        <h2>Your Stellar Compliance Proof</h2>
+      </div>
+      <button class="btn-primary" id="generateBtn" onclick="generateProof()">
+        <i class="hgi-stroke hgi-zap"></i> Generate Proof
+      </button>
+    </div>
+
+    <div class="proof-meta" id="proofMeta" style="display:none">
+      <div class="meta-chip">
+        <label>KYC Tier</label>
+        <span id="metaKyc" class="ok">—</span>
+      </div>
+      <div class="meta-chip">
+        <label>Sanctions</label>
+        <span id="metaSanctions" class="ok">—</span>
+      </div>
+      <div class="meta-chip">
+        <label>Expires In</label>
+        <span id="metaExpiry">—</span>
+      </div>
+    </div>
+
+    <div id="proofHashBox" class="proof-hash-box" style="display:none">
+      <div>
+        <div class="label">ZK Proof Hash (Oracle Signed)</div>
+        <div id="proofHashVal">—</div>
+      </div>
+      <button class="copy-btn" onclick="copyProofHash()"><i class="hgi-stroke hgi-copy-01"></i> Copy</button>
+    </div>
+
+    <p id="proofHint" style="font-size:0.85rem;color:var(--muted);">Click <strong>Generate Proof</strong> to compile your Stellar compliance state into a portable ZK proof ready for cross-chain submission.</p>
+  </div>
+
+  <!-- CHAINS GRID -->
+  <div class="chains-title">
+    <i class="hgi-stroke hgi-global"></i>
+    Destination Chains
+  </div>
+
+  <div class="chains-grid" id="chainsGrid">
+    <!-- Populated dynamically -->
+  </div>
+
+  <!-- STATUS LOG -->
+  <div class="status-log" id="statusLog">
+    <div class="log-line dim">// Reso Cross-Chain Bridge v1.0</div>
+    <div class="log-line dim">// Waiting for proof generation...</div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-section">
+    <div class="chains-title">
+      <i class="hgi-stroke hgi-information-circle"></i>
+      How It Works
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Authenticate</h3>
+        <p>Sign in to your Reso account linked to a Stellar testnet wallet.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Generate Proof</h3>
+        <p>The Reso oracle compiles your KYC tier, sanctions status, and spending limits into a signed ZK proof.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Select Chain</h3>
+        <p>Choose a destination chain — Ethereum, Solana, Cosmos, or Polygon.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Bridge & Verify</h3>
+        <p>The proof is relayed and verified on the destination chain. No re-KYC required.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API = '';
+  const AUTH_KEY = 'reso_session_token';
+
+  let currentProof = null;
+  let bridgedChains = new Set();
+
+  const chainColors = {
+    ethereum: '#627EEA',
+    solana: '#9945FF',
+    cosmos: '#6f86d6',
+    polygon: '#8247E5',
+  };
+  const chainIcons = {
+    ethereum: 'ETH',
+    solana: 'SOL',
+    cosmos: 'ATOM',
+    polygon: 'MATIC',
+  };
+
+  function log(msg, type = '') {
+    const box = document.getElementById('statusLog');
+    const line = document.createElement('div');
+    line.className = 'log-line' + (type ? ' ' + type : '');
+    line.textContent = `[${new Date().toISOString().substr(11,8)}] ${msg}`;
+    box.appendChild(line);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function getToken() {
+    return localStorage.getItem(AUTH_KEY);
+  }
+
+  async function loadChains() {
+    try {
+      const r = await fetch(API + '/api/bridge/chains');
+      const d = await r.json();
+      if (!d.success) return;
+      renderChains(d.chains);
+    } catch (e) {
+      log('Failed to load chain list: ' + e.message, 'err');
+    }
+  }
+
+  function renderChains(chains) {
+    const grid = document.getElementById('chainsGrid');
+    grid.innerHTML = '';
+    chains.forEach(chain => {
+      const card = document.createElement('div');
+      card.className = 'chain-card';
+      card.id = 'chain-' + chain.id;
+      card.innerHTML = `
+        <div class="chain-header">
+          <div class="chain-icon" style="background:${chainColors[chain.id] || '#38BDF8'}">
+            ${chainIcons[chain.id] || chain.icon}
+          </div>
+          <div class="chain-status ready" id="status-${chain.id}">Ready</div>
+        </div>
+        <div class="chain-name">${chain.name}</div>
+        <div class="chain-desc">${chain.description}</div>
+        <div class="chain-tx" id="tx-${chain.id}">
+          <div class="tx-label">Destination TX</div>
+          <div id="txhash-${chain.id}">—</div>
+        </div>
+        <div class="progress-bar" id="progress-${chain.id}">
+          <div class="progress-fill" id="fill-${chain.id}"></div>
+        </div>
+        <button class="bridge-btn" id="btn-${chain.id}" onclick="bridgeToChain('${chain.id}', '${chain.name}', ${chain.verify_latency_ms})">
+          <i class="hgi-stroke hgi-link-02"></i> Bridge to ${chain.name}
+        </button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  async function generateProof() {
+    const token = getToken();
+    if (!token) {
+      document.getElementById('authWarn').style.display = 'flex';
+      log('ERROR: No session token found. Please sign in first.', 'err');
+      return;
+    }
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Generating...';
+    log('Connecting to Reso oracle...');
+
+    try {
+      const r = await fetch(API + `/api/bridge/export-proof?token=${token}`);
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || 'Failed to generate proof');
+
+      currentProof = d.proof;
+      log('Compliance state fetched from Stellar.', 'ok');
+      log(`KYC Tier: ${d.proof.compliance_state.kyc_tier_name}`, 'ok');
+      log(`Sanctions Cleared: ${d.proof.compliance_state.sanctions_cleared}`, 'ok');
+      log(`Proof hash: ${d.proof.proof_hash.slice(0, 24)}...`, 'ok');
+      log('Proof ready. Select a chain to bridge.', 'ok');
+
+      // Update UI
+      document.getElementById('proofMeta').style.display = 'grid';
+      document.getElementById('proofHashBox').style.display = 'flex';
+      document.getElementById('proofHint').style.display = 'none';
+
+      document.getElementById('metaKyc').textContent = `Tier ${d.proof.compliance_state.kyc_tier} — ${d.proof.compliance_state.kyc_tier_name}`;
+      document.getElementById('metaSanctions').textContent = d.proof.compliance_state.sanctions_cleared ? '✓ Cleared' : '✗ Flagged';
+      document.getElementById('metaSanctions').className = d.proof.compliance_state.sanctions_cleared ? 'ok' : 'warn';
+
+      const expiresIn = Math.round((d.proof.expires_at - d.proof.issued_at) / 3600);
+      document.getElementById('metaExpiry').textContent = `${expiresIn}h`;
+      document.getElementById('proofHashVal').textContent = d.proof.proof_hash;
+
+      btn.innerHTML = '<i class="hgi-stroke hgi-check"></i> Proof Generated';
+      btn.style.background = 'linear-gradient(135deg,#16a34a,#22c55e)';
+    } catch (e) {
+      log('ERROR: ' + e.message, 'err');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="hgi-stroke hgi-zap"></i> Generate Proof';
+    }
+  }
+
+  async function bridgeToChain(chainId, chainName, latencyMs) {
+    const token = getToken();
+    if (!token) {
+      document.getElementById('authWarn').style.display = 'flex';
+      log('ERROR: Must be signed in to bridge.', 'err');
+      return;
+    }
+    if (!currentProof) {
+      log('ERROR: Generate proof first before bridging.', 'err');
+      return;
+    }
+
+    const card = document.getElementById('chain-' + chainId);
+    const statusEl = document.getElementById('status-' + chainId);
+    const btn = document.getElementById('btn-' + chainId);
+    const progressBar = document.getElementById('progress-' + chainId);
+    const fill = document.getElementById('fill-' + chainId);
+
+    card.classList.add('bridging');
+    statusEl.className = 'chain-status loading';
+    statusEl.innerHTML = '<span class="spinner"></span>';
+    btn.innerHTML = `<span class="spinner"></span> Bridging...`;
+    progressBar.classList.add('visible');
+    log(`Initiating ZK proof relay to ${chainName}...`);
+
+    // Animate progress bar
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress = Math.min(progress + (100 / (latencyMs / 100)), 90);
+      fill.style.width = progress + '%';
+    }, 100);
+
+    try {
+      const r = await fetch(API + `/api/bridge/verify/${chainId}?token=${token}`, { method: 'POST' });
+      const d = await r.json();
+      clearInterval(interval);
+      fill.style.width = '100%';
+
+      if (!r.ok) throw new Error(d.detail || 'Bridge failed');
+
+      await new Promise(res => setTimeout(res, 300));
+
+      const isVerified = d.verification_status === 'VERIFIED';
+      bridgedChains.add(chainId);
+
+      card.classList.remove('bridging');
+      if (isVerified) card.classList.add('verified');
+
+      statusEl.className = 'chain-status ' + (isVerified ? 'verified' : 'ready');
+      statusEl.innerHTML = isVerified ? '<span class="pulse-dot"></span> Verified' : 'Rejected';
+
+      const txBox = document.getElementById('tx-' + chainId);
+      const txHash = document.getElementById('txhash-' + chainId);
+      txBox.classList.add('visible');
+      txHash.textContent = d.destination_tx;
+
+      btn.className = 'bridge-btn done';
+      btn.innerHTML = `<i class="hgi-stroke hgi-check-circle"></i> Verified on ${chainName}`;
+
+      log(`✓ Proof verified on ${chainName} in ~${latencyMs}ms`, 'ok');
+      log(`  TX: ${d.destination_tx.slice(0, 32)}...`, 'ok');
+    } catch (e) {
+      clearInterval(interval);
+      card.classList.remove('bridging');
+      statusEl.className = 'chain-status ready';
+      statusEl.textContent = 'Failed';
+      btn.innerHTML = `<i class="hgi-stroke hgi-link-02"></i> Retry Bridge`;
+      log(`ERROR bridging to ${chainName}: ${e.message}`, 'err');
+    }
+  }
+
+  function copyProofHash() {
+    const hash = document.getElementById('proofHashVal').textContent;
+    navigator.clipboard.writeText(hash).then(() => {
+      log('Proof hash copied to clipboard.', 'ok');
+    });
+  }
+
+  // Init
+  const token = getToken();
+  if (!token) {
+    document.getElementById('authWarn').style.display = 'flex';
+    log('Not authenticated — please sign in to use bridge.', 'err');
+  } else {
+    log('Session token found. Ready to generate proof.');
+  }
+  loadChains();
+</script>
+</body>
+</html>
